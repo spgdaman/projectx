@@ -103,3 +103,4 @@ class Product(models.Model):
         if self.retailer_category and hasattr(self.retailer_category, "mapping"):
             self.master_category = self.retailer_category.mapping.master_category
             self.save()
+
