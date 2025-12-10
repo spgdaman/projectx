@@ -104,3 +104,19 @@ class Product(models.Model):
             self.master_category = self.retailer_category.mapping.master_category
             self.save()
 
+class Deal(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
+    current_price = models.DecimalField(max_digits=12, decimal_places=2)
+    old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    link = models.URLField(null=True, blank=True)
+    scraped_at = models.DateTimeField(auto_now_add=True)
+
+class StagingProduct(models.Model):
+    retailer_name = models.CharField(max_length=200)
+    retailer_category_name = models.CharField(max_length=255)
+    product_name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    product_url = models.URLField(null=True, blank=True)
+    scraped_at = models.DateTimeField(auto_now_add=True)
