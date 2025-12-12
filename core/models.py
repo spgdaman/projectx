@@ -33,6 +33,16 @@ class Retailer(models.Model):
     def __str__(self):
         return self.name
 
+class RetailerBranch(models.Model):
+    retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+
+    class Meta:
+        unique_together = ('retailer', 'name')
+        verbose_name_plural = "Retailer Branches"
+
+    def __str__(self):
+        return f"{self.retailer.name} - {self.name}"
 
 class RetailerCategory(models.Model):
     """
@@ -85,7 +95,6 @@ class Product(models.Model):
     sku = models.CharField(max_length=200, null=True, blank=True)
     url = models.URLField(null=True, blank=True)
 
-    # this gets auto-filled once mapping exists
     master_category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -97,29 +106,21 @@ class Product(models.Model):
         return self.name
 
     def assign_master_category(self):
-        """
-        Call this after saving product or after updating mappings.
-        """
         if self.retailer_category and hasattr(self.retailer_category, "mapping"):
             self.master_category = self.retailer_category.mapping.master_category
             self.save()
 
+
 class Deal(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
+
     current_price = models.DecimalField(max_digits=12, decimal_places=2)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
     link = models.URLField(null=True, blank=True)
     scraped_at = models.DateTimeField(auto_now_add=True)
 
-# class StagingProduct(models.Model):
-#     retailer_name = models.CharField(max_length=200)
-#     retailer_category_name = models.CharField(max_length=255)
-#     product_name = models.CharField(max_length=255)
-#     price = models.DecimalField(max_digits=12, decimal_places=2)
-#     old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-#     product_url = models.URLField(null=True, blank=True)
-#     scraped_at = models.DateTimeField(auto_now_add=True)
 
 class StagingProduct(models.Model):
     """
@@ -137,7 +138,6 @@ class StagingProduct(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
-    # optional metrics from your CSV
     change_count_7 = models.IntegerField(null=True, blank=True)
     avg_pct_change_7 = models.FloatField(null=True, blank=True)
     last_change_date_7 = models.DateField(null=True, blank=True)

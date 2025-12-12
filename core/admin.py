@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct
+from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -26,11 +26,13 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("retailer", "master_category")
     autocomplete_fields = ("retailer_category", "master_category")
 
+
 class DealAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("product", "retailer", "current_price", "old_price", "scraped_at")
+
 
 class StagingProductAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("retailer_name", "product_name", "price", "branch_name")
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -38,5 +40,6 @@ admin.site.register(Retailer, admin.ModelAdmin)
 admin.site.register(RetailerCategory, RetailerCategoryAdmin)
 admin.site.register(CategoryMapping, CategoryMappingAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.regiser(Deal, DealAdmin)
+admin.site.register(Deal, DealAdmin)   # ✔ FIXED TYPO
 admin.site.register(StagingProduct, StagingProductAdmin)
+admin.site.register(RetailerBranch, admin.ModelAdmin)

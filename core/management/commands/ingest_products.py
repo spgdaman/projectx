@@ -1,8 +1,7 @@
-# core/management/commands/ingest_products.py
 import csv
-from datetime import datetime
 from django.core.management.base import BaseCommand
-from core.models import StagingProduct, Retailer, RetailerCategory, Product, Deal, CategoryMapping
+from core.models import StagingProduct
+
 
 class Command(BaseCommand):
     help = "Ingest product CSV files from multiple sources"
@@ -13,12 +12,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         csv_file = options['csv_file']
 
+        self.stdout.write("Clearing staging table...")
+        StagingProduct.objects.all().delete()
+
         with open(csv_file, newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
+
                 # Detect format dynamically
                 if 'category' in row:
-                    # Sample1 format
                     staging = StagingProduct.objects.create(
                         retailer_name=row['retailer'],
                         category_name=row.get('category'),
@@ -31,7 +33,6 @@ class Command(BaseCommand):
                         old_price=row.get('last_old_price_7') or None,
                     )
                 else:
-                    # Sample2 format
                     staging = StagingProduct.objects.create(
                         retailer_name=row['retailer'],
                         branch_name=row.get('branch_name'),
@@ -42,6 +43,7 @@ class Command(BaseCommand):
                         price=row.get('last_new_price_7') or None,
                         old_price=row.get('last_old_price_7') or None,
                     )
+
                 self.stdout.write(f"Staged: {staging.product_name}")
 
         self.stdout.write(self.style.SUCCESS("Staging complete."))
