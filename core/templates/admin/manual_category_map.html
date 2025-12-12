@@ -1,29 +1,35 @@
 {% extends "admin/base_site.html" %}
+
 {% block content %}
-<h1>Manual Category Mapping</h1>
+<h1>{{ title }}</h1>
+
+<h2>Manual Mapping / Remap</h2>
 <form method="POST">{% csrf_token %}
-  <table>
-    <tr>
-      <th>Retailer Category</th>
-      <th>Assign Master Category</th>
-      <th>Action</th>
-    </tr>
-    {% for rcat in unmapped_categories %}
-    <tr>
-      <td>{{ rcat.retailer.name }} → {{ rcat.name }}</td>
-      <td>
-        <select name="master_category">
-          {% for cat in master_categories %}
-            <option value="{{ cat.id }}">{{ cat.name }}</option>
-          {% endfor %}
-        </select>
-      </td>
-      <td>
-        <input type="hidden" name="retailer_category" value="{{ rcat.id }}">
-        <button type="submit">Map</button>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+    <label>Retailer Category:</label>
+    <select name="retailer_category">
+        {% for rcat in unmapped_categories %}
+        <option value="{{ rcat.id }}" {% if preselect_mapping and rcat.id == preselect_mapping %}selected{% endif %}>
+            {{ rcat.retailer.name }} → {{ rcat.name }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label>Master Category:</label>
+    <select name="master_category">
+        {% for cat in master_categories %}
+        <option value="{{ cat.id }}" {% if preselect_mapping and cat.id == preselect_mapping %}selected{% endif %}>
+            {{ cat.name }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Save Mapping</button>
 </form>
+
+<h2>Auto Suggestions</h2>
+<ul>
+    {% for rcat, mcat, score in suggestions %}
+        <li>{{ rcat.retailer.name }} → {{ rcat.name }} : Suggested = {{ mcat.name }} ({{ score|floatformat:2 }})</li>
+    {% endfor %}
+</ul>
 {% endblock %}
