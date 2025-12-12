@@ -48,7 +48,17 @@ class RetailerCategory(models.Model):
     def __str__(self):
         return f"{self.retailer.name}: {self.name}"
 
+class RetailerBranch(models.Model):
+    retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, blank=True, null=True)
 
+    class Meta:
+        unique_together = ('retailer', 'name')
+
+    def __str__(self):
+        return f"{self.retailer.name} - {self.name}"
+    
 class CategoryMapping(models.Model):
     """
     Mapping of RetailerCategory → Master Category.
@@ -107,10 +117,28 @@ class Product(models.Model):
 class Deal(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
+    branch = models.ForeignKey(RetailerBranch, on_delete=models.SET_NULL, null=True, blank=True)
+    external_product_id = models.CharField(max_length=500, null=True, blank=True)
     current_price = models.DecimalField(max_digits=12, decimal_places=2)
     old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     link = models.URLField(null=True, blank=True)
     scraped_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product.name} @ {self.retailer.name} ({self.branch})"
+
+# class Deal(models.Model):
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
+#     branch = models.ForeignKey(RetailerBranch, on_delete=models.SET_NULL, null=True, blank=True)
+    
+#     external_product_id = models.CharField(max_length=500, null=True, blank=True)
+#     current_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+#     old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+#     timestamp = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.product.name} @ {self.retailer.name} ({self.branch})"
 
 # class StagingProduct(models.Model):
 #     retailer_name = models.CharField(max_length=200)
@@ -141,6 +169,9 @@ class StagingProduct(models.Model):
     change_count_7 = models.IntegerField(null=True, blank=True)
     avg_pct_change_7 = models.FloatField(null=True, blank=True)
     last_change_date_7 = models.DateField(null=True, blank=True)
+
+    # True for API/frontend records
+    is_manual = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

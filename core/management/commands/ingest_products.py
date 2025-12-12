@@ -1,8 +1,25 @@
 # core/management/commands/ingest_products.py
 import csv
-from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from django.core.management.base import BaseCommand
-from core.models import StagingProduct, Retailer, RetailerCategory, Product, Deal, CategoryMapping
+from core.models import StagingProduct
+from django.db import connection
+
+def parse_decimal(value):
+    if value is None:
+        return None
+    # Remove commas and extra spaces
+    value = value.replace(',', '').strip()
+    if value == '':
+        return None
+    try:
+        return Decimal(value)
+    except InvalidOperation:
+        return None
+
+def clear_staging():
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM core_stagingproduct")
 
 class Command(BaseCommand):
     help = "Ingest product CSV files from multiple sources"
@@ -13,35 +30,47 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         csv_file = options['csv_file']
 
-        with open(csv_file, newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                # Detect format dynamically
-                if 'category' in row:
-                    # Sample1 format
-                    staging = StagingProduct.objects.create(
-                        retailer_name=row['retailer'],
-                        category_name=row.get('category'),
-                        sub_category_name=row.get('sub_category_1'),
-                        sub_category_2_name=row.get('sub_category_2'),
-                        product_name=row.get('product_name'),
-                        product_url=row.get('product_url'),
-                        image_url=row.get('image_url'),
-                        price=row.get('last_new_price_7') or None,
-                        old_price=row.get('last_old_price_7') or None,
-                    )
-                else:
-                    # Sample2 format
-                    staging = StagingProduct.objects.create(
-                        retailer_name=row['retailer'],
-                        branch_name=row.get('branch_name'),
-                        category_name=row.get('category_name'),
-                        sub_category_name=row.get('sub_category_name'),
-                        product_name=row.get('product_name'),
-                        product_url=row.get('product_link'),
-                        price=row.get('last_new_price_7') or None,
-                        old_price=row.get('last_old_price_7') or None,
-                    )
-                self.stdout.write(f"Staged: {staging.product_name}")
+        try:
+            with open(csv_file, newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                count = 0
 
-        self.stdout.write(self.style.SUCCESS("Staging complete."))
+                clear_staging()
+
+                for row in reader:
+                    # Detect CSV format
+                    if 'category' in row:  # Sample1
+                        staging = StagingProduct.objects.create(
+                            retailer_name=row['retailer'],
+                            branch_name=row.get('branch_name'),
+                            category_name=row.get('category'),
+                            sub_category_name=row.get('sub_category_1'),
+                            sub_category_2_name=row.get('sub_category_2'),
+                            product_name=row.get('product_name'),
+                            product_url=row.get('product_url'),
+                            image_url=row.get('image_url'),
+                            price=parse_decimal(row.get('last_new_price_7')),
+                            old_price=parse_decimal(row.get('last_old_price_7')),
+                            is_manual=False
+                        )
+                    else:  # Sample2
+                        staging = StagingProduct.objects.create(
+                            retailer_name=row['retailer'],
+                            branch_name=row.get('branch_name'),
+                            category_name=row.get('category_name'),
+                            sub_category_name=row.get('sub_category_name'),
+                            product_name=row.get('product_name'),
+                            product_url=row.get('product_link'),
+                            image_url=row.get('image_url'),
+                            price=parse_decimal(row.get('last_new_price_7')),
+                            old_price=parse_decimal(row.get('last_old_price_7')),
+                            is_manual=False
+                        )
+
+                    self.stdout.write(f"Staged: {staging.product_name} | Price: {staging.price}")
+                    count += 1
+
+                self.stdout.write(self.style.SUCCESS(f"Staging complete. {count} products ingested."))
+
+        except FileNotFoundError:
+            self.stderr.write(self.style.ERROR(f"File not found: {csv_file}"))
