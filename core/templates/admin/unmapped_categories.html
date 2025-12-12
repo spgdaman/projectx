@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Manual Category Mapping</h1>
+
+<form method="POST">{% csrf_token %}
+    <table>
+        <tr>
+            <th>Retailer Category</th>
+            <th>Master Category</th>
+            <th>Action</th>
+        </tr>
+        {% for rcat in unmapped_categories %}
+        <tr>
+            <td>{{ rcat.retailer.name }} → {{ rcat.name }}</td>
+            <td>
+                <select name="master_category">
+                    {% for cat in master_categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <button type="submit" name="retailer_category" value="{{ rcat.id }}">Map</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</form>
+{% endblock %}
