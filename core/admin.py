@@ -14,14 +14,13 @@ class RetailerCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "retailer")
     search_fields = ("name",)
     list_filter = ("retailer",)
-
-
 class CategoryMappingAdmin(admin.ModelAdmin):
     list_display = ("retailer_category", "master_category")
     search_fields = ("retailer_category__name", "retailer_category__retailer__name")
     list_filter = ("master_category", "retailer_category__retailer")
 
-    change_list_template = "admin/unmapped_categories.html"
+    # Add a custom button/link in admin
+    change_list_template = "admin/categorymapping_change_list.html"
 
     def get_urls(self):
         urls = super().get_urls()
@@ -32,7 +31,7 @@ class CategoryMappingAdmin(admin.ModelAdmin):
 
     def manual_map_view(self, request):
         unmapped = RetailerCategory.objects.filter(mapping__isnull=True).order_by("retailer__name")
-        categories = Category.objects.all().order_by("name")
+        master_categories = Category.objects.all().order_by("name")
 
         if request.method == "POST":
             rcat_id = request.POST.get("retailer_category")
@@ -40,15 +39,18 @@ class CategoryMappingAdmin(admin.ModelAdmin):
             if rcat_id and cat_id:
                 rcat = RetailerCategory.objects.get(id=rcat_id)
                 cat = Category.objects.get(id=cat_id)
-                CategoryMapping.objects.get_or_create(retailer_category=rcat, defaults={"master_category": cat})
+                CategoryMapping.objects.update_or_create(
+                    retailer_category=rcat,
+                    defaults={"master_category": cat}
+                )
 
         context = dict(
             self.admin_site.each_context(request),
             unmapped_categories=unmapped,
-            master_categories=categories,
-            title="Manual Category Mapping",
+            master_categories=master_categories,
+            title="Manual Category Mapping"
         )
-        return TemplateResponse(request, "admin/manual_category_map.html", context)
+        return TemplateResponse(request, "admin/unmapped_categories.html", context)
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "retailer", "master_category", "price")
