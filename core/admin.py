@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch
+from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -12,11 +12,6 @@ class RetailerCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "retailer")
     search_fields = ("name",)
     list_filter = ("retailer",)
-
-class RetailerBranchAdmin(admin.ModelAdmin):
-    list_display = ("retailer","name","location")
-    search_fields = ("retailer","name")
-    list_filter = ("name",)
 
 
 class CategoryMappingAdmin(admin.ModelAdmin):
@@ -35,7 +30,7 @@ class DealAdmin(admin.ModelAdmin):
     pass
 
 class StagingProductAdmin(admin.ModelAdmin):
-    search_fields = ("product_name",)
+    pass
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -43,6 +38,5 @@ admin.site.register(Retailer, admin.ModelAdmin)
 admin.site.register(RetailerCategory, RetailerCategoryAdmin)
 admin.site.register(CategoryMapping, CategoryMappingAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Deal, DealAdmin)
+admin.site.regiser(Deal, DealAdmin)
 admin.site.register(StagingProduct, StagingProductAdmin)
-admin.site.register(RetailerBranch, RetailerBranchAdmin)
