@@ -1,6 +1,16 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    payment_status = models.BooleanField(default=False)  # Paid subscription
+    is_free_tier = models.BooleanField(default=True)     # Free tier
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.username} profile"
+    
 class Category(models.Model):
     """
     Master category hierarchy — what YOU define.
@@ -22,7 +32,6 @@ class Category(models.Model):
         if self.parent:
             return f"{self.parent} > {self.name}"
         return self.name
-
 
 class Retailer(models.Model):
     """
@@ -58,7 +67,6 @@ class RetailerCategory(models.Model):
     def __str__(self):
         return f"{self.retailer.name}: {self.name}"
 
-
 class CategoryMapping(models.Model):
     """
     Mapping of RetailerCategory → Master Category.
@@ -75,7 +83,6 @@ class CategoryMapping(models.Model):
 
     def __str__(self):
         return f"{self.retailer_category} → {self.master_category}"
-
 
 class Product(models.Model):
     """
@@ -110,7 +117,6 @@ class Product(models.Model):
             self.master_category = self.retailer_category.mapping.master_category
             self.save()
 
-
 class Deal(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
@@ -120,7 +126,6 @@ class Deal(models.Model):
 
     link = models.URLField(null=True, blank=True)
     scraped_at = models.DateTimeField(auto_now_add=True)
-
 
 class StagingProduct(models.Model):
     """
@@ -164,9 +169,17 @@ class Subscription(models.Model):
     category = models.ForeignKey("Category", null=True, blank=True, on_delete=models.CASCADE)
     retailer = models.ForeignKey("Retailer", null=True, blank=True, on_delete=models.CASCADE)
 
-    is_paid = models.BooleanField(default=False)
-    is_free_tier = models.BooleanField(default=True)
+    # is_paid = models.BooleanField(default=False)
+    # is_free_tier = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
+    
+    @property
+    def is_paid(self):
+        return self.user.userprofile.payment_status
+
+    @property
+    def is_free_tier(self):
+        return self.user.userprofile.is_free_tier
 
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated_at = models.DateTimeField(auto_now=True)

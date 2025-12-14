@@ -1,10 +1,44 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
 {% block content %}
-<h2>{{ action }} Subscription</h2>
+<h2>{{ form.instance.pk|yesno:"Edit,New" }} Subscription</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">{{ action }}</button>
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+        {{ form.target_type.label_tag }}
+        {{ form.target_type }}
+    </div>
+
+    <div class="mb-3" id="product-field">
+        {{ form.product.label_tag }}
+        {{ form.product }}
+    </div>
+
+    <div class="mb-3" id="category-field">
+        {{ form.category.label_tag }}
+        {{ form.category }}
+    </div>
+
+    <div class="mb-3" id="retailer-field">
+        {{ form.retailer.label_tag }}
+        {{ form.retailer }}
+    </div>
+
+    <button class="btn btn-primary" type="submit">Save</button>
 </form>
-<a href="{% url 'subscription_list' %}">Back to list</a>
+
+<script>
+function toggleFields() {
+    let target = document.getElementById('id_target_type').value;
+    document.getElementById('product-field').style.display = target === 'product' ? 'block' : 'none';
+    document.getElementById('category-field').style.display = target === 'category' ? 'block' : 'none';
+    document.getElementById('retailer-field').style.display = target === 'retailer' ? 'block' : 'none';
+}
+
+// Initial toggle on page load
+toggleFields();
+document.getElementById('id_target_type').addEventListener('change', toggleFields);
+</script>
 {% endblock %}

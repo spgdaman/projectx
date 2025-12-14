@@ -151,6 +151,8 @@ class DealAdmin(admin.ModelAdmin):
 
 class StagingProductAdmin(admin.ModelAdmin):
     list_display = ("retailer_name", "product_name", "price", "branch_name")
+    search_fields = ("retailer_name", "product_name")
+    list_filter = ("retailer_name",)
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
@@ -169,8 +171,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     list_filter = (
         "target_type",
-        "is_paid",
-        "is_free_tier",
+        # "is_paid",
+        # "is_free_tier",
         "is_active",
     )
 
