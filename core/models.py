@@ -233,6 +233,7 @@ class Subscription(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField(auto_now=True)  # ✅ NEW
 
     class Meta:
         constraints = [

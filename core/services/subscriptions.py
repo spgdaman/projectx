@@ -11,3 +11,7 @@ def can_create_subscription(user):
     ).count()
 
     return active_free < FREE_TIER_LIMIT
+
+def deactivate_subscription(subscription):
+    subscription.is_active = False
+    subscription.save(update_fields=["is_active", "last_updated_at"])

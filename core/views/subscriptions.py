@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from core.models import Subscription, Product, Category, Retailer
-from core.services.subscriptions import can_create_subscription
+from core.services.subscriptions import can_create_subscription, deactivate_subscription
 
 
 @login_required
@@ -37,3 +37,16 @@ def create_subscription(request):
     Subscription.objects.create(**data)
 
     return JsonResponse({"status": "subscribed"})
+
+@login_required
+def unsubscribe(request, subscription_id):
+    try:
+        subscription = Subscription.objects.get(
+            id=subscription_id,
+            user=request.user
+        )
+    except Subscription.DoesNotExist:
+        return JsonResponse({"error": "Not found"}, status=404)
+
+    deactivate_subscription(subscription)
+    return JsonResponse({"status": "unsubscribed"})

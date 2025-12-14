@@ -91,13 +91,17 @@ class Command(BaseCommand):
 
             # 5️⃣ Price history (Deal)
             if sp.price or sp.old_price:
-                Deal.objects.create(
+                from core.services.alerts import process_deal_alerts
+
+                deal = Deal.objects.create(
                     product=product,
                     retailer=retailer,
                     link=sp.product_url,
-                    current_price=Decimal(sp.price) if sp.price not in [None, '', ' '] else None,
-                    old_price=Decimal(sp.old_price) if sp.old_price not in [None, '', ' '] else None
+                    current_price=Decimal(sp.price),
+                    old_price=Decimal(sp.old_price) if sp.old_price else None
                 )
+
+                process_deal_alerts(deal)
 
             self.stdout.write(f"Processed: {product.name}")
 
