@@ -4,12 +4,12 @@ from django.template.response import TemplateResponse
 from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription
 from django.utils.html import format_html
 from difflib import SequenceMatcher
+from core.services.subscriptions import update_product_subscription
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "parent")
     search_fields = ("name",)
     list_filter = ("parent",)
-
 
 class RetailerCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "retailer")
@@ -146,15 +146,12 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("retailer", "master_category")
     autocomplete_fields = ("retailer_category", "master_category")
 
-
 class DealAdmin(admin.ModelAdmin):
     list_display = ("product", "retailer", "current_price", "old_price", "scraped_at")
-
 
 class StagingProductAdmin(admin.ModelAdmin):
     list_display = ("retailer_name", "product_name", "price", "branch_name")
 
-# core/admin.py
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
@@ -167,6 +164,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "is_free_tier",
         "is_active",
         "created_at",
+        "last_updated_at",
     )
 
     list_filter = (
@@ -185,10 +183,16 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     readonly_fields = ("created_at",)
 
+    def save_model(self, request, obj, form, change):
+        if change and obj.target_type == "product":
+            if "product" in form.changed_data:
+                update_product_subscription(obj, form.cleaned_data["product"])
+                return
+        super().save_model(request, obj, form, change)
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Retailer, admin.ModelAdmin)
-# admin.site.register(RetailerCategory, RetailerCategoryAdmin)
 admin.site.register(RetailerCategory, RetailerCategoryMappingAdmin)
 admin.site.register(CategoryMapping, CategoryMappingAdmin)
 admin.site.register(Product, ProductAdmin)

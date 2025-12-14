@@ -1,52 +1,41 @@
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from core.models import Subscription, Product, Category, Retailer
-from core.services.subscriptions import can_create_subscription, deactivate_subscription
-
-
-@login_required
-def create_subscription(request):
-    user = request.user
-
-    if not can_create_subscription(user):
-        return JsonResponse(
-            {"error": "Free tier limit reached"},
-            status=403
-        )
-
-    target_type = request.POST.get("target_type")
-    target_id = request.POST.get("target_id")
-
-    data = {
-        "user": user,
-        "target_type": target_type,
-        "is_free_tier": True,
-        "is_paid": False,
-        "is_active": True,
-    }
-
-    if target_type == "product":
-        data["product"] = Product.objects.get(id=target_id)
-
-    elif target_type == "category":
-        data["category"] = Category.objects.get(id=target_id)
-
-    elif target_type == "retailer":
-        data["retailer"] = Retailer.objects.get(id=target_id)
-
-    Subscription.objects.create(**data)
-
-    return JsonResponse({"status": "subscribed"})
+from core.forms import SubscriptionForm
 
 @login_required
-def unsubscribe(request, subscription_id):
-    try:
-        subscription = Subscription.objects.get(
-            id=subscription_id,
-            user=request.user
-        )
-    except Subscription.DoesNotExist:
-        return JsonResponse({"error": "Not found"}, status=404)
+def subscription_list(request):
+    subs = Subscription.objects.filter(user=request.user)
+    return render(request, "core/subscription_list.html", {"subscriptions": subs})
 
-    deactivate_subscription(subscription)
-    return JsonResponse({"status": "unsubscribed"})
+@login_required
+def subscription_create(request):
+    if request.method == "POST":
+        form = SubscriptionForm(request.POST)
+        if form.is_valid():
+            sub = form.save(commit=False)
+            sub.user = request.user
+            sub.save()
+            return redirect("subscription_list")
+    else:
+        form = SubscriptionForm()
+    return render(request, "core/subscription_form.html", {"form": form, "action": "Create"})
+
+@login_required
+def subscription_update(request, pk):
+    sub = get_object_or_404(Subscription, pk=pk, user=request.user)
+    if request.method == "POST":
+        form = SubscriptionForm(request.POST, instance=sub)
+        if form.is_valid():
+            form.save()
+            return redirect("subscription_list")
+    else:
+        form = SubscriptionForm(instance=sub)
+    return render(request, "core/subscription_form.html", {"form": form, "action": "Update"})
+
+@login_required
+def subscription_deactivate(request, pk):
+    sub = get_object_or_404(Subscription, pk=pk, user=request.user)
+    sub.is_active = False
+    sub.save()
+    return redirect("subscription_list")

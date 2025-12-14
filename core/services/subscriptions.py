@@ -1,4 +1,5 @@
 from core.models import Subscription
+from django.utils import timezone
 
 FREE_TIER_LIMIT = 3
 
@@ -15,3 +16,9 @@ def can_create_subscription(user):
 def deactivate_subscription(subscription):
     subscription.is_active = False
     subscription.save(update_fields=["is_active", "last_updated_at"])
+
+def update_product_subscription(subscription, new_product):
+    subscription.product = new_product
+    subscription.category = new_product.master_category
+    subscription.last_updated_at = timezone.now()
+    subscription.save()

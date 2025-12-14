@@ -1,5 +1,7 @@
+from django.utils.timezone import now
+from datetime import timedelta, timezone
 from django.db.models import Q
-from core.models import Subscription
+from core.models import Subscription, AlertLog
 
 
 def process_deal_alerts(deal):
@@ -12,12 +14,11 @@ def process_deal_alerts(deal):
     )
 
     for sub in subscriptions:
-        if sub.alert_type == "price_drop":
-            if deal.old_price and deal.current_price:
-                if deal.current_price < deal.old_price:
-                    notify(sub, deal)
-        else:
-            notify(sub, deal)
+        if not can_send_alert(sub, deal):
+            continue
+
+        notify(sub, deal)
+        AlertLog.objects.create(subscription=sub, deal=deal)
 
 
 def notify(subscription, deal):
@@ -28,3 +29,21 @@ def notify(subscription, deal):
         f"ALERT → {subscription.user} | "
         f"{deal.product.name} | {deal.current_price}"
     )
+
+def can_send_alert(subscription, deal):
+    if subscription.is_paid:
+        return True
+
+    cutoff = now() - timedelta(hours=24)
+
+    return not AlertLog.objects.filter(
+        subscription=subscription,
+        deal__product=deal.product,
+        sent_at__gte=cutoff
+    ).exists()
+
+def update_product_subscription(subscription, new_product):
+    subscription.product = new_product
+    subscription.category = new_product.master_category
+    subscription.last_updated_at = timezone.now()
+    subscription.save()

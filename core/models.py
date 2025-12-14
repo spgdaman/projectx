@@ -150,102 +150,44 @@ class StagingProduct(models.Model):
         return f"{self.retailer_name} | {self.product_name}"
     
 class Subscription(models.Model):
-    TARGET_PRODUCT = "product"
-    TARGET_CATEGORY = "category"
-    TARGET_RETAILER = "retailer"
-
-    TARGET_CHOICES = [
-        (TARGET_PRODUCT, "Product"),
-        (TARGET_CATEGORY, "Category"),
-        (TARGET_RETAILER, "Retailer"),
-    ]
-
-    ALERT_PRICE_DROP = "price_drop"
-    ALERT_ANY_CHANGE = "any_change"
-
-    ALERT_CHOICES = [
-        (ALERT_PRICE_DROP, "Price Drop"),
-        (ALERT_ANY_CHANGE, "Any Price Change"),
-    ]
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="subscriptions"
+    TARGET_CHOICES = (
+        ("product", "Product"),
+        ("category", "Category"),
+        ("retailer", "Retailer"),
     )
 
-    # what is being subscribed to
-    target_type = models.CharField(
-        max_length=20,
-        choices=TARGET_CHOICES
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    product = models.ForeignKey(
-        "Product",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
+    target_type = models.CharField(max_length=20, choices=TARGET_CHOICES)
 
-    category = models.ForeignKey(
-        "Category",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
+    product = models.ForeignKey("Product", null=True, blank=True, on_delete=models.CASCADE)
+    category = models.ForeignKey("Category", null=True, blank=True, on_delete=models.CASCADE)
+    retailer = models.ForeignKey("Retailer", null=True, blank=True, on_delete=models.CASCADE)
 
-    retailer = models.ForeignKey(
-        "Retailer",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
-
-    # alert behaviour
-    alert_type = models.CharField(
-        max_length=20,
-        choices=ALERT_CHOICES,
-        default=ALERT_PRICE_DROP
-    )
-
-    threshold_pct = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        help_text="Optional % drop threshold"
-    )
-
-    # 🔐 PAYMENT & ACCESS CONTROL
-    is_paid = models.BooleanField(
-        default=False,
-        help_text="True = paid subscription"
-    )
-
-    is_free_tier = models.BooleanField(
-        default=True,
-        help_text="True = free-tier subscription"
-    )
-
-    is_active = models.BooleanField(
-        default=False,
-        help_text="Controls whether alerts are sent"
-    )
+    is_paid = models.BooleanField(default=False)
+    is_free_tier = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
-    last_updated_at = models.DateTimeField(auto_now=True)  # ✅ NEW
+    last_updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=(
-                    models.Q(product__isnull=False, target_type="product") |
-                    models.Q(category__isnull=False, target_type="category") |
-                    models.Q(retailer__isnull=False, target_type="retailer")
-                ),
-                name="subscription_target_consistency"
-            )
-        ]
+    def save(self, *args, **kwargs):
+        # Enforce target rules centrally
+        if self.target_type == "product" and self.product:
+            self.category = self.product.master_category
+            self.retailer = None
 
-    def __str__(self):
-        return f"{self.user} → {self.target_type}"
+        elif self.target_type == "category":
+            self.product = None
+            self.retailer = None
+
+        elif self.target_type == "retailer":
+            self.product = None
+            self.category = None
+
+        super().save(*args, **kwargs)
+
+class AlertLog(models.Model):
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    deal = models.ForeignKey("Deal", on_delete=models.CASCADE)
+    sent_at = models.DateTimeField(auto_now_add=True)
