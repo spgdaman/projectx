@@ -31,6 +31,7 @@ class Command(BaseCommand):
                         image_url=row.get('image_url'),
                         price=row.get('last_new_price_7') or None,
                         old_price=row.get('last_old_price_7') or None,
+                        is_manual=False,
                     )
                 else:
                     staging = StagingProduct.objects.create(
@@ -42,6 +43,7 @@ class Command(BaseCommand):
                         product_url=row.get('product_link'),
                         price=row.get('last_new_price_7') or None,
                         old_price=row.get('last_old_price_7') or None,
+                        is_manual=False,
                     )
 
                 self.stdout.write(f"Staged: {staging.product_name}")

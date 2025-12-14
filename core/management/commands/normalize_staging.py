@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from core.models import StagingProduct, Retailer, RetailerCategory, Product, CategoryMapping, Deal
+from core.models import StagingProduct, Retailer, RetailerCategory, RetailerBranch, Product, CategoryMapping, Deal
 from decimal import Decimal
 
 
@@ -12,32 +12,55 @@ class Command(BaseCommand):
 
         for sp in staged_products:
 
+            # Skip products with no price
+            if not sp.price:
+                self.stdout.write(f"Skipping {sp.product_name}: no price available")
+                continue
+
             # 1️⃣ Retailer
             retailer, _ = Retailer.objects.get_or_create(name=sp.retailer_name)
 
-            # 2️⃣ Retailer category mapping chain
-            parent_cat = None
-            if sp.category_name:
-                parent_cat, _ = RetailerCategory.objects.get_or_create(
+            # 2️⃣ Branch (variable name untouched)
+            branch_obj = None
+            if sp.branch_name:
+                branch_obj, _ = RetailerBranch.objects.get_or_create(
                     retailer=retailer,
-                    name=sp.category_name
+                    name=sp.branch_name
                 )
 
-            sub_cat = parent_cat
-            if sp.sub_category_name:
-                sub_cat, _ = RetailerCategory.objects.get_or_create(
+            # 3 Retailer category mapping chain
+            # parent_cat = None
+            # if sp.category_name:
+            #     parent_cat, _ = RetailerCategory.objects.get_or_create(
+            #         retailer=retailer,
+            #         name=sp.category_name
+            #     )
+
+            # 3️⃣ Retailer category (MAIN CATEGORY ONLY)
+            final_retailer_cat = None
+            if sp.category_name and sp.category_name.strip():
+                final_retailer_cat, _ = RetailerCategory.objects.get_or_create(
                     retailer=retailer,
-                    name=sp.sub_category_name
+                    name=sp.category_name.strip()
                 )
 
-            sub_cat_2 = sub_cat
-            if sp.sub_category_2_name:
-                sub_cat_2, _ = RetailerCategory.objects.get_or_create(
-                    retailer=retailer,
-                    name=sp.sub_category_2_name
-                )
+                
+            # sub_cat = parent_cat
+            # if sp.sub_category_name:
+            #     sub_cat, _ = RetailerCategory.objects.get_or_create(
+            #         retailer=retailer,
+            #         name=sp.sub_category_name
+            #     )
 
-            final_retailer_cat = sub_cat_2 or sub_cat or parent_cat
+            # sub_cat_2 = sub_cat
+            # if sp.sub_category_2_name:
+            #     sub_cat_2, _ = RetailerCategory.objects.get_or_create(
+            #         retailer=retailer,
+            #         name=sp.sub_category_2_name
+            #     )
+
+            # final_retailer_cat = sub_cat_2 or sub_cat or parent_cat
+            # final_retailer_cat = parent_cat
 
             # 3️⃣ Mapping → master category
             master_category = None
@@ -54,7 +77,7 @@ class Command(BaseCommand):
                 retailer_category=final_retailer_cat,
                 name=sp.product_name,
                 defaults={
-                    'price': Decimal(sp.price) if sp.price not in [None, '', ' '] else None,
+                    'price': Decimal(sp.price) if sp.price not in [None, '', ' '] else Decimal("0.00"),
                     'master_category': master_category
                 }
             )
