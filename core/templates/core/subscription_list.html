@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Subscriptions</h2>
+<a href="{% url 'subscription_create' %}">Add New Subscription</a>
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Retailer</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for sub in subscriptions %}
+    <tr>
+        <td>{{ sub.get_target_type_display }}</td>
+        <td>{{ sub.product }}</td>
+        <td>{{ sub.category }}</td>
+        <td>{{ sub.retailer }}</td>
+        <td>{{ sub.is_active|yesno:"Active,Inactive" }}</td>
+        <td>
+            <a href="{% url 'subscription_update' sub.pk %}">Edit</a> |
+            <a href="{% url 'subscription_deactivate' sub.pk %}">Deactivate</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">No subscriptions yet</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
