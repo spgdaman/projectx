@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.template.response import TemplateResponse
-from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch
+from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription
 from django.utils.html import format_html
 from difflib import SequenceMatcher
 
@@ -154,12 +154,42 @@ class DealAdmin(admin.ModelAdmin):
 class StagingProductAdmin(admin.ModelAdmin):
     list_display = ("retailer_name", "product_name", "price", "branch_name")
 
+# core/admin.py
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "target_type",
+        "product",
+        "category",
+        "retailer",
+        "is_paid",
+        "is_free_tier",
+        "is_active",
+        "created_at",
+    )
+
+    list_filter = (
+        "target_type",
+        "is_paid",
+        "is_free_tier",
+        "is_active",
+    )
+
+    search_fields = (
+        "user__username",
+        "product__name",
+        "category__name",
+        "retailer__name",
+    )
+
+    readonly_fields = ("created_at",)
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Retailer, admin.ModelAdmin)
 # admin.site.register(RetailerCategory, RetailerCategoryAdmin)
 admin.site.register(RetailerCategory, RetailerCategoryMappingAdmin)
-
 admin.site.register(CategoryMapping, CategoryMappingAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Deal, DealAdmin)   # ✔ FIXED TYPO
