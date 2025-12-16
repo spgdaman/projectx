@@ -251,6 +251,8 @@ class Payment(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.user} | {self.amount} | {self.status}"

@@ -1,6 +1,7 @@
 import uuid
 from core.models import Payment
 from django.utils import timezone
+from datetime import timedelta
 
 def activate_subscription(subscription):
     subscription.is_paid = True
@@ -21,6 +22,7 @@ def mark_payment_success(payment, provider_reference=None):
     payment.status = "success"
     payment.provider_reference = provider_reference
     payment.completed_at = timezone.now()
+    payment.expires_at = timezone.now() + timedelta(days=30)
     payment.save()
 
     profile = payment.user.userprofile
@@ -28,4 +30,3 @@ def mark_payment_success(payment, provider_reference=None):
     profile.is_free_tier = False
     profile.save()
 
-    

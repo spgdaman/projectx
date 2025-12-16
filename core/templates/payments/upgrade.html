@@ -1,0 +1,7 @@
+<h2>Upgrade Subscription</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="phone" placeholder="2547XXXXXXXX" required>
+  <button type="submit">Pay with M-Pesa</button>
+</form>
