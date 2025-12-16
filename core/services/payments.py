@@ -28,5 +28,6 @@ def mark_payment_success(payment, provider_reference=None):
     profile = payment.user.userprofile
     profile.payment_status = True
     profile.is_free_tier = False
+    profile.grace_until = None
     profile.save()
 

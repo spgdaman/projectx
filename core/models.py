@@ -13,6 +13,14 @@ class UserProfile(models.Model):
     payment_status = models.BooleanField(default=False)  # Paid subscription
     is_free_tier = models.BooleanField(default=True)     # Free tier
     is_active = models.BooleanField(default=True)
+    grace_until = models.DateTimeField(null=True, blank=True)
+
+    def has_access(self):
+        if self.payment_status:
+            return True
+        if self.grace_until and self.grace_until > timezone.now():
+            return True
+        return False
 
     def __str__(self):
         return f"{self.user.username} profile"
