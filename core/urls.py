@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from core.views.auth import login_view
 from core.views.subscriptions import (
     subscription_list,
@@ -7,6 +8,7 @@ from core.views.subscriptions import (
     subscription_deactivate
 )
 from core.views.webhooks import mpesa_callback
+from core.views.payments import initiate_payment
 
 urlpatterns = [
     path("login/", login_view, name="login"),
@@ -15,6 +17,11 @@ urlpatterns = [
     path("subscriptions/<int:pk>/edit/", subscription_update, name="subscription_update"),
     path("subscriptions/<int:pk>/deactivate/", subscription_deactivate, name="subscription_deactivate"),
 
-    # MPesa callback
+    # MPesa
     path("webhooks/mpesa/", mpesa_callback, name="mpesa-callback"),
+    path("payments/upgrade/", initiate_payment, name="initiate-payment"),
+    path("payments/pending/", TemplateView.as_view(
+        template_name="payments/pending.html"
+    ), name="payment-pending")
+
 ]

@@ -1,0 +1,18 @@
+<h2>Upgrade Your Subscription</h2>
+
+<p>
+  Paid users get:
+  <ul>
+    <li>More alerts</li>
+    <li>Priority tracking</li>
+    <li>Retailer-wide monitoring</li>
+  </ul>
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  <label>Phone Number (M-Pesa)</label><br>
+  <input type="text" name="phone" placeholder="2547XXXXXXXX" required>
+  <br><br>
+  <button type="submit">Pay with M-Pesa</button>
+</form>
