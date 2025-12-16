@@ -6,6 +6,7 @@ from core.views.subscriptions import (
     subscription_update,
     subscription_deactivate
 )
+from core.views.webhooks import mpesa_callback
 
 urlpatterns = [
     path("login/", login_view, name="login"),
@@ -13,4 +14,7 @@ urlpatterns = [
     path("subscriptions/add/", subscription_create, name="subscription_create"),
     path("subscriptions/<int:pk>/edit/", subscription_update, name="subscription_update"),
     path("subscriptions/<int:pk>/deactivate/", subscription_deactivate, name="subscription_deactivate"),
+
+    # MPesa callback
+    path("webhooks/mpesa/", mpesa_callback, name="mpesa-callback"),
 ]
