@@ -223,3 +223,36 @@ class AlertLog(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     deal = models.ForeignKey("Deal", on_delete=models.CASCADE)
     sent_at = models.DateTimeField(auto_now_add=True)
+
+class Payment(models.Model):
+    PAYMENT_PROVIDER_CHOICES = (
+        ("mpesa", "M-Pesa"),
+        ("card", "Card"),
+        ("bank", "Bank"),
+    )
+
+    STATUS_CHOICES = (
+        ("pending", "Pending"),
+        ("success", "Success"),
+        ("failed", "Failed"),
+        ("expired", "Expired"),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10, default="KES")
+
+    provider = models.CharField(max_length=20, choices=PAYMENT_PROVIDER_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+
+    reference = models.CharField(max_length=100, unique=True)
+    provider_reference = models.CharField(max_length=100, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} | {self.amount} | {self.status}"
+
+
