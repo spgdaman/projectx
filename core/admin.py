@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.template.response import TemplateResponse
-from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription
+from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription, UserProfile
 from django.utils.html import format_html
 from difflib import SequenceMatcher
 from core.services.subscriptions import update_product_subscription
@@ -192,6 +192,9 @@ class SubscriptionAdmin(admin.ModelAdmin):
                 return
         super().save_model(request, obj, form, change)
 
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ("payment_status", "phone_number", "is_free_tier", "is_active", "user_id")
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Retailer, admin.ModelAdmin)

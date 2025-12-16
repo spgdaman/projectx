@@ -1,6 +1,15 @@
 from django import forms
 from core.models import Subscription, Product, Category, Retailer
 
+class PhoneLoginForm(forms.Form):
+    phone_number = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={"placeholder": "Phone number"})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+    )
+    
 class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription

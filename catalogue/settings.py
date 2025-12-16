@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+
+    #Packages
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -99,13 +102,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    "core.auth_backends.PhoneNumberBackend",  # phone login
+    "django.contrib.auth.backends.ModelBackend",  # username/email fallback
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -121,3 +128,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PHONENUMBER_DEFAULT_REGION = "US"  # Default: "US"
+PHONENUMBER_DB_FORMAT = "INTERNATIONAL"  # Options: "E164", "INTERNATIONAL", "NATIONAL", "RFC3966"

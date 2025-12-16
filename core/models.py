@@ -4,10 +4,12 @@ from django.contrib.auth.models import User
 import random
 from django.utils import timezone
 from datetime import timedelta
+from phonenumber_field.modelfields import PhoneNumberField
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=15, unique=True)
+    # phone_number = models.CharField(max_length=15, unique=True)
+    phone_number = PhoneNumberField()
     payment_status = models.BooleanField(default=False)  # Paid subscription
     is_free_tier = models.BooleanField(default=True)     # Free tier
     is_active = models.BooleanField(default=True)
@@ -15,7 +17,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username} profile"
 
-class WhatsAppAuthCode(models.Model):
+class LoginOTP(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
