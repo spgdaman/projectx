@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +26,12 @@ SECRET_KEY = 'django-insecure-xsx#qr-_by9$2ydi&xj+ks-3)86cx!0c0sv7ej=vu8v*fmb!us
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".ngrok-free.app",
+    ".ngrok-free.dev",
+]
 
 # Application definition
 
@@ -44,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'core.middleware.WebhookDebugMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -131,3 +137,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PHONENUMBER_DEFAULT_REGION = "US"  # Default: "US"
 PHONENUMBER_DB_FORMAT = "INTERNATIONAL"  # Options: "E164", "INTERNATIONAL", "NATIONAL", "RFC3966"
+
+MPESA_CONSUMER_KEY = "AVqm0rvtGewyZOfOtricNBglJeGi1eqdQBdxoG6CL6G4r7IE"
+MPESA_CONSUMER_SECRET = "AkMEpc89nLlX3y1t7WZD5N4evRS62MSk2o1zwStFQoUGxTSxWPTCoZG0ZGCLqYgq"
+MPESA_CALLBACK_URL = "https://excuseless-atmospherically-delcie.ngrok-free.dev/webhooks/mpesa/"
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.app",
+    "https://*.ngrok-free.dev",
+]
+
+
+SECURE_SSL_REDIRECT = False
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+MESSAGE_TAGS = {
+    messages.SUCCESS: "success",
+    messages.ERROR: "error",
+}

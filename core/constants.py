@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+SUBSCRIPTION_DURATION = timedelta(days=30)
+
 FREE_ALERT_LIMIT = 3
 PAID_ALERT_LIMIT = 100
 MONTHLY_SUBSCRIPTION_PRICE = 299

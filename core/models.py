@@ -210,6 +210,10 @@ class Subscription(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated_at = models.DateTimeField(auto_now=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    def is_valid(self):
+        return self.expires_at and self.expires_at > timezone.now()
 
     def save(self, *args, **kwargs):
         # Enforce target rules centrally

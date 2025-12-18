@@ -8,7 +8,7 @@ from core.views.subscriptions import (
     subscription_deactivate
 )
 from core.views.webhooks import mpesa_callback
-from core.views.payments import initiate_payment
+from core.views.payments import initiate_payment, payment_status
 
 urlpatterns = [
     path("login/", login_view, name="login"),
@@ -22,6 +22,7 @@ urlpatterns = [
     path("payments/upgrade/", initiate_payment, name="initiate-payment"),
     path("payments/pending/", TemplateView.as_view(
         template_name="payments/pending.html"
-    ), name="payment-pending")
+    ), name="payment-pending"),
+    path("payments/status/", payment_status, name="payment-status"),
 
 ]

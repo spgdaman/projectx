@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from core.models import Subscription, Product, Category, Retailer
 from core.forms import SubscriptionForm
 
 @login_required
 def subscription_list(request):
     subs = Subscription.objects.filter(user=request.user)
+    if request.user.is_authenticated:
+        messages.success(request, "Payment successful! Your subscription is now active.")
     return render(request, "core/subscription_list.html", {"subscriptions": subs})
 
 @login_required

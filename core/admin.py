@@ -167,6 +167,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "is_active",
         "created_at",
         "last_updated_at",
+        "expires_at",
     )
 
     list_filter = (
@@ -204,7 +205,8 @@ class PaymentAdmin(admin.ModelAdmin):
         "provider",
         "status",
         "created_at",
-        "completed_at",        
+        "completed_at",
+        "expires_at",
     )
     list_filter = ("provider", "status")
     search_fields = ("user__username", "reference")

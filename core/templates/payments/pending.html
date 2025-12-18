@@ -1,2 +1,53 @@
-<h3>Payment Request Sent</h3>
-<p>Please complete the payment on your phone.</p>
+{% extends "base.html" %}
+{% block content %}
+
+<div class="payment-pending">
+    <h2>Waiting for payment confirmation</h2>
+    <div class="spinner"></div>
+    <p>Please complete the M-Pesa prompt on your phone</p>
+</div>
+
+<script>
+    let elapsed = 0;
+    const MAX_WAIT = 120000; // 2 minutes
+
+    function checkPaymentStatus() {
+        elapsed += 3000;
+
+        fetch("{% url 'payment-status' %}")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.href = "{% url 'subscription_list' %}";
+                }
+
+                if (data.status === "failed" || data.status === "expired") {
+                    window.location.href = "{% url 'initiate-payment' %}";
+                }
+
+                if (elapsed >= MAX_WAIT) {
+                    window.location.href = "{% url 'initiate-payment' %}";
+                }
+            });
+    }
+
+    setInterval(checkPaymentStatus, 3000);
+</script>
+
+<style>
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #eee;
+    border-top: 6px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+{% endblock %}

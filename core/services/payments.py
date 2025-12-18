@@ -9,7 +9,7 @@ def activate_subscription(subscription):
     subscription.is_active = True
     subscription.save()
 
-def create_payment(user, amount, provider="mpesa"):
+def create_payment(user, amount, provider):
     payment = Payment.objects.create(
         user=user,
         amount=amount,
@@ -31,3 +31,8 @@ def mark_payment_success(payment, provider_reference=None):
     profile.grace_until = None
     profile.save()
 
+def expire_stale_payments():
+    Payment.objects.filter(
+        status="pending",
+        expires_at__lt=timezone.now()
+    ).update(status="expired")

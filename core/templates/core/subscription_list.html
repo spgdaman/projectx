@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
 <h2>Your Subscriptions</h2>
 <a href="{% url 'subscription_create' %}">Add New Subscription</a>
 <table>

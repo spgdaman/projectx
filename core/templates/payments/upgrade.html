@@ -1,7 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
 <h2>Upgrade Subscription</h2>
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-error">
+        {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
 
 <form method="post">
   {% csrf_token %}
   <input type="text" name="phone" placeholder="2547XXXXXXXX" required>
   <button type="submit">Pay with M-Pesa</button>
 </form>
+{% endblock %}
