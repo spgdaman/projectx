@@ -42,3 +42,10 @@ def subscription_deactivate(request, pk):
     sub.is_active = False
     sub.save()
     return redirect("subscription_list")
+
+@login_required
+def subscription_activate(request, pk):
+    sub = get_object_or_404(Subscription, pk=pk, user=request.user)
+    sub.is_active = True
+    sub.save()
+    return redirect("subscription_list")

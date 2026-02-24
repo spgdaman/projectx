@@ -29,7 +29,11 @@
         <td>{{ sub.is_active|yesno:"Active,Inactive" }}</td>
         <td>
             <a href="{% url 'subscription_update' sub.pk %}">Edit</a> |
-            <a href="{% url 'subscription_deactivate' sub.pk %}">Deactivate</a>
+            {% if sub.status == "False" %}
+                <a href="{% url 'subscription_activate' sub.pk %}">Activate</a>
+            {% else %}
+                <a href="{% url 'subscription_deactivate' sub.pk %}">Deactivate</a>
+            {% endif %}
         </td>
     </tr>
     {% empty %}

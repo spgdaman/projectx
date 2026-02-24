@@ -1,0 +1,96 @@
+body {
+  font-family: 'Quicksand', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.norm-text {
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.emphasis {
+  color: rgb(229, 68, 22)
+}
+
+.spacer {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+.padder {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.mini-spacer {
+  margin-top: 1.7rem;
+  margin-bottom: 1.7rem;
+}
+
+.white-font {
+  color: white;
+}
+
+.grey-font {
+  color: rgb(144, 156, 162);
+}
+
+.small-font {
+  font-size: small;
+}
+
+.orange-bg {
+  background-color: rgb(229, 68, 22);
+  width: 100vw; /* full viewport width */
+  overflow-x: hidden; /* prevents tiny scrollbars from showing gaps */
+}
+
+.black-bg {
+  background-color: rgb(17, 24, 40);
+  width: 100vw; /* full viewport width */
+  overflow-x: hidden; /* prevents tiny scrollbars from showing gaps */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.off-grey-bg {
+  background-color: rgb(249, 250, 252);
+  width: 100vw; /* full viewport width */
+  overflow-x: hidden; /* prevents tiny scrollbars from showing gaps */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.off-orange-bg {
+  background-color: rgb(255, 249, 241);
+  width: 100vw; /* full viewport width */
+  overflow-x: hidden; /* prevents tiny scrollbars from showing gaps */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.orange-btn {
+  background-color: rgb(229, 68, 22);
+  color: white;
+  height: 46px;
+  width: 140px;
+}
+
+.card-size {
+  width: 24rem;
+  height: 16rem;
+}
+
+.circle {
+  width: 100px;       /* diameter */
+  height: 100px;      /* diameter */
+  background-color: rgb(229, 68, 22);
+  border-radius: 50%; /* makes it a circle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}

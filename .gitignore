@@ -5,3 +5,6 @@ db.sqlite3
 migrations
 csv
 migrations/
+node_modules
+package-lock.json
+package.json

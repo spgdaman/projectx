@@ -5,10 +5,12 @@ from core.views.subscriptions import (
     subscription_list,
     subscription_create,
     subscription_update,
-    subscription_deactivate
+    subscription_deactivate,
+    subscription_activate
 )
 from core.views.webhooks import mpesa_callback
 from core.views.payments import initiate_payment, payment_status
+from core.views.home import home
 
 urlpatterns = [
     path("login/", login_view, name="login"),
@@ -16,6 +18,7 @@ urlpatterns = [
     path("subscriptions/add/", subscription_create, name="subscription_create"),
     path("subscriptions/<int:pk>/edit/", subscription_update, name="subscription_update"),
     path("subscriptions/<int:pk>/deactivate/", subscription_deactivate, name="subscription_deactivate"),
+    path("subscriptions/<int:pk>/activate/", subscription_activate, name="subscription_activate"),
 
     # MPesa
     path("webhooks/mpesa/", mpesa_callback, name="mpesa-callback"),
@@ -25,4 +28,5 @@ urlpatterns = [
     ), name="payment-pending"),
     path("payments/status/", payment_status, name="payment-status"),
 
+    path("", home, name="home"),
 ]

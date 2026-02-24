@@ -1,0 +1,322 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bargain Hunters | Home</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600..700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+  <!-- Tailwind (keep last if you want to use its utilities!) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Your custom CSS last -->
+  <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+</head>
+
+  <body>
+
+    <!-- Section1 -->
+    <nav class="navbar navbar-expand-lg">
+    <div class="container py-2">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag w-8 h-8 text-orange-600"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>
+          <span class="mx-2"><b>Bargain Hunters</b></span>
+        </a>
+      <div class="row">
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+        </button> -->
+
+        <div class="mx-auto" id="navbarNav">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">How It Works</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Features</a>
+            </li>
+            <li>
+              <!-- Call to action Button -->
+              <button type="button" class="btn orange-btn my-auto d-inline-flex align-items-center gap-2">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
+                </span>
+                  Get Started
+              </button>
+            </li>
+          </ul>
+        </div>
+      
+      </div>  
+
+    </div>
+    </nav>
+    <!--End of Section 1-->
+
+
+      <!-- Section 2 -->
+      <div class="container-fluid off-orange-bg">
+        <div class="container">
+          <div class="row spacer">
+            
+            <div class="col-md-6">
+              <span class="badge text-bg-warning">Never Miss a Deal Again</span>
+              <div class="py-2">
+                <h1 class="display-4"><b>Smart Alerts for</b></h1>
+                <h1 class="display-4 emphasis"><b>Every Deal</b></h1>
+              </div>
+
+              <p class="py-3 norm-text">Get instant notifications for deals and discounts across your favorite brands, products, and locations. Available on web, WhatsApp, and mobile apps.</p>
+
+              <div class="d-flex justify-content-left">
+                <!--App store Button-->
+                <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?&releaseDate=1386288000" alt="Download on the App Store" className="h-14" height="30px" width="150px"/>
+
+                <!-- Playstore Button -->
+                <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-14" height="88px" width="180px"/>
+              
+                <!-- Call to action Button -->
+                <button type="button" class="btn orange-btn my-auto d-inline-flex align-items-center gap-2">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
+                  </span>
+                    Get Started
+                </button>
+              </div>
+
+              <div class="d-flex justify-content-left mb-4 mx-2">
+                <div class="mx-2 text-center" id="active-users">
+                    <p class="fw-bold mb-0  display-6">50K+</p>
+                    <small style="font-size: medium;">Active Users</small>
+                </div>
+                
+                <div class="mx-2 text-center" id="deals-tracked">
+                    <p class="font-bold mb-0  display-6">1M+</p>
+                    <small style="font-size: medium;">Deals Tracked</small>
+                </div>
+
+                <div class="mx-2 text-center" id="monitoring">
+                    <p class="font-bold mb-0 display-6">24/7</p>
+                    <small style="font-size: medium;">Monitoring</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="relative z-10 mx-auto" style="max-width: 320px;"><div class="relative bg-gray-900 rounded-[3rem] p-3 shadow-2xl"><div class="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-7 bg-gray-900 rounded-b-3xl z-10"></div><div class="relative bg-white rounded-[2.5rem] overflow-hidden" style="aspect-ratio: 9 / 19.5;"><div class="h-full overflow-y-auto bg-gradient-to-b from-orange-50 to-white"><div class="bg-orange-600 text-white px-6 py-8 pb-12"><div class="flex items-center justify-between mb-2"><h2 class="text-2xl font-bold">Bargain Hunters</h2><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-6 h-6"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></div><p class="text-orange-100 text-sm">Your personal deal finder</p></div><div class="px-6 -mt-6 mb-6"><div class="bg-white rounded-xl shadow-lg p-4 border border-gray-200"><input type="text" placeholder="Search brands, products..." class="w-full text-sm outline-none text-gray-900" disabled=""></div></div><div class="px-6 space-y-4 pb-6"><div class="bg-white rounded-xl p-4 shadow-md border border-gray-100"><div class="flex items-start space-x-3"><div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag w-6 h-6 text-red-600"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg></div><div class="flex-1 min-w-0"><div class="flex items-center space-x-2 mb-1"><span class="inline-block bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded">50% OFF</span></div><h3 class="font-semibold text-gray-900 text-sm mb-1">Nike Air Max</h3><p class="text-xs text-gray-600">Limited time offer</p></div></div></div><div class="bg-white rounded-xl p-4 shadow-md border border-gray-100"><div class="flex items-start space-x-3"><div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag w-6 h-6 text-green-600"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg></div><div class="flex-1 min-w-0"><div class="flex items-center space-x-2 mb-1"><span class="inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">30% OFF</span></div><h3 class="font-semibold text-gray-900 text-sm mb-1">Electronics Sale</h3><p class="text-xs text-gray-600">Ends tonight</p></div></div></div><div class="bg-white rounded-xl p-4 shadow-md border border-gray-100"><div class="flex items-start space-x-3"><div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin w-6 h-6 text-orange-600"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><div class="flex-1 min-w-0"><div class="flex items-center space-x-2 mb-1"><span class="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-2 py-1 rounded">NEARBY</span></div><h3 class="font-semibold text-gray-900 text-sm mb-1">Local Store Deal</h3><p class="text-xs text-gray-600">2.5 miles away</p></div></div></div></div></div></div></div><div class="absolute -left-8 top-20 bg-white rounded-xl shadow-xl p-4 border border-gray-200 transform -rotate-6 hidden lg:block"><div class="flex items-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-5 h-5 text-orange-600"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span class="text-sm font-medium text-gray-900">New Deal Alert!</span></div></div><div class="absolute -right-8 bottom-32 bg-white rounded-xl shadow-xl p-4 border border-gray-200 transform rotate-6 hidden lg:block"><div class="text-center"><div class="text-2xl font-bold text-green-600">-60%</div><div class="text-xs text-gray-600">Today Only</div></div></div></div>
+            </div>
+
+          </div>
+        </div>
+        
+
+
+      </div>
+
+      
+      <!--End of Section 2-->
+
+
+        <!-- Section 3 -->
+        <div class="container spacer">
+            <h1 class="text-center display-4"><b>Everything You Need to Save Big</b></h1>
+            <p class="text-center py-3 norm-text">Powerful features to help you never miss a deal on products and brands you love</p>
+
+            <div class="container">
+              <div class="row spacer g-2">
+                <div id="card-1" class="col-md-4">
+                  <div class="card card-size">
+                    <div class="card-body">
+                      <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-7 h-7 text-orange-600"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></div>
+                      <h3 class="card-title my-3 font-bold norm-text">Smart Alerts</h3>
+                      
+                      <p class="card-text">Get instant notifications via web, WhatsApp, or mobile app when deals match your preferences.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="card-2" class="col-md-4">
+                  <div class="card card-size">
+                    <div class="card-body">
+                      <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag w-7 h-7 text-red-600"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg></div>
+                      <h3 class="card-title my-3 font-bold norm-text">Brand Tracking</h3>
+                      
+                      <p class="card-text">Follow your favorite brands and get notified the moment they launch sales or promotions.</p>
+                    </div>
+                  </div>
+                </div>                
+
+                <div id="card-3" class="col-md-4">
+                  <div class="card card-size">
+                    <div class="card-body">
+                      <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin w-7 h-7 text-green-600"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                      <h3 class="card-title my-3 font-bold norm-text">Location-Based</h3>
+                      
+                      <p class="card-text">Discover deals near you from local stores and businesses in your area.</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="container">
+              <div class="row spacer">
+                <div id="card-4" class="col-md-4">
+                  <div class="card card-size">
+                    <div class="card-body">
+                      <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone w-7 h-7 text-blue-600"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></div>
+                      <h3 class="card-title my-3 font-bold norm-text">Multi-Platform</h3>
+                      
+                      <p class="card-text">Access deals anywhere with our web app, WhatsApp integration, and mobile apps.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="card-5" class="col-md-4">
+                  <div class="card card-size">
+                    <div class="card-body">
+                      <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-7 h-7 text-yellow-600"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                      <h3 class="card-title my-3 font-bold norm-text">Real-Time Updates</h3>
+                      
+                      <p class="card-text">Lightning-fast notifications ensure you catch time-sensitive deals before they expire.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="card-6" class="col-md-4">
+                  <div class="card card-size">
+                    <div class="card-body">
+                      <div class="w-14 h-14 bg-violet-100 rounded-xl flex items-center justify-center mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock w-7 h-7 text-violet-600"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                      <h3 class="card-title my-3 font-bold norm-text">24/7 Monitoring</h3>
+                      
+                      <p class="card-text">We continuously scan for deals around the clock so you can save while you sleep.</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <!-- <script src="main.js"></script> -->
+      </div>
+      <!-- End of Section 3-->
+
+      <!-- Section 4 -->
+      <div class="container-fluid spacer off-grey-bg spacer padder">
+        <h1 class="text-center display-4"><b>Start Saving in 3 Simple Steps</b></h1>
+        <p class="text-center py-3 norm-text mini-spacer">Get started in under a minute</p>
+
+        <div class="container">
+          <div class="row g-4 mini-spacer">
+            <div class="col-md-4 text-center">
+              <div class="circle mx-auto">1</div>
+              <h3 class="font-bold mini-spacer norm-text">Choose Your Interests</h3>
+              <p>Select brands, product categories, and locations you want to track for deals.</p>
+            </div>
+
+            <div class="col-md-4 text-center">
+              <div class="circle mx-auto">2</div>
+              <h3 class="font-bold mini-spacer norm-text">Set Your Preferences</h3>
+              <p>Customize alert settings and choose how you want to receive notifications.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+              <div class="circle mx-auto">3</div>
+              <h3 class="font-bold mini-spacer norm-text">Start Saving</h3>
+              <p>Sit back and let us notify you about the best deals tailored to your interests.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!--End of Section 4-->
+
+
+
+
+    <!-- Section 5 -->
+    <div class="container-fluid orange-bg py-6">
+      <h1 class="font-bold mini-spacer white-font text-center display-4">Ready to Start Saving?</h1>
+      <p class="text-center norm-text mini-spacer white-font">Join thousands of smart shoppers who never miss a great deal</p>
+
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <!--App store Button-->
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?&releaseDate=1386288000" alt="Download on the App Store" className="h-14" height="30px" width="150px"/>
+
+          <!-- Playstore Button -->
+          <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-14" height="83px" width="180px"/>
+        </div>
+      </div>
+
+    </div>
+    <!--End of Section 5-->
+
+
+    <!-- Section 6 -->
+    <div class="container-fluid black-bg spacer padder">
+      <div class="container">
+        <div class="row">
+
+          <div id="column1" class="col-md-3">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag w-8 h-8 text-orange-600"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>
+              <span class="mx-2 white-font"><b>Bargain Hunters</b></span>
+            </a>
+            <p class="grey-font">Your smart companion for finding the best deals and discounts.</p>
+          </div>
+
+          <div id="product" class="col-md-3">
+            <p class="white-font py-1">Product</p>
+            <ul class="grey-font">
+              <li>Features</li>
+              <li>How it Works</li>
+              <li>Pricing</li>
+            </ul>
+          </div>
+
+          <div id="company" class="col-md-3">
+            <p class="white-font py-1">Company</p>
+            <ul class="grey-font">
+              <li>About</li>
+              <li>Blog</li>
+              <li>Careers</li>
+            </ul>
+          </div>
+          
+          <div id="support" class="col-md-3">
+            <p class="white-font py-1">Support</p>
+            <ul class="grey-font">
+              <li>Help Center</li>
+              <li>Contact</li>
+              <li>Privacy Policy</li>
+            </ul>
+          </div>  
+
+        </div>
+
+        <hr class="mini-spacer grey-font">
+
+        <p class="grey-font text-center">&copy; <script>document.write(/\d{4}/.exec(Date())[0])</script> Bargain Hunters. All rights reserved.</p>
+
+      </div>
+    </div>
+    <!--End of Section 6-->
+
+  </body>
+</html>

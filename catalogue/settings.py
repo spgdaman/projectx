@@ -156,3 +156,9 @@ MESSAGE_TAGS = {
     messages.SUCCESS: "success",
     messages.ERROR: "error",
 }
+
+STATIC_URL = '/static/'
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",  # if you have a global static folder
+# ]
