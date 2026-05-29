@@ -1,0 +1,44 @@
+# Django core
+Django==4.2.2
+asgiref==3.7.2
+
+# REST API
+djangorestframework==3.16.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.7.0
+
+# Auth & phone fields
+django-phonenumber-field==8.4.0
+phonenumbers==9.0.20
+
+# Environment & config
+python-decouple==3.8
+dj-database-url==2.1.0
+
+# Payments
+requests==2.32.5
+
+# Async tasks & real-time
+celery[redis]==5.4.0
+channels[daphne]==4.1.0
+channels-redis==4.2.1
+redis==5.2.1
+
+# Database drivers
+psycopg2-binary==2.9.9
+
+# Data processing (CSV ingestion pipeline)
+beautifulsoup4==4.14.3
+pandas==2.1.1
+numpy==1.26.1
+Pillow==10.1.0
+
+# Utilities
+sqlparse==0.4.4
+python-dateutil==2.8.2
+pytz==2023.3.post1
+tzdata==2023.3
+urllib3==2.5.0
+certifi==2025.11.12
+charset-normalizer==3.4.4
+idna==3.11
