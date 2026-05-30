@@ -1,0 +1,9 @@
+{
+  "files.watcherExclude": {
+    "**/apps/mobile/android/**": true,
+    "**/node_modules/**": true
+  },
+  "files.exclude": {
+    "**/node_modules": true
+  }
+}
