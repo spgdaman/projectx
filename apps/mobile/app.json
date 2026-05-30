@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Bargain Hunters",
+    "slug": "bargain-hunters",
+    "version": "1.0.0",
+    "sdkVersion": "56.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#E54416"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ke.invent.bargainhunters"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#E54416"
+      },
+      "package": "ke.invent.bargainhunters"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-secure-store"]
+  }
+}
