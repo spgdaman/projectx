@@ -72,7 +72,7 @@ export const productsApi = {
 
 export const categoriesApi = {
   tree: () => apiClient.get("/categories/tree/"),
-  list: () => apiClient.get("/categories/"),
+  list: (params?: { retailer?: number }) => apiClient.get("/categories/", { params }),
 };
 
 export const retailersApi = {

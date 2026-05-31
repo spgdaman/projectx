@@ -17,7 +17,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models import (
     Category,
+    CategoryMapping,
     Retailer,
+    RetailerCategory,
     Product,
     Deal,
     Subscription,
@@ -95,7 +97,11 @@ class RegisterView(APIView):
                 last_name=d.get("last_name", ""),
                 email=d.get("email", ""),
             )
-            UserProfile.objects.create(user=user, phone_number=d["phone"])
+            UserProfile.objects.create(
+                user=user,
+                phone_number=d["phone"],
+                date_of_birth=d.get("date_of_birth"),
+            )
         except Exception as exc:
             # Catch IntegrityError (duplicate phone after normalisation) or
             # ValueError from PhoneNumberField rejecting an invalid number.
@@ -127,10 +133,16 @@ class MeView(APIView):
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all().order_by("name")
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
     search_fields = ["name"]
+
+    def get_queryset(self):
+        qs = Category.objects.all().order_by("name")
+        if retailer_id := self.request.query_params.get("retailer"):
+            # Only return categories that have at least one product from this retailer
+            qs = qs.filter(product__retailer_id=retailer_id).distinct()
+        return qs
 
     @action(detail=False, methods=["get"])
     def tree(self, request):
@@ -332,3 +344,120 @@ class MpesaWebhookView(APIView):
             payment.save(update_fields=["status", "completed_at"])
 
         return Response({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+
+# ── Admin-only views ──────────────────────────────────────────────────────────
+
+class AdminStatsView(APIView):
+    """Dashboard stats — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        return Response({
+            "total_users": User.objects.count(),
+            "paid_users": UserProfile.objects.filter(payment_status=True).count(),
+            "free_users": UserProfile.objects.filter(is_free_tier=True).count(),
+            "total_products": Product.objects.count(),
+            "total_deals": Deal.objects.count(),
+            "active_subscriptions": Subscription.objects.filter(is_active=True).count(),
+            "total_retailers": Retailer.objects.count(),
+            "unmapped_categories": RetailerCategory.objects.filter(mapping__isnull=True).count(),
+            "total_categories": Category.objects.count(),
+        })
+
+
+class AdminUsersViewSet(viewsets.ReadOnlyModelViewSet):
+    """Paginated user list — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = UserProfileSerializer
+
+    def get_queryset(self):
+        qs = UserProfile.objects.select_related("user").order_by("-user__date_joined")
+        if q := self.request.query_params.get("search"):
+            from django.db.models import Q
+            qs = qs.filter(
+                Q(user__username__icontains=q) |
+                Q(user__first_name__icontains=q) |
+                Q(user__last_name__icontains=q) |
+                Q(phone_number__icontains=q)
+            )
+        if plan := self.request.query_params.get("plan"):
+            if plan == "paid":
+                qs = qs.filter(payment_status=True)
+            elif plan == "free":
+                qs = qs.filter(is_free_tier=True)
+        return qs
+
+    @action(detail=True, methods=["post"])
+    def toggle_admin(self, request, pk=None):
+        """Toggle is_staff on the underlying User — cannot demote yourself."""
+        profile = self.get_object()
+        if profile.user == request.user:
+            return Response(
+                {"detail": "You cannot change your own admin status."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        profile.user.is_staff = not profile.user.is_staff
+        profile.user.save(update_fields=["is_staff"])
+        return Response({"is_staff": profile.user.is_staff})
+
+
+class AdminCategoryMappingViewSet(viewsets.ModelViewSet):
+    """Category mapping CRUD — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def list(self, request):
+        """Returns both mapped and unmapped retailer categories."""
+        from core.serializers import RetailerSerializer
+        unmapped = RetailerCategory.objects.filter(
+            mapping__isnull=True
+        ).select_related("retailer").order_by("retailer__name", "name")
+        mapped = CategoryMapping.objects.select_related(
+            "retailer_category", "retailer_category__retailer", "master_category"
+        ).order_by("retailer_category__retailer__name", "retailer_category__name")
+
+        return Response({
+            "unmapped": [
+                {
+                    "id": rc.id,
+                    "name": rc.name,
+                    "retailer": rc.retailer.name,
+                }
+                for rc in unmapped
+            ],
+            "mapped": [
+                {
+                    "id": m.id,
+                    "retailer_category_id": m.retailer_category_id,
+                    "retailer_category": m.retailer_category.name,
+                    "retailer": m.retailer_category.retailer.name,
+                    "master_category_id": m.master_category_id,
+                    "master_category": m.master_category.name,
+                }
+                for m in mapped
+            ],
+        })
+
+    def create(self, request):
+        retailer_category_id = request.data.get("retailer_category_id")
+        master_category_id = request.data.get("master_category_id")
+        if not retailer_category_id or not master_category_id:
+            return Response(
+                {"detail": "retailer_category_id and master_category_id are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        mapping, created = CategoryMapping.objects.update_or_create(
+            retailer_category_id=retailer_category_id,
+            defaults={"master_category_id": master_category_id},
+        )
+        return Response(
+            {"id": mapping.id, "created": created},
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
+
+    def destroy(self, request, pk=None):
+        try:
+            CategoryMapping.objects.get(pk=pk).delete()
+        except CategoryMapping.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
