@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-changeme")
 DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,10.0.2.2", cast=Csv())
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -134,6 +134,11 @@ CHANNEL_LAYERS = {
 }
 
 # ---------------------------------------------------------------------------
+# Redis
+# ---------------------------------------------------------------------------
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/1")
+
+# ---------------------------------------------------------------------------
 # Celery
 # ---------------------------------------------------------------------------
 CELERY_BROKER_URL = config("REDIS_URL", default="redis://localhost:6379")
@@ -142,6 +147,29 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Africa/Nairobi"
+
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    'scrape-naivas': {
+        'task': 'scrapers.tasks.scrape_naivas',
+        'schedule': crontab(hour='*/4'),
+    },
+    'scrape-quickmart': {
+        'task': 'scrapers.tasks.scrape_quickmart_all',
+        'schedule': crontab(hour='*/6'),
+    },
+    'scrape-carrefour': {
+        'task': 'scrapers.tasks.scrape_carrefour',
+        'schedule': crontab(hour='*/4'),
+    },
+}
+
+CELERY_TASK_ROUTES = {
+    'scrapers.tasks.scrape_naivas':           {'queue': 'naivas-queue'},
+    'scrapers.tasks.scrape_carrefour':        {'queue': 'carrefour-queue'},
+    'scrapers.tasks.scrape_quickmart_all':    {'queue': 'default'},
+    'scrapers.tasks.scrape_quickmart_branch': {'queue': 'quickmart-queue'},
+}
 
 # ---------------------------------------------------------------------------
 # Authentication

@@ -10,8 +10,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # phone_number = models.CharField(max_length=15, unique=True)
     phone_number = PhoneNumberField()
-    payment_status = models.BooleanField(default=False)  # Paid subscription
-    is_free_tier = models.BooleanField(default=True)     # Free tier
+    date_of_birth = models.DateField(null=True, blank=True)
+    payment_status = models.BooleanField(default=False)
+    is_free_tier = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     grace_until = models.DateTimeField(null=True, blank=True)
 
@@ -72,6 +73,8 @@ class Retailer(models.Model):
 class RetailerBranch(models.Model):
     retailer = models.ForeignKey(Retailer, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    is_active = models.BooleanField(default=True)
+    external_id = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         unique_together = ('retailer', 'name')
@@ -128,6 +131,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     sku = models.CharField(max_length=200, null=True, blank=True)
     url = models.URLField(null=True, blank=True)
+    image_url = models.URLField(max_length=1000, null=True, blank=True)
 
     master_category = models.ForeignKey(
         Category,
@@ -153,6 +157,13 @@ class Deal(models.Model):
 
     link = models.URLField(null=True, blank=True)
     scraped_at = models.DateTimeField(auto_now_add=True)
+    branch = models.ForeignKey(
+        'RetailerBranch',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='deals',
+    )
 
 class StagingProduct(models.Model):
     """
@@ -177,6 +188,12 @@ class StagingProduct(models.Model):
     is_manual = models.BooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
+    source = models.CharField(
+        max_length=20,
+        default='csv',
+        choices=[('csv', 'CSV Import'), ('scraper', 'Scraper')],
+    )
+    scraped_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.retailer_name} | {self.product_name}"
@@ -270,3 +287,97 @@ class Payment(models.Model):
         return f"{self.user} | {self.amount} | {self.status}"
 
 
+class PriceHistory(models.Model):
+    product = models.ForeignKey(
+        'Product',
+        on_delete=models.CASCADE,
+        related_name='price_history',
+    )
+    retailer = models.ForeignKey(
+        'Retailer',
+        on_delete=models.CASCADE,
+        related_name='price_history',
+    )
+    branch = models.ForeignKey(
+        'RetailerBranch',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='price_history',
+    )
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    source = models.CharField(
+        max_length=20,
+        default='scraper',
+        choices=[('csv', 'CSV Import'), ('scraper', 'Scraper')],
+    )
+    recorded_at = models.DateTimeField(default=timezone.now, db_index=True)
+
+    class Meta:
+        db_table = 'core_pricehistory'
+        ordering = ['-recorded_at']
+        indexes = [
+            models.Index(fields=['product', 'retailer', 'recorded_at'], name='ph_product_retailer_idx'),
+            models.Index(fields=['product', 'branch', 'recorded_at'], name='ph_product_branch_idx'),
+        ]
+
+    def __str__(self):
+        branch_str = f' @ {self.branch.name}' if self.branch else ''
+        return f'{self.product.name}{branch_str} — KES {self.price} ({self.recorded_at.date()})'
+
+    @property
+    def discount_pct(self):
+        if self.old_price and self.old_price > self.price:
+            return int(((self.old_price - self.price) / self.old_price) * 100)
+        return None
+
+
+class ScraperRun(models.Model):
+    STRATEGY_CHOICES = [
+        ('api', 'API'),
+        ('scraper', 'Web scraper (fallback)'),
+    ]
+    STATUS_CHOICES = [
+        ('running', 'Running'),
+        ('success', 'Success'),
+        ('failed', 'Failed'),
+        ('partial', 'Partial'),
+    ]
+
+    retailer = models.ForeignKey(
+        'Retailer',
+        on_delete=models.CASCADE,
+        related_name='scraper_runs',
+    )
+    branch = models.ForeignKey(
+        'RetailerBranch',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='scraper_runs',
+    )
+    strategy = models.CharField(max_length=20, default='api', choices=STRATEGY_CHOICES)
+    status = models.CharField(max_length=20, default='running', choices=STATUS_CHOICES)
+    deals_found = models.IntegerField(default=0)
+    deals_changed = models.IntegerField(default=0)
+    started_at = models.DateTimeField(auto_now_add=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    error = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'core_scraperrun'
+        ordering = ['-started_at']
+        indexes = [
+            models.Index(fields=['retailer', 'started_at'], name='sr_retailer_time_idx'),
+        ]
+
+    def __str__(self):
+        branch_str = f' / {self.branch.name}' if self.branch else ''
+        return f'{self.retailer.name}{branch_str} — {self.strategy} — {self.status} ({self.started_at.date()})'
+
+    def finish(self, status='success', error=''):
+        self.status = status
+        self.finished_at = timezone.now()
+        self.error = error
+        self.save(update_fields=['status', 'finished_at', 'error'])
