@@ -13,6 +13,9 @@ from .views import (
     SubscriptionViewSet,
     PaymentViewSet,
     MpesaWebhookView,
+    AdminStatsView,
+    AdminUsersViewSet,
+    AdminCategoryMappingViewSet,
 )
 
 router = DefaultRouter()
@@ -23,6 +26,10 @@ router.register(r"deals", DealViewSet, basename="deal")
 router.register(r"subscriptions", SubscriptionViewSet, basename="subscription")
 router.register(r"payments", PaymentViewSet, basename="payment")
 
+admin_router = DefaultRouter()
+admin_router.register(r"users", AdminUsersViewSet, basename="admin-users")
+admin_router.register(r"mappings", AdminCategoryMappingViewSet, basename="admin-mappings")
+
 urlpatterns = [
     # Auth
     path("auth/login/", LoginView.as_view(), name="api-login"),
@@ -32,6 +39,10 @@ urlpatterns = [
 
     # Webhooks (no JWT, CSRF-exempt)
     path("webhooks/mpesa/", MpesaWebhookView.as_view(), name="api-mpesa-webhook"),
+
+    # Admin (staff only)
+    path("admin/stats/", AdminStatsView.as_view(), name="admin-stats"),
+    path("admin/", include(admin_router.urls)),
 
     # Resource router
     path("", include(router.urls)),

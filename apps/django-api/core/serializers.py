@@ -16,7 +16,7 @@ from .models import (
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name"]
+        fields = ["id", "username", "email", "first_name", "last_name", "is_staff", "date_joined"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -28,6 +28,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = [
             "user",
             "phone_number",
+            "date_of_birth",
             "payment_status",
             "is_free_tier",
             "is_active",
@@ -77,7 +78,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "name", "price", "sku", "url", "retailer", "master_category"]
+        fields = ["id", "name", "price", "sku", "url", "image_url", "retailer", "master_category"]
 
 
 class DealSerializer(serializers.ModelSerializer):
@@ -209,7 +210,8 @@ class RegisterSerializer(serializers.Serializer):
     password = serializers.CharField(min_length=6, write_only=True, style={"input_type": "password"})
     first_name = serializers.CharField(max_length=150, required=False, allow_blank=True, default="")
     last_name = serializers.CharField(max_length=150, required=False, allow_blank=True, default="")
-    email = serializers.EmailField(required=False, allow_blank=True, default="")
+    email = serializers.EmailField(required=True)
+    date_of_birth = serializers.DateField(required=True)
 
     def validate_phone(self, value):
         import phonenumbers

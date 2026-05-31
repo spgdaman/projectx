@@ -4,6 +4,7 @@ import DealsScreen from '../screens/DealsScreen';
 import CreateAlertScreen from '../screens/CreateAlertScreen';
 import MyAlertsScreen from '../screens/MyAlertsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import { ShoppingListHomeScreen } from '../screens/ShoppingList';
 import { colors } from '../theme';
 
 const Tab = createBottomTabNavigator();
@@ -50,6 +51,15 @@ export default function AppTabs() {
           title: 'My Alerts',
           tabBarLabel: 'My Alerts',
           tabBarIcon: ({ focused }) => <TabIcon emoji="📋" focused={focused} />,
+        }}
+      />
+      <Tab.Screen
+        name="ShoppingList"
+        component={ShoppingListHomeScreen}
+        options={{
+          title: 'Shopping Lists',
+          tabBarLabel: 'Lists',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🛒" focused={focused} />,
         }}
       />
       <Tab.Screen

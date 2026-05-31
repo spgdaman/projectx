@@ -165,7 +165,7 @@ class Command(BaseCommand):
                 deals_to_upsert,
                 update_conflicts=True,
                 unique_fields=['product', 'retailer'],
-                update_fields=['current_price', 'old_price', 'link', 'scraped_at'],
+                update_fields=['current_price', 'old_price', 'link', 'scraped_at', 'branch'],
             )
             deals_to_upsert.clear()
 
@@ -180,7 +180,7 @@ class Command(BaseCommand):
                     skipped += 1
                     continue
 
-                get_or_create_branch(retailer, sp.branch_name)
+                branch = get_or_create_branch(retailer, sp.branch_name)
                 rcat = get_or_create_rcat(retailer, sp.category_name)
 
                 master_category_id: Optional[int] = None
@@ -239,6 +239,7 @@ class Command(BaseCommand):
                             current_price=current_price,
                             old_price=old_price,
                             link=sp.product_url or "",
+                            branch=branch,
                             # Carry the scraper's actual timestamp; fall back to now
                             # for CSV rows that have no scraped_at
                             scraped_at=sp.scraped_at or timezone.now(),

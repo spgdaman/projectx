@@ -30,6 +30,9 @@ psycopg2-binary==2.9.9
 # Scraper
 playwright>=1.44.0
 
+# Shopping list — fuzzy product matching
+rapidfuzz>=3.6.0
+
 # Data processing (CSV ingestion pipeline)
 beautifulsoup4==4.14.3
 pandas==2.1.1

@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
+    "shopping_list",
     # Third-party
     "phonenumber_field",
     "rest_framework",
@@ -219,6 +220,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SECURE_SSL_REDIRECT = False
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# ---------------------------------------------------------------------------
+# Shopping list
+# ---------------------------------------------------------------------------
+FUZZY_MATCH_THRESHOLD = 65
 
 from django.contrib.messages import constants as messages
 

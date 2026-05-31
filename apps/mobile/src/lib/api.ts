@@ -1,14 +1,25 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { configureShoppingList } from '@bargain-hunters/api-client';
 
 const BASE = Platform.OS === 'android'
   ? 'http://10.0.2.2:8000/api/v1'
-  : 'http://localhost:8000/api/v1';
+  : 'http://127.0.0.1:8000/api/v1';
+
+const API_ORIGIN = Platform.OS === 'android'
+  ? 'http://10.0.2.2:8000'
+  : 'http://127.0.0.1:8000';
+
+configureShoppingList({
+  baseUrl: API_ORIGIN,
+  getToken: () => SecureStore.getItemAsync('access_token'),
+});
 
 export const apiClient = axios.create({
   baseURL: BASE,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 10000,
 });
 
 apiClient.interceptors.request.use(async (config) => {
