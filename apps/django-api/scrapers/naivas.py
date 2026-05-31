@@ -1,203 +1,165 @@
 """
 scrapers/naivas.py
 -------------------
-Naivas scraper — Magento 2 (naivas.online)
+Naivas scraper — naivas.online (Laravel + Livewire, NOT Magento)
 
 API strategy:
-  Magento 2 public REST API at /rest/V1/products, filtering for special_price.
-  No auth token needed for guest catalog reads on most Magento 2 setups.
+  naivas.online has no public REST API. The site uses Laravel Livewire and
+  loads products server-side. The /rest/V1/products endpoint does not exist.
+  scrape_api() immediately raises APIError to trigger the Playwright fallback.
 
-  !! VERIFY FIRST (one-time, 30 min) !!
-  Open naivas.online → DevTools → Network → XHR/Fetch → browse Special Offers.
-  Look for requests to /rest/V1/products or /graphql.
-  If auth header present, add to HEADERS dict.
+Playwright strategy (primary working path):
+  Navigates to /food-cupboard-deals (the main promo listing page).
+  Product cards are Livewire child components. Selectors confirmed live:
 
-Playwright fallback:
-  Navigates to OFFERS_URL, scrolls, parses Magento 2 Luma/Hyva product cards.
+  Card wrapper  : div[wire:id]:has(.product-price)
+  Name          : a[wire:click="redirectToProductPage"] → title attribute
+  URL           : a[wire:click="redirectToProductPage"] → href
+  Image         : img inside the card
+  Sale price    : .product-price .font-bold          (green, current price)
+  Old price     : .product-price .line-through        (red, was-price)
+
+  The page lazy-loads more products on scroll — we scroll 6x to capture ~45+ items.
+  Additional deal pages (e.g. /beverage-deals) can be added to DEAL_PAGES.
 """
 
-import time
-from decimal import Decimal
 from typing import Optional
-
-import requests
 
 from .base import APIError, BaseScraper, logger
 
 BASE_URL = 'https://www.naivas.online'
-PRODUCTS_URL = f'{BASE_URL}/rest/V1/products'
-OFFERS_URL = f'{BASE_URL}/special-offers'
-PAGE_SIZE = 100
 
-HEADERS = {
-    'User-Agent': (
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-        '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-    ),
-    'Accept': 'application/json',
-}
+# Deal category pages to scrape. Add more as needed.
+DEAL_PAGES = [
+    f'{BASE_URL}/food-cupboard-deals',
+    f'{BASE_URL}/fresh-deals',
+    f'{BASE_URL}/beverage-deals',
+    f'{BASE_URL}/beauty-cosmetics-deals',
+    f'{BASE_URL}/cleaning-deals',
+    f'{BASE_URL}/snacks-deals',
+    f'{BASE_URL}/baby-kids-deals',
+    f'{BASE_URL}/electronics-deals',
+]
 
 
 class NaivasScraper(BaseScraper):
     retailer_name = 'Naivas'
     rate_limit_seconds = 0.3
 
-    def get_offers_url(self):
-        return OFFERS_URL
+    def get_offers_url(self) -> str:
+        return DEAL_PAGES[0]
 
-    # ── API strategy ─────────────────────────────────────────────────── #
+    # ── API strategy — not available, go straight to Playwright ─────── #
 
     def scrape_api(self) -> list:
-        items = []
-        page = 1
+        raise APIError(
+            'naivas.online has no public REST API — using Playwright scraper'
+        )
 
-        while True:
-            params = {
-                'searchCriteria[filterGroups][0][filters][0][field]': 'special_price',
-                'searchCriteria[filterGroups][0][filters][0][conditionType]': 'notnull',
-                'searchCriteria[pageSize]': PAGE_SIZE,
-                'searchCriteria[currentPage]': page,
-            }
-
-            try:
-                resp = requests.get(PRODUCTS_URL, params=params, headers=HEADERS, timeout=20)
-            except requests.RequestException as e:
-                raise APIError(f'Network error page {page}: {e}')
-
-            if resp.status_code == 401:
-                raise APIError('Naivas API requires a token — check DevTools for auth header')
-            if resp.status_code == 403:
-                raise APIError('Naivas API returned 403 — may need session cookie')
-            if resp.status_code != 200:
-                raise APIError(f'Naivas API returned HTTP {resp.status_code}')
-
-            try:
-                data = resp.json()
-            except ValueError as e:
-                raise APIError(f'Non-JSON response: {e}')
-
-            products = data.get('items', [])
-            if not products:
-                break
-
-            for p in products:
-                item = self._parse_product(p)
-                if item:
-                    items.append(item)
-
-            total = data.get('total_count', 0)
-            if page * PAGE_SIZE >= total:
-                break
-
-            page += 1
-            time.sleep(self.rate_limit_seconds)
-
-        if not items:
-            raise APIError('Naivas API returned 0 products — endpoint may have moved')
-
-        logger.info('[Naivas] API: %d discounted products', len(items))
-        return items
-
-    def _get_custom_attr(self, product: dict, code: str):
-        for attr in product.get('custom_attributes', []):
-            if attr.get('attribute_code') == code:
-                return attr.get('value')
-        return None
-
-    def _parse_product(self, p: dict) -> Optional[dict]:
-        try:
-            name = p.get('name', '').strip()
-            if not name:
-                return None
-
-            regular_price = self.parse_price(p.get('price'))
-            special_price = self.parse_price(self._get_custom_attr(p, 'special_price'))
-
-            deal_price = special_price or regular_price
-            old_price = regular_price if special_price else None
-
-            if not deal_price:
-                return None
-
-            url_key = self._get_custom_attr(p, 'url_key') or ''
-            product_url = f'{BASE_URL}/{url_key}.html' if url_key else None
-
-            media = p.get('media_gallery_entries', [])
-            image_url = None
-            if media:
-                image_url = f'{BASE_URL}/pub/media/catalog/product{media[0].get("file", "")}'
-
-            cat_links = p.get('extension_attributes', {}).get('category_links', [])
-            category_name = cat_links[0].get('category_id', '') if cat_links else None
-
-            return {
-                'product_name': name,
-                'external_id':  p.get('sku', name),
-                'product_url':  product_url,
-                'image_url':    image_url,
-                'price':        deal_price,
-                'old_price':    old_price,
-                'category_name': category_name,
-            }
-        except Exception as e:
-            logger.debug('[Naivas] Skipping product: %s', e)
-            return None
-
-    # ── Playwright fallback ──────────────────────────────────────────── #
+    # ── Playwright strategy ──────────────────────────────────────────── #
 
     def scrape_web(self, page) -> list:
+        """
+        Scrape all DEAL_PAGES. Called by BaseScraper._run_playwright_fallback()
+        which has already navigated to get_offers_url(). We navigate further
+        pages ourselves.
+        """
+        all_items = []
+
+        for page_url in DEAL_PAGES:
+            logger.info('[Naivas] Scraping %s', page_url)
+            try:
+                resp = page.goto(page_url, wait_until='networkidle', timeout=30_000)
+                if resp.status >= 400:
+                    logger.warning('[Naivas] %s returned HTTP %d', page_url, resp.status)
+                    continue
+            except Exception as e:
+                logger.warning('[Naivas] Failed to load %s: %s', page_url, e)
+                continue
+
+            # Scroll down to trigger Livewire lazy-loading
+            for _ in range(6):
+                page.keyboard.press('End')
+                page.wait_for_timeout(1200)
+
+            items = self._parse_page(page, page_url)
+            logger.info('[Naivas] %s: %d products', page_url, len(items))
+            all_items.extend(items)
+
+        return all_items
+
+    def _parse_page(self, page, page_url: str) -> list:
         items = []
 
+        # Each product is a Livewire child component that contains .product-price
         try:
-            page.wait_for_selector('.product-item, li.item.product', timeout=15_000)
+            cards = page.query_selector_all('div[wire\\:id]:has(.product-price)')
         except Exception:
-            logger.warning('[Naivas] Fallback: product-item selector not found — check CSS selectors')
+            # :has() fallback — find via .product-price parent
+            price_divs = page.query_selector_all('.product-price')
+            cards = []
+            seen_ids = set()
+            for pd in price_divs:
+                parent = pd.evaluate_handle(
+                    'el => el.closest("[wire\\\\:id]")'
+                ).as_element()
+                if parent:
+                    wid = parent.get_attribute('wire:id')
+                    if wid and wid not in seen_ids:
+                        seen_ids.add(wid)
+                        cards.append(parent)
+
+        if not cards:
+            logger.warning('[Naivas] No product cards found on %s', page_url)
             return items
 
-        cards = page.query_selector_all('.product-item, li.item.product')
-        logger.info('[Naivas] Fallback: %d product cards found', len(cards))
+        logger.debug('[Naivas] %d product cards on %s', len(cards), page_url)
 
         for card in cards:
             try:
-                name_el = card.query_selector(
-                    '.product-item-name a, .product-name a, [class*="product-name"] a'
-                )
-                deal_el = card.query_selector(
-                    '.special-price .price, '
-                    '.price-wrapper[data-price-type="finalPrice"] .price'
-                )
-                orig_el = card.query_selector(
-                    '.old-price .price, '
-                    '.price-wrapper[data-price-type="oldPrice"] .price'
-                )
-                link_el = card.query_selector('a')
-                img_el  = card.query_selector('img.product-image-photo, img[class*="product"]')
-                pid     = card.get_attribute('data-product-id') or ''
-
-                if not name_el or not deal_el:
-                    continue
-
-                name       = name_el.inner_text().strip()
-                deal_price = self.parse_price(deal_el.inner_text())
-                old_price  = self.parse_price(orig_el.inner_text()) if orig_el else None
-                link       = name_el.get_attribute('href') or (
-                    link_el.get_attribute('href') if link_el else None
-                )
-                image = img_el.get_attribute('src') if img_el else None
-
-                if not name or not deal_price:
-                    continue
-
-                items.append({
-                    'product_name': name,
-                    'external_id':  pid or name,
-                    'product_url':  link,
-                    'image_url':    image,
-                    'price':        deal_price,
-                    'old_price':    old_price,
-                    'category_name': None,
-                })
+                item = self._parse_card(card)
+                if item:
+                    items.append(item)
             except Exception as e:
-                logger.debug('[Naivas] Fallback: skipping card: %s', e)
+                logger.debug('[Naivas] Skipping card: %s', e)
 
         return items
+
+    def _parse_card(self, card) -> Optional[dict]:
+        # Name, URL, image from the product anchor
+        link_el = card.query_selector('a[wire\\:click="redirectToProductPage"]')
+        if not link_el:
+            return None
+
+        name = (link_el.get_attribute('title') or '').strip()
+        if not name:
+            return None
+
+        href = link_el.get_attribute('href') or ''
+        url  = href if href.startswith('http') else f'{BASE_URL}{href}'
+
+        img_el = card.query_selector('img')
+        image  = img_el.get_attribute('src') if img_el else None
+
+        # Prices
+        price_el = card.query_selector('.product-price .font-bold')
+        old_el   = card.query_selector('.product-price .line-through')
+
+        deal_price = self.parse_price(price_el.inner_text()) if price_el else None
+        old_price  = self.parse_price(old_el.inner_text()) if old_el else None
+
+        if not deal_price:
+            return None
+
+        # Extract product ID from pill span (id="pill-{id}")
+        pill = card.query_selector('[id^="pill-"]')
+        pid  = pill.get_attribute('id').replace('pill-', '') if pill else name
+
+        return {
+            'product_name': name,
+            'external_id':  pid,
+            'product_url':  url,
+            'image_url':    image,
+            'price':        deal_price,
+            'old_price':    old_price,
+        }
