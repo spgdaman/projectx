@@ -141,23 +141,33 @@ class BaseScraper:
             if price and not self.price_has_changed(str(external_id), price):
                 continue
 
-            StagingProduct.objects.update_or_create(
+            lookup = dict(
                 retailer_name=self.retailer_name,
                 branch_name=self.branch_name,
                 product_name=item['product_name'],
-                defaults={
-                    'category_name':       item.get('category_name'),
-                    'sub_category_name':   item.get('sub_category_name'),
-                    'sub_category_2_name': item.get('sub_category_2_name'),
-                    'product_url':         item.get('product_url'),
-                    'image_url':           item.get('image_url'),
-                    'price':               price,
-                    'old_price':           item.get('old_price'),
-                    'source':              'scraper',
-                    'is_manual':           False,
-                    'scraped_at':          timezone.now(),
-                },
             )
+            defaults = {
+                'category_name':       item.get('category_name'),
+                'sub_category_name':   item.get('sub_category_name'),
+                'sub_category_2_name': item.get('sub_category_2_name'),
+                'product_url':         item.get('product_url'),
+                'image_url':           item.get('image_url'),
+                'price':               price,
+                'old_price':           item.get('old_price'),
+                'source':              'scraper',
+                'is_manual':           False,
+                'scraped_at':          timezone.now(),
+            }
+            qs = StagingProduct.objects.filter(**lookup)
+            count = qs.count()
+            if count > 1:
+                # Collapse duplicates — keep the first, delete the rest
+                qs.exclude(pk=qs.first().pk).delete()
+                qs.update(**defaults)
+            elif count == 1:
+                qs.update(**defaults)
+            else:
+                StagingProduct.objects.create(**lookup, **defaults)
             written += 1
 
         run.deals_found += len(items)
