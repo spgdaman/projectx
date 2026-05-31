@@ -156,7 +156,7 @@ class Deal(models.Model):
     old_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 
     link = models.URLField(null=True, blank=True)
-    scraped_at = models.DateTimeField(auto_now_add=True)
+    scraped_at = models.DateTimeField(default=timezone.now)
     branch = models.ForeignKey(
         'RetailerBranch',
         on_delete=models.SET_NULL,
@@ -164,6 +164,10 @@ class Deal(models.Model):
         blank=True,
         related_name='deals',
     )
+
+    class Meta:
+        unique_together = (('product', 'retailer'),)
+        ordering = ['-scraped_at']
 
 class StagingProduct(models.Model):
     """
