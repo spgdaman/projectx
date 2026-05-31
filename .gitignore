@@ -1,10 +1,48 @@
-env
-pycache
-__pycache__
+# ─── Python ──────────────────────────────────────────────────────────────────
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ─── Django ──────────────────────────────────────────────────────────────────
 db.sqlite3
-migrations
-csv
-migrations/
-node_modules
-package-lock.json
-package.json
+apps/django-api/db.sqlite3
+apps/django-api/.env
+apps/django-api/static/
+
+# ─── Scraper test / inspection scripts ───────────────────────────────────────
+apps/django-api/test_naivas.py
+apps/django-api/inspect_naivas.py
+apps/django-api/cleanup_dupes.py
+apps/django-api/check_db.py
+
+# ─── Node / JS ───────────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+
+# ─── Expo / React Native ─────────────────────────────────────────────────────
+apps/mobile/.expo/
+apps/mobile/android/
+apps/mobile/ios/
+
+# ─── Logs & misc ─────────────────────────────────────────────────────────────
+*.log
+.DS_Store
+Thumbs.db
+
+# ─── Environment secrets ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Lock files (keep package-lock.json in root for npm workspaces) ───────────
+apps/web/package-lock.json
+apps/mobile/package-lock.json
