@@ -6,25 +6,27 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#E54416"
     },
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "ke.invent.bargainhunters"
+      "supportsTablet": true,
+      "bundleIdentifier": "co.ke.invent.bargainhunters"
     },
     "android": {
+      "package": "co.ke.invent.bargainhunters",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#E54416"
+        "backgroundColor": "#E54416",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "ke.invent.bargainhunters"
+      "predictiveBackGestureEnabled": false
     },
-    "plugins": [
-      "expo-splash-screen"
-    ]
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
   }
 }
