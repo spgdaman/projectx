@@ -180,15 +180,6 @@ class ShoppingListSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Budget must be greater than 0.')
         return value
 
-    def validate(self, data):
-        mode   = data.get('mode', getattr(self.instance, 'mode', 'split'))
-        budget = data.get('budget', getattr(self.instance, 'budget', None))
-        if mode == 'budget' and not budget:
-            raise serializers.ValidationError(
-                {'budget': 'A budget amount is required when mode is "budget".'}
-            )
-        return data
-
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)

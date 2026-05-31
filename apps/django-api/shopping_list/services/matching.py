@@ -154,8 +154,14 @@ class ProductMatchingService:
         # Layer 2: category fallback
         cat_results = self._category_search(query, limit=limit * 2)
 
-        # Merge + deduplicate (fuzzy wins over category for same product)
-        merged = self._merge(fuzzy_results, cat_results)
+        # Layer 3: direct icontains fallback — guaranteed to find products when
+        # fuzzy/category return nothing (e.g. empty cache, no category mappings)
+        db_results = []
+        if len(fuzzy_results) + len(cat_results) < limit:
+            db_results = self._name_search(query, limit=limit * 2)
+
+        # Merge + deduplicate (fuzzy wins over category or db for same product)
+        merged = self._merge(self._merge(fuzzy_results, cat_results), db_results)
 
         # Enrich with retailer + pricing data
         enriched = self._enrich(merged)
@@ -184,9 +190,7 @@ class ProductMatchingService:
         """
         from core.models import Product
         self._name_cache = list(
-            Product.objects
-            .filter(master_category__isnull=False)   # only normalised products
-            .values_list('id', 'name')
+            Product.objects.values_list('id', 'name')
         )
         self._cache_built = True
         logger.debug('[Matching] Cache built: %d products', len(self._name_cache))
@@ -300,6 +304,34 @@ class ProductMatchingService:
             ))
 
         return results
+
+    # ── Layer 3: Direct DB name search ──────────────────────────────── #
+
+    def _name_search(self, query: str, limit: int) -> list[MatchResult]:
+        """
+        Direct icontains DB query — runs when fuzzy + category together return
+        fewer results than needed. Ensures products are always findable even
+        when the in-memory cache is empty or categories aren't mapped.
+        """
+        from core.models import Product
+        products = (
+            Product.objects
+            .filter(name__icontains=query)
+            .select_related('master_category')
+            [:limit]
+        )
+        return [
+            MatchResult(
+                product_id=p.id,
+                product_name=p.name,
+                score=0.60,
+                match_type='fuzzy',
+                master_category=p.master_category.name if p.master_category else None,
+                image_url=p.image_url or None,
+                product_url=p.url or None,
+            )
+            for p in products
+        ]
 
     # ── Merge + dedup ────────────────────────────────────────────────── #
 

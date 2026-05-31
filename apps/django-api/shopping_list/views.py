@@ -377,13 +377,14 @@ def optimise_list(request, list_id):
 
     if not shopping_list.items.filter(is_matched=True).exists():
         return Response(
-            {'detail': 'No matched items — add products to the list first.'},
+            {'detail': 'None of your items were matched to products. '
+                       'Try searching and selecting a product from the dropdown instead of typing freely.'},
             status=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
-    if not UserBranchPreference.objects.filter(user=request.user).exists():
+    if shopping_list.mode == 'budget' and not shopping_list.budget:
         return Response(
-            {'detail': 'No preferred branches saved — select branches first.'},
+            {'detail': 'Set a budget amount before running budget mode.'},
             status=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 

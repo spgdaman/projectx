@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   shoppingListApi,
   ShoppingList,
@@ -57,11 +57,14 @@ function DiscountPill({ pct }: { pct: number }) {
 // ════════════════════════════════════════════════════════════════════════════ //
 
 export function ShoppingListPage() {
-  const [lists, setLists]          = useState<ShoppingList[]>([])
-  const [activeListId, setActive]  = useState<number | null>(null)
-  const [result, setResult]        = useState<OptimisationResult | null>(null)
-  const [creating, setCreating]    = useState(false)
-  const [loadingLists, setLoading] = useState(true)
+  const [lists, setLists]              = useState<ShoppingList[]>([])
+  const [activeListId, setActive]      = useState<number | null>(null)
+  const [result, setResult]            = useState<OptimisationResult | null>(null)
+  const [creating, setCreating]        = useState(false)
+  const [loadingLists, setLoading]     = useState(true)
+  const [showNewForm, setShowNewForm]  = useState(false)
+  const [newListName, setNewListName]  = useState('')
+  const nameInputRef                   = useRef<HTMLInputElement>(null)
   const view = result ? 'result' : activeListId ? 'builder' : 'home'
 
   useEffect(() => {
@@ -70,12 +73,23 @@ export function ShoppingListPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const createList = async () => {
+  const openNewForm = () => {
+    setShowNewForm(true)
+    setNewListName('')
+    setTimeout(() => nameInputRef.current?.focus(), 50)
+  }
+
+  const createList = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const name = newListName.trim() || 'My shopping list'
     setCreating(true)
     try {
-      const list = await shoppingListApi.createList({ name: 'New list', mode: 'split' })
+      const list = await shoppingListApi.createList({ name, mode: 'split' })
       setLists(prev => [list, ...prev])
       setActive(list.id)
+      setShowNewForm(false)
+      setNewListName('')
+      setResult(null)
     } finally {
       setCreating(false)
     }
@@ -96,25 +110,61 @@ export function ShoppingListPage() {
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">Shopping lists</h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              Find the best deals across Naivas, Quickmart and Carrefour
+              Find the best deals across retailers
             </p>
           </div>
           <button
-            onClick={createList}
+            onClick={openNewForm}
             disabled={creating}
             className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded-lg hover:bg-brand-700 disabled:opacity-60 transition-colors"
           >
-            {creating ? '...' : '+ New list'}
+            + New list
           </button>
         </div>
 
         <div className="flex gap-6">
           {/* Left: list sidebar */}
           <div className="w-64 flex-shrink-0">
+
+            {/* Inline create form */}
+            {showNewForm && (
+              <form
+                onSubmit={createList}
+                className="mb-3 p-3 bg-white border border-brand-300 rounded-lg shadow-sm"
+              >
+                <p className="text-xs font-semibold text-gray-500 mb-2">Name your list</p>
+                <input
+                  ref={nameInputRef}
+                  value={newListName}
+                  onChange={e => setNewListName(e.target.value)}
+                  placeholder="e.g. Weekly groceries"
+                  className="w-full px-2.5 py-1.5 text-sm border border-gray-200 rounded-md outline-none focus:border-brand-600 mb-2"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={creating}
+                    className="flex-1 py-1.5 bg-brand-600 text-white text-xs font-semibold rounded-md hover:bg-brand-700 disabled:opacity-60"
+                  >
+                    {creating ? '...' : 'Create'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewForm(false)}
+                    className="flex-1 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-md hover:bg-gray-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
             {loadingLists ? (
               <div className="text-sm text-gray-400 py-4 text-center">Loading...</div>
-            ) : lists.length === 0 ? (
-              <div className="text-sm text-gray-400 py-4 text-center">No lists yet</div>
+            ) : lists.length === 0 && !showNewForm ? (
+              <div className="text-sm text-gray-400 py-4 text-center">
+                No lists yet — create one above
+              </div>
             ) : (
               <div className="space-y-2">
                 {lists.map(list => (
@@ -156,7 +206,7 @@ export function ShoppingListPage() {
                   Select a list or create a new one
                 </p>
                 <button
-                  onClick={createList}
+                  onClick={openNewForm}
                   className="text-brand-600 text-sm font-medium hover:underline"
                 >
                   + Create your first list
@@ -167,6 +217,11 @@ export function ShoppingListPage() {
               <ShoppingListBuilder
                 listId={activeListId}
                 onOptimised={r => setResult(r)}
+                onRename={newName =>
+                  setLists(prev => prev.map(l =>
+                    l.id === activeListId ? { ...l, name: newName } : l
+                  ))
+                }
               />
             )}
             {view === 'result' && result && activeListId && (
@@ -190,9 +245,11 @@ export function ShoppingListPage() {
 function ShoppingListBuilder({
   listId,
   onOptimised,
+  onRename,
 }: {
   listId: number
   onOptimised: (result: OptimisationResult) => void
+  onRename: (name: string) => void
 }) {
   const [list, setList]               = useState<ShoppingList | null>(null)
   const [query, setQuery]             = useState('')
@@ -203,6 +260,7 @@ function ShoppingListBuilder({
   const [branchesLoaded, setBranchesLoaded] = useState(false)
   const [savingBranch, setSavingBranch]     = useState<number | null>(null)
   const [listMode, setListMode]       = useState<ShoppingList['mode']>('split')
+  const [budget, setBudget]           = useState('')
   const [optimising, setOptimising]   = useState(false)
   const [error, setError]             = useState<string | null>(null)
   const inputRef   = useRef<HTMLInputElement>(null)
@@ -212,6 +270,7 @@ function ShoppingListBuilder({
     shoppingListApi.getList(listId).then(l => {
       setList(l)
       setListMode(l.mode)
+      if (l.budget) setBudget(String(l.budget))
     })
   }, [listId])
 
@@ -228,6 +287,21 @@ function ShoppingListBuilder({
     shoppingListApi.getBranchesNearby()
       .then(data => { setBranches(data); setBranchesLoaded(true) })
   }, [])
+
+  const switchMode = async (m: ShoppingList['mode']) => {
+    setListMode(m)
+    if (m !== 'budget') {
+      await shoppingListApi.updateList(listId, { mode: m })
+    }
+    // budget mode: save mode + budget together once budget is confirmed
+  }
+
+  const saveBudget = async () => {
+    const amt = parseFloat(budget)
+    if (listMode === 'budget' && amt > 0) {
+      await shoppingListApi.updateList(listId, { mode: 'budget', budget: amt })
+    }
+  }
 
   const selectSuggestion = async (sug: ProductSearchResult) => {
     setQuery(''); setShowSugg(false); inputRef.current?.blur()
@@ -286,8 +360,8 @@ function ShoppingListBuilder({
 
   const handleOptimise = async () => {
     setError(null)
-    if (!branches.some(b => b.is_preferred)) {
-      setError('Please select at least one branch before optimising.')
+    if (listMode === 'budget' && (!budget || parseFloat(budget) <= 0)) {
+      setError('Enter a budget amount (KES) above before optimising.')
       return
     }
     setOptimising(true)
@@ -296,7 +370,12 @@ function ShoppingListBuilder({
       onOptimised(result)
     } catch (e: unknown) {
       const err = e as { body?: string }
-      setError(err.body || 'Optimisation failed — please try again.')
+      let msg = 'Optimisation failed — please try again.'
+      try {
+        const parsed = JSON.parse(err.body ?? '')
+        msg = parsed.detail ?? msg
+      } catch { /* keep default */ }
+      setError(msg)
     } finally {
       setOptimising(false)
     }
@@ -316,17 +395,26 @@ function ShoppingListBuilder({
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
 
       {/* List name + mode */}
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
-        <input
-          defaultValue={list.name}
-          onBlur={e => shoppingListApi.updateList(listId, { name: e.target.value })}
-          className="text-base font-semibold text-gray-900 bg-transparent border-none outline-none flex-1 min-w-0"
-        />
-        <div className="flex gap-1">
+      <div className="px-5 py-4 border-b border-gray-100 space-y-3">
+        <div className="flex items-center gap-3">
+          <input
+            defaultValue={list.name}
+            onBlur={e => {
+              const name = e.target.value.trim() || list.name
+              shoppingListApi.updateList(listId, { name })
+              onRename(name)
+            }}
+            className="text-base font-semibold text-gray-900 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-brand-600 outline-none flex-1 min-w-0 pb-0.5 transition-colors"
+            title="Click to rename"
+          />
+        </div>
+
+        {/* Mode buttons */}
+        <div className="flex gap-1.5">
           {(['split', 'single', 'budget'] as const).map(m => (
             <button
               key={m}
-              onClick={() => { setListMode(m); shoppingListApi.updateList(listId, { mode: m }) }}
+              onClick={() => switchMode(m)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 listMode === m
                   ? 'bg-brand-600 text-white'
@@ -337,6 +425,29 @@ function ShoppingListBuilder({
             </button>
           ))}
         </div>
+
+        {/* Budget input — only visible in budget mode */}
+        {listMode === 'budget' && (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-gray-500 font-medium whitespace-nowrap">
+              Budget (KES)
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={budget}
+              onChange={e => setBudget(e.target.value)}
+              onBlur={saveBudget}
+              placeholder="e.g. 5000"
+              className="flex-1 px-2.5 py-1.5 text-sm border border-gray-200 rounded-md outline-none focus:border-brand-600 transition-colors"
+            />
+            {budget && parseFloat(budget) > 0 && (
+              <span className="text-xs text-brand-600 font-medium whitespace-nowrap">
+                {formatKES(parseFloat(budget))}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 divide-x divide-gray-100">
@@ -420,7 +531,7 @@ function ShoppingListBuilder({
                     {item.product_name || item.raw_query}
                   </p>
                   {!item.is_matched && (
-                    <p className="text-xs text-amber-600">Product not confirmed</p>
+                    <p className="text-xs text-amber-600">Not confirmed — try searching and selecting from the dropdown</p>
                   )}
                   {item.is_matched && item.best_price != null && (
                     <p className="text-xs text-brand-600 font-medium">
@@ -432,20 +543,11 @@ function ShoppingListBuilder({
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => updateQty(item, -1)}
-                    className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-sm leading-none"
-                  >−</button>
+                  <button onClick={() => updateQty(item, -1)} className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-sm leading-none">−</button>
                   <span className="w-5 text-center text-sm font-medium">{item.qty}</span>
-                  <button
-                    onClick={() => updateQty(item, +1)}
-                    className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-sm leading-none"
-                  >+</button>
+                  <button onClick={() => updateQty(item, +1)} className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center text-sm leading-none">+</button>
                 </div>
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="text-gray-300 hover:text-red-400 text-sm transition-colors"
-                >✕</button>
+                <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 text-sm transition-colors">✕</button>
               </div>
             ))}
           </div>
@@ -453,11 +555,16 @@ function ShoppingListBuilder({
 
         {/* Right: branches */}
         <div className="p-5">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">
             Select branches
+          </p>
+          <p className="text-xs text-gray-400 mb-3">
+            Optional — leave all unchecked to search all retailers
           </p>
           {!branchesLoaded ? (
             <p className="text-sm text-gray-400 text-center py-4">Loading branches...</p>
+          ) : branches.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-4">No branches found</p>
           ) : (
             <div className="space-y-4">
               {(['Naivas', 'Quickmart', 'Carrefour'] as const).map(retailer => {
@@ -570,16 +677,10 @@ function ShoppingListResult({
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={handleShare}
-            className="px-3 py-2 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={handleShare} className="px-3 py-2 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             Copy list
           </button>
-          <button
-            onClick={onEdit}
-            className="px-3 py-2 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={onEdit} className="px-3 py-2 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
             Edit
           </button>
         </div>

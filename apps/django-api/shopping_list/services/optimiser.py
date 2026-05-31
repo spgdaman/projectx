@@ -346,6 +346,7 @@ class BasketOptimiserService:
         )
 
     def _get_preferred_branches(self) -> list:
+        from core.models import RetailerBranch
         from shopping_list.models import UserBranchPreference
         prefs = (
             UserBranchPreference.objects
@@ -353,7 +354,16 @@ class BasketOptimiserService:
             .select_related('branch__retailer')
             .order_by('priority')
         )
-        return [p.branch for p in prefs]
+        preferred = [p.branch for p in prefs]
+        if preferred:
+            return preferred
+        # No saved preferences — use all active branches so the optimiser
+        # still works for users who haven't selected specific branches
+        return list(
+            RetailerBranch.objects
+            .filter(is_active=True)
+            .select_related('retailer')
+        )
 
     def _best_deal_at_branch(self, item, branch):
         """
