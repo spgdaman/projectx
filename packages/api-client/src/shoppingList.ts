@@ -176,7 +176,7 @@ export const shoppingListApi = {
     return request<ProductSearchResult[]>(`/api/products/search/?${params}`)
   },
 
-  getBranchesNearby(params?: {
+  async getBranchesNearby(params?: {
     lat?: number
     lng?: number
     retailer_ids?: number[]
@@ -185,11 +185,13 @@ export const shoppingListApi = {
     if (params?.lat)          qs.set('lat', String(params.lat))
     if (params?.lng)          qs.set('lng', String(params.lng))
     if (params?.retailer_ids) qs.set('retailer_ids', params.retailer_ids.join(','))
-    return request<Branch[]>(`/api/branches/nearby/?${qs}`)
+    const data = await request<Branch[] | { results: Branch[] }>(`/api/branches/nearby/?${qs}`)
+    return Array.isArray(data) ? data : (data.results ?? [])
   },
 
-  getBranchPreferences(): Promise<BranchPreference[]> {
-    return request<BranchPreference[]>('/api/user/branches/')
+  async getBranchPreferences(): Promise<BranchPreference[]> {
+    const data = await request<BranchPreference[] | { results: BranchPreference[] }>('/api/user/branches/')
+    return Array.isArray(data) ? data : (data.results ?? [])
   },
 
   addBranchPreference(data: {
@@ -208,8 +210,9 @@ export const shoppingListApi = {
     return request<void>(`/api/user/branches/${branchId}/`, { method: 'DELETE' })
   },
 
-  getLists(): Promise<ShoppingList[]> {
-    return request<ShoppingList[]>('/api/shopping-lists/')
+  async getLists(): Promise<ShoppingList[]> {
+    const data = await request<ShoppingList[] | { results: ShoppingList[] }>('/api/shopping-lists/')
+    return Array.isArray(data) ? data : (data.results ?? [])
   },
 
   createList(data: {
