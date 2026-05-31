@@ -1,9 +1,9 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity,
   ActivityIndicator, Modal, Image, Alert, Dimensions,
 } from 'react-native';
-import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { dealsApi, retailersApi, categoriesApi, subscriptionsApi } from '../lib/api';
 import { colors } from '../theme';
@@ -142,22 +142,47 @@ export default function DealsScreen() {
   const [alertingId, setAlertingId] = useState<number | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Simple pagination state — avoids useInfiniteQuery complexity
+  const [page, setPage] = useState(1);
+  const [deals, setDeals] = useState<any[]>([]);
+  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Reset to page 1 whenever filters / search change
+  useEffect(() => {
+    setPage(1);
+    setDeals([]);
+    setHasMore(true);
+  }, [debouncedSearch, retailer?.id, category?.id]);
+
   function handleSearch(val: string) {
     setSearch(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => setDebouncedSearch(val), 350);
   }
 
-  const dealsQuery = useInfiniteQuery({
-    queryKey: ['deals', debouncedSearch, retailer?.id, category?.id],
-    queryFn: ({ pageParam = 1 }) =>
-      dealsApi.list({ search: debouncedSearch || undefined, retailer: retailer?.id, category: category?.id, page: pageParam as number })
-        .then((r) => r.data),
-    getNextPageParam: (lastPage: any) => lastPage.next ? true : undefined,
-    initialPageParam: 1,
+  const { isLoading, isFetching } = useQuery({
+    queryKey: ['deals', debouncedSearch, retailer?.id, category?.id, page],
+    queryFn: async () => {
+      const { data } = await dealsApi.list({
+        search: debouncedSearch || undefined,
+        retailer: retailer?.id,
+        category: category?.id,
+        page,
+      });
+      const incoming: any[] = data.results ?? [];
+      setDeals(prev => {
+        if (page === 1) return incoming;
+        // Deduplicate by id in case onEndReached fires twice
+        const seen = new Set(prev.map((d: any) => d.id));
+        return [...prev, ...incoming.filter((d: any) => !seen.has(d.id))];
+      });
+      setTotal(data.count ?? 0);
+      setHasMore(!!data.next);
+      return data;
+    },
+    enabled: hasMore || page === 1,
   });
-
-  const deals = dealsQuery.data?.pages.flatMap((p: any) => p.results ?? []) ?? [];
 
   const { data: retailers } = useQuery({
     queryKey: ['retailers'],
@@ -189,12 +214,13 @@ export default function DealsScreen() {
   });
 
   function loadMore() {
-    if (dealsQuery.hasNextPage && !dealsQuery.isFetchingNextPage) {
-      dealsQuery.fetchNextPage();
+    if (hasMore && !isFetching) {
+      setPage(p => p + 1);
     }
   }
 
-  const total = dealsQuery.data?.pages[0]?.count ?? 0;
+  // Show initial loader only on first page with no data yet
+  const showInitialLoader = isLoading && deals.length === 0;
 
   return (
     <SafeAreaView style={s.safe} edges={['left', 'right', 'bottom']}>
@@ -236,11 +262,11 @@ export default function DealsScreen() {
         <Text style={s.countText}>{total.toLocaleString()} deals found</Text>
       )}
 
-      {dealsQuery.isLoading ? (
+      {showInitialLoader ? (
         <View style={s.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      ) : deals.length === 0 ? (
+      ) : deals.length === 0 && !isFetching ? (
         <View style={s.empty}>
           <Text style={s.emptyIcon}>🏷️</Text>
           <Text style={s.emptyTitle}>No deals found</Text>
@@ -253,17 +279,18 @@ export default function DealsScreen() {
           numColumns={2}
           columnWrapperStyle={s.row}
           contentContainerStyle={s.list}
+          removeClippedSubviews={false}
           renderItem={({ item }) => (
             <View style={{ opacity: alertingId === item.id ? 0.6 : 1 }}>
               <DealCard deal={item} onAlert={(d) => subscribe.mutate(d)} />
             </View>
           )}
           onEndReached={loadMore}
-          onEndReachedThreshold={0.3}
+          onEndReachedThreshold={0.5}
           ListFooterComponent={
-            dealsQuery.isFetchingNextPage
+            isFetching && deals.length > 0
               ? <ActivityIndicator style={{ marginVertical: 16 }} color={colors.primary} />
-              : null
+              : hasMore ? <View style={{ height: 20 }} /> : null
           }
         />
       )}
