@@ -485,7 +485,7 @@ function ShoppingListBuilder({
             </div>
 
             {showSugg && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden max-h-72 overflow-y-auto">
                 {suggestions.map(sug => (
                   <button
                     key={sug.product_id}
@@ -647,97 +647,207 @@ function ShoppingListResult({
   onBack: () => void
   onEdit: () => void
 }) {
-  const plan = result.branch_plan
+  const plan        = result.branch_plan
+  const totalSaving = parseFloat(plan.total_saving)
+  const grandTotal  = parseFloat(plan.grand_total)
+  const savingPct   = grandTotal + totalSaving > 0
+    ? Math.round(totalSaving / (grandTotal + totalSaving) * 100)
+    : 0
 
   const handleShare = () => {
-    const lines = ['🛒 Bargain Hunters Shopping List\n']
+    const lines: string[] = ['🛒 Bargain Hunters Shopping List\n']
     for (const group of plan.branches) {
       lines.push(`📍 ${group.branch_name} (${group.retailer})`)
+      lines.push('─'.repeat(40))
       for (const item of group.items) {
-        lines.push(`  • ${item.product_name} × ${item.qty}  KES ${item.price}`)
+        const disc = item.old_price
+          ? ` [${Math.round((parseFloat(item.old_price) - parseFloat(item.price)) / parseFloat(item.old_price) * 100)}% off]`
+          : ''
+        lines.push(`  ${item.product_name}${disc}`)
+        lines.push(`    × ${item.qty}  KES ${item.price}  = KES ${item.line_total}`)
       }
-      lines.push(`  Subtotal: ${formatKES(group.branch_total)}\n`)
+      lines.push('─'.repeat(40))
+      lines.push(`  Subtotal: ${formatKES(group.branch_total)}`)
+      if (parseFloat(group.branch_saving) > 0)
+        lines.push(`  Saved:    ${formatKES(group.branch_saving)}`)
+      lines.push('')
     }
-    lines.push(`Total: ${formatKES(plan.grand_total)}`)
-    lines.push(`Savings: ${formatKES(plan.total_saving)}`)
+    if (plan.unmatched_items.length)
+      lines.push(`Not found: ${plan.unmatched_items.join(', ')}\n`)
+    lines.push('─'.repeat(40))
+    lines.push(`Grand total:    ${formatKES(plan.grand_total)}`)
+    lines.push(`Total savings:  ${formatKES(plan.total_saving)} (${savingPct}% off)`)
     navigator.clipboard.writeText(lines.join('\n'))
       .then(() => alert('Copied to clipboard!'))
   }
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+
+      {/* Receipt header */}
+      <div className="px-5 py-4 bg-brand-50 border-b border-brand-100 flex items-center justify-between">
         <div>
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">Best deal plan</p>
-          <p className="text-lg font-semibold text-gray-900 mt-0.5">
-            {formatKES(plan.grand_total)}
-            <span className="text-sm font-normal text-brand-600 ml-2">
-              save {formatKES(plan.total_saving)}
-            </span>
+          <p className="text-[11px] font-semibold text-brand-700 uppercase tracking-widest mb-1">
+            Best deal plan
           </p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-gray-900">{formatKES(plan.grand_total)}</span>
+            {totalSaving > 0 && (
+              <span className="text-sm font-semibold text-brand-600">
+                save {formatKES(plan.total_saving)}
+                <span className="ml-1 px-1.5 py-0.5 bg-brand-100 text-brand-700 rounded text-[11px]">
+                  {savingPct}% off
+                </span>
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
-          <button onClick={handleShare} className="px-3 py-2 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-            Copy list
+          <button
+            onClick={handleShare}
+            className="px-3 py-1.5 text-xs font-medium bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Copy
           </button>
-          <button onClick={onEdit} className="px-3 py-2 text-xs font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-            Edit
+          <button
+            onClick={onEdit}
+            className="px-3 py-1.5 text-xs font-medium bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Edit list
           </button>
         </div>
       </div>
 
+      {/* Unmatched warning */}
       {plan.unmatched_items.length > 0 && (
-        <div className="px-5 py-3 bg-amber-50 border-b border-amber-100">
-          <p className="text-xs font-semibold text-amber-700 mb-0.5">
-            {plan.unmatched_items.length} item{plan.unmatched_items.length !== 1 ? 's' : ''} not found
-          </p>
-          <p className="text-xs text-amber-600">{plan.unmatched_items.join(' · ')}</p>
+        <div className="px-5 py-3 bg-amber-50 border-b border-amber-100 flex items-start gap-2">
+          <span className="text-amber-500 text-sm mt-px">⚠</span>
+          <div>
+            <p className="text-xs font-semibold text-amber-700">
+              {plan.unmatched_items.length} item{plan.unmatched_items.length !== 1 ? 's' : ''} couldn't be matched
+            </p>
+            <p className="text-xs text-amber-600 mt-0.5">{plan.unmatched_items.join(' · ')}</p>
+          </div>
         </div>
       )}
 
-      <div className="divide-y divide-gray-100">
-        {plan.branches.map(group => (
-          <div key={group.branch_id}>
-            <div className="px-5 py-3 bg-gray-50 flex items-center justify-between">
+      {/* Branch sections */}
+      {plan.branches.map((group, gi) => {
+        const branchSaving = parseFloat(group.branch_saving)
+        const showBranchName = group.branch_name !== group.retailer
+
+        return (
+          <div key={group.branch_id ?? `g${gi}`} className="border-b border-gray-100 last:border-0">
+
+            {/* Branch header */}
+            <div className="px-5 py-3 bg-gray-50 flex items-center justify-between border-b border-gray-200">
               <div className="flex items-center gap-2">
                 <RetailerBadge name={group.retailer} />
-                <p className="text-sm font-semibold text-gray-900">{group.branch_name}</p>
+                {showBranchName && (
+                  <span className="text-sm font-semibold text-gray-900">{group.branch_name}</span>
+                )}
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-gray-900">{formatKES(group.branch_total)}</p>
-                {parseFloat(group.branch_saving) > 0 && (
-                  <p className="text-xs text-brand-600">saves {formatKES(group.branch_saving)}</p>
+                <span className="text-sm font-bold text-gray-900">{formatKES(group.branch_total)}</span>
+                {branchSaving > 0 && (
+                  <span className="text-xs font-medium text-brand-600 ml-2">
+                    −{formatKES(group.branch_saving)}
+                  </span>
                 )}
               </div>
             </div>
-            <div className="divide-y divide-gray-50">
-              {group.items.map(item => (
-                <div key={item.item_id} className="px-5 py-3 flex items-center gap-4">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{item.product_name}</p>
-                    {item.old_price && (
-                      <p className="text-xs text-gray-400 line-through">was {formatKES(item.old_price)}</p>
+
+            {/* Column labels */}
+            <div className="px-5 py-1.5 grid grid-cols-[1fr_3rem_6rem_6rem] gap-x-3 border-b border-gray-100 bg-gray-50">
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Item</span>
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Qty</span>
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Unit price</span>
+              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Total</span>
+            </div>
+
+            {/* Line items */}
+            {group.items.map(item => {
+              const unitPrice   = parseFloat(item.price)
+              const oldPrice    = item.old_price ? parseFloat(item.old_price) : null
+              const lineSaving  = parseFloat(item.saving)
+              const discountPct = oldPrice
+                ? Math.round((oldPrice - unitPrice) / oldPrice * 100)
+                : 0
+
+              return (
+                <div
+                  key={item.item_id}
+                  className="px-5 py-3 grid grid-cols-[1fr_3rem_6rem_6rem] gap-x-3 items-start border-b border-gray-50 last:border-0"
+                >
+                  {/* Product + discount info */}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-900 leading-snug">{item.product_name}</p>
+                    {oldPrice && (
+                      <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                        <span className="text-[11px] text-gray-400 line-through">
+                          {formatKES(oldPrice)}
+                        </span>
+                        {discountPct > 0 && (
+                          <span className="px-1 py-px rounded text-[10px] font-bold bg-brand-100 text-brand-700">
+                            {discountPct}% off
+                          </span>
+                        )}
+                        {lineSaving > 0 && (
+                          <span className="text-[11px] font-semibold text-brand-600">
+                            save {formatKES(item.saving)}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    {item.qty > 1 && <span className="text-xs text-gray-400">× {item.qty}</span>}
-                    <span className="text-sm font-semibold text-brand-600">{formatKES(item.price)}</span>
-                  </div>
+
+                  {/* Qty */}
+                  <span className="text-sm text-gray-600 text-right tabular-nums pt-px">
+                    {item.qty}
+                  </span>
+
+                  {/* Unit price */}
+                  <span className="text-sm text-gray-700 text-right tabular-nums pt-px">
+                    {formatKES(item.price)}
+                  </span>
+
+                  {/* Line total */}
+                  <span className="text-sm font-semibold text-gray-900 text-right tabular-nums pt-px">
+                    {formatKES(item.line_total)}
+                  </span>
                 </div>
-              ))}
+              )
+            })}
+
+            {/* Branch subtotal row */}
+            <div className="px-5 py-2.5 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+              <span className="text-xs text-gray-500">
+                {group.items.length} item{group.items.length !== 1 ? 's' : ''}
+                {branchSaving > 0 && (
+                  <span className="text-brand-600 ml-1.5 font-medium">
+                    · saved {formatKES(group.branch_saving)}
+                  </span>
+                )}
+              </span>
+              <span className="text-sm font-bold text-gray-900">
+                Subtotal: {formatKES(group.branch_total)}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
+        )
+      })}
 
-      <div className="px-5 py-4 border-t border-gray-200 bg-gray-50">
-        <div className="flex justify-between items-center mb-1">
-          <span className="text-sm text-gray-500">Total savings</span>
-          <span className="text-sm font-semibold text-brand-600">{formatKES(plan.total_saving)}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-base font-semibold text-gray-900">Grand total</span>
-          <span className="text-xl font-bold text-gray-900">{formatKES(plan.grand_total)}</span>
+      {/* Grand total footer */}
+      <div className="px-5 py-4 bg-gray-50 border-t border-gray-200 space-y-2">
+        {totalSaving > 0 && (
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-gray-500">Total savings</span>
+            <span className="font-semibold text-brand-600">−{formatKES(plan.total_saving)}</span>
+          </div>
+        )}
+        <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+          <span className="text-base font-bold text-gray-900">Grand total</span>
+          <span className="text-2xl font-bold text-gray-900">{formatKES(plan.grand_total)}</span>
         </div>
       </div>
     </div>

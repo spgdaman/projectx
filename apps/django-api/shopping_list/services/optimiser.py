@@ -183,58 +183,73 @@ class BasketOptimiserService:
 
     def _optimise_single(self) -> dict:
         """
-        For each preferred branch, compute what the full basket would cost.
-        Return the branch with the lowest total. Items not available at that
-        branch are flagged as unmatched.
+        For each preferred branch (and each branchless retailer), compute what
+        the full basket would cost. Return the option with the lowest total.
         """
         items = self._get_matched_items()
         if not items:
             return self._empty_plan()
 
-        preferred_branches = self._get_preferred_branches()
-        if not preferred_branches:
+        preferred_branches    = self._get_preferred_branches()
+        branchless_retailers  = self._get_branchless_retailers()
+
+        if not preferred_branches and not branchless_retailers:
             return self._empty_plan()
 
-        best_branch = None
+        best_source = None   # branch object OR retailer object
         best_total  = None
         best_deals  = {}
+        best_is_branchless = False
 
         for branch in preferred_branches:
             total, deals = self._basket_total_at_branch(items, branch)
             if best_total is None or total < best_total:
-                best_total  = total
-                best_branch = branch
-                best_deals  = deals
+                best_total         = total
+                best_source        = branch
+                best_deals         = deals
+                best_is_branchless = False
 
-        if not best_branch:
+        for retailer in branchless_retailers:
+            total, deals = self._basket_total_for_retailer(items, retailer)
+            if best_total is None or total < best_total:
+                best_total         = total
+                best_source        = retailer
+                best_deals         = deals
+                best_is_branchless = True
+
+        if best_source is None:
             return self._empty_plan()
 
-        return self._build_plan(
-            items=items,
-            assignment={item.id: (best_branch, best_deals.get(item.id)) for item in items},
-        )
+        if best_is_branchless:
+            assignment = {item.id: (None, best_deals.get(item.id)) for item in items}
+        else:
+            assignment = {item.id: (best_source, best_deals.get(item.id)) for item in items}
+
+        return self._build_plan(items=items, assignment=assignment)
 
     # ── Mode: split basket ───────────────────────────────────────────── #
 
     def _optimise_split(self) -> dict:
         """
-        For each item, find the cheapest deal across all preferred branches.
-        If the total split saving vs cheapest single store is below
-        MIN_SPLIT_SAVING, fall back to single store.
+        For each item, find the cheapest deal across all preferred branches
+        and branchless retailers. Falls back to single-store if the saving
+        from splitting doesn't exceed MIN_SPLIT_SAVING.
         """
         items = self._get_matched_items()
         if not items:
             return self._empty_plan()
 
-        preferred_branches = self._get_preferred_branches()
-        if not preferred_branches:
+        preferred_branches   = self._get_preferred_branches()
+        branchless_retailers = self._get_branchless_retailers()
+
+        if not preferred_branches and not branchless_retailers:
             return self._empty_plan()
 
-        # Best deal per item across all preferred branches
+        # Best deal per item across all sources
         assignment = {}
         for item in items:
             best_deal   = None
-            best_branch = None
+            best_branch = None   # None = branchless retailer won
             best_price  = None
 
             for branch in preferred_branches:
@@ -246,6 +261,16 @@ class BasketOptimiserService:
                     best_price  = price
                     best_deal   = deal
                     best_branch = branch
+
+            for retailer in branchless_retailers:
+                deal = self._best_deal_for_retailer(item, retailer)
+                if deal is None:
+                    continue
+                price = deal.current_price
+                if best_price is None or price < best_price:
+                    best_price  = price
+                    best_deal   = deal
+                    best_branch = None  # no specific branch
 
             assignment[item.id] = (best_branch, best_deal)
 
@@ -279,9 +304,10 @@ class BasketOptimiserService:
         if budget <= 0:
             return self._empty_plan()
 
-        preferred_branches = self._get_preferred_branches()
+        preferred_branches   = self._get_preferred_branches()
+        branchless_retailers = self._get_branchless_retailers()
 
-        # Find best deal + branch for each item first
+        # Find best deal + source for each item first
         candidates = []
         for item in items:
             best_deal   = None
@@ -298,6 +324,18 @@ class BasketOptimiserService:
                     best_price  = price
                     best_deal   = deal
                     best_branch = branch
+                    if deal.old_price and deal.old_price > deal.current_price:
+                        discount = (deal.old_price - deal.current_price) / deal.old_price
+
+            for retailer in branchless_retailers:
+                deal = self._best_deal_for_retailer(item, retailer)
+                if deal is None:
+                    continue
+                price = deal.current_price * item.qty
+                if best_price is None or price < best_price:
+                    best_price  = price
+                    best_deal   = deal
+                    best_branch = None
                     if deal.old_price and deal.old_price > deal.current_price:
                         discount = (deal.old_price - deal.current_price) / deal.old_price
 
@@ -365,23 +403,58 @@ class BasketOptimiserService:
             .select_related('retailer')
         )
 
+    def _get_branchless_retailers(self) -> list:
+        """
+        Returns Retailer objects that have NO entries in RetailerBranch.
+        These retailers can never be 'selected' by branch — they're always
+        included in the optimiser as retailer-wide deal sources.
+        """
+        from core.models import Retailer, RetailerBranch
+        branched_ids = set(
+            RetailerBranch.objects.values_list('retailer_id', flat=True)
+        )
+        return list(Retailer.objects.exclude(id__in=branched_ids))
+
+    def _best_deal_for_retailer(self, item, retailer):
+        """
+        Best deal for a retailer that has no branches.
+        Fetches any deal for that retailer (branch-specific or retailer-wide).
+        """
+        from core.models import Deal
+        return (
+            Deal.objects
+            .filter(product=item.product, retailer=retailer)
+            .select_related('retailer')
+            .order_by('current_price')
+            .first()
+        )
+
+    def _basket_total_for_retailer(self, items, retailer) -> tuple:
+        """Returns (total_Decimal, {item_id: deal}) for a branchless retailer."""
+        total = Decimal('0')
+        deals = {}
+        for item in items:
+            deal = self._best_deal_for_retailer(item, retailer)
+            if deal:
+                total += deal.current_price * item.qty
+                deals[item.id] = deal
+        return total, deals
+
     def _best_deal_at_branch(self, item, branch):
         """
-        Returns the cheapest active Deal for item.product at this branch.
-        Returns None if no deal exists at this branch.
+        Returns the cheapest Deal for item.product at this branch.
+        Includes branch-specific deals AND retailer-wide deals (branch=NULL).
         """
         from core.models import Deal
 
-        # core.Deal now has a nullable branch FK (added in scraper migration)
-        deals = Deal.objects.filter(
-            product=item.product,
-            retailer=branch.retailer,
-        ).filter(
-            # branch-specific deal OR a retailer-wide deal (null branch)
-            models_Q(branch=branch) | models_Q(branch__isnull=True)
-        ).order_by('current_price')
-
-        return deals.first()
+        return (
+            Deal.objects
+            .filter(product=item.product, retailer=branch.retailer)
+            .filter(models_Q(branch=branch) | models_Q(branch__isnull=True))
+            .select_related('retailer')
+            .order_by('current_price')
+            .first()
+        )
 
     def _basket_total_at_branch(self, items, branch) -> tuple:
         """Returns (total_Decimal, {item_id: deal}) for a branch."""
@@ -427,16 +500,16 @@ class BasketOptimiserService:
         for item in items:
             branch, deal = assignment.get(item.id, (None, None))
 
-            if deal is None or branch is None:
+            # branch=None is valid for branchless retailers; only skip when no deal
+            if deal is None:
                 if item.raw_query not in unmatched:
                     unmatched.append(item.raw_query)
-                # Clear any previous assignment
                 ShoppingListItem.objects.filter(id=item.id).update(
                     deal=None, branch=None
                 )
                 continue
 
-            # Update the item row
+            # Update the item row (branch may legitimately be None)
             ShoppingListItem.objects.filter(id=item.id).update(
                 deal=deal, branch=branch
             )
@@ -449,18 +522,33 @@ class BasketOptimiserService:
                 saving = (deal.old_price - deal.current_price) * item.qty
                 total_saving += saving
 
-            branch_key = branch.id
-            if branch_key not in branch_groups:
-                branch_groups[branch_key] = {
-                    'branch_id':    branch.id,
-                    'branch_name':  branch.name,
-                    'retailer':     branch.retailer.name,
-                    'items':        [],
-                    'branch_total': Decimal('0'),
-                    'branch_saving': Decimal('0'),
-                }
+            # Key by branch id when a branch exists; fall back to retailer id
+            # (prefixed to avoid collisions between branch ids and retailer ids)
+            if branch is not None:
+                group_key = f'b{branch.id}'
+                if group_key not in branch_groups:
+                    branch_groups[group_key] = {
+                        'branch_id':    branch.id,
+                        'branch_name':  branch.name,
+                        'retailer':     branch.retailer.name,
+                        'items':        [],
+                        'branch_total': Decimal('0'),
+                        'branch_saving': Decimal('0'),
+                    }
+            else:
+                # Branchless retailer — group by retailer
+                group_key = f'r{deal.retailer_id}'
+                if group_key not in branch_groups:
+                    branch_groups[group_key] = {
+                        'branch_id':    None,
+                        'branch_name':  deal.retailer.name,
+                        'retailer':     deal.retailer.name,
+                        'items':        [],
+                        'branch_total': Decimal('0'),
+                        'branch_saving': Decimal('0'),
+                    }
 
-            branch_groups[branch_key]['items'].append({
+            branch_groups[group_key]['items'].append({
                 'item_id':      item.id,
                 'product_name': item.product.name if item.product else item.raw_query,
                 'deal_id':      deal.id,
@@ -470,8 +558,8 @@ class BasketOptimiserService:
                 'line_total':   str(line_total),
                 'saving':       str(saving),
             })
-            branch_groups[branch_key]['branch_total']  += line_total
-            branch_groups[branch_key]['branch_saving'] += saving
+            branch_groups[group_key]['branch_total']  += line_total
+            branch_groups[group_key]['branch_saving'] += saving
 
         # Serialise Decimal → str for JSON storage
         branches_list = []
