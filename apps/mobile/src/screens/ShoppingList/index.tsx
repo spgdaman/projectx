@@ -231,12 +231,17 @@ export function ShoppingListBuilderScreen() {
 
   const [optimising, setOptimising] = useState(false)
   const [listMode, setListMode]     = useState<ShoppingList['mode']>('split')
+  const [budget, setBudget]         = useState('')
 
   const debouncedQuery = useDebounce(query, 300)
   const inputRef       = useRef<TextInput>(null)
 
   useEffect(() => {
-    shoppingListApi.getList(listId).then(l => { setList(l); setListMode(l.mode) })
+    shoppingListApi.getList(listId).then(l => {
+      setList(l)
+      setListMode(l.mode)
+      if (l.budget) setBudget(String(l.budget))
+    })
   }, [listId])
 
   useEffect(() => {
@@ -334,10 +339,24 @@ export function ShoppingListBuilderScreen() {
     } catch { /* silent */ }
   }
 
+  const switchMode = (m: ShoppingList['mode']) => {
+    setListMode(m)
+    if (m !== 'budget') {
+      shoppingListApi.updateList(listId, { mode: m })
+    }
+    // budget mode: mode + budget are saved together in saveBudget
+  }
+
+  const saveBudget = async () => {
+    const amt = parseFloat(budget)
+    if (listMode === 'budget' && amt > 0) {
+      await shoppingListApi.updateList(listId, { mode: 'budget', budget: amt })
+    }
+  }
+
   const handleOptimise = async () => {
-    if (!branches.some(b => b.is_preferred)) {
-      Alert.alert('Select branches', 'Please select at least one branch first.')
-      setShowBranches(true)
+    if (listMode === 'budget' && (!budget || parseFloat(budget) <= 0)) {
+      Alert.alert('Budget required', 'Enter a budget amount (KES) before finding deals.')
       return
     }
     setOptimising(true)
@@ -346,7 +365,9 @@ export function ShoppingListBuilderScreen() {
       navigation.navigate('ShoppingListResult', { listId, result })
     } catch (e: unknown) {
       const err = e as { body?: string }
-      Alert.alert('Error', err.body || 'Optimisation failed.')
+      let msg = 'Optimisation failed — please try again.'
+      try { msg = JSON.parse(err.body ?? '').detail ?? msg } catch { /* keep default */ }
+      Alert.alert('Could not optimise', msg)
     } finally {
       setOptimising(false)
     }
@@ -374,7 +395,7 @@ export function ShoppingListBuilderScreen() {
             <TouchableOpacity
               key={m}
               style={[s.modeBtn, listMode === m && s.modeBtnActive]}
-              onPress={() => { setListMode(m); shoppingListApi.updateList(listId, { mode: m }) }}
+              onPress={() => switchMode(m)}
             >
               <Text style={[s.modeBtnText, listMode === m && s.modeBtnTextActive]}>
                 {m === 'split' ? 'Best price' : m === 'single' ? 'One store' : 'Budget'}
@@ -382,6 +403,26 @@ export function ShoppingListBuilderScreen() {
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* Budget input — only shown in budget mode */}
+        {listMode === 'budget' && (
+          <View style={s.budgetRow}>
+            <Text style={s.budgetLabel}>Budget (KES)</Text>
+            <TextInput
+              style={s.budgetInput}
+              value={budget}
+              onChangeText={setBudget}
+              onEndEditing={saveBudget}
+              keyboardType="numeric"
+              placeholder="e.g. 5000"
+              placeholderTextColor={T.textHint}
+              returnKeyType="done"
+            />
+            {!!budget && parseFloat(budget) > 0 && (
+              <Text style={s.budgetAmount}>{formatKES(parseFloat(budget))}</Text>
+            )}
+          </View>
+        )}
 
         {/* Search input */}
         <View style={s.searchWrap}>
@@ -407,7 +448,7 @@ export function ShoppingListBuilderScreen() {
           </View>
 
           {showSugg && (
-            <View style={s.suggestions}>
+            <ScrollView style={s.suggestions} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
               {suggestions.map(sug => (
                 <TouchableOpacity key={sug.product_id} style={s.suggItem} onPress={() => selectSuggestion(sug)}>
                   <View style={{ flex: 1 }}>
@@ -427,7 +468,7 @@ export function ShoppingListBuilderScreen() {
                   </View>
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
           )}
         </View>
 
@@ -475,7 +516,10 @@ export function ShoppingListBuilderScreen() {
             style={s.sectionHeader}
             onPress={showBranches ? () => setShowBranches(false) : loadBranches}
           >
-            <Text style={s.sectionTitle}>Select branches</Text>
+            <View>
+              <Text style={s.sectionTitle}>Select branches</Text>
+              <Text style={s.sectionSubtitle}>Optional — leave unchecked to search all retailers</Text>
+            </View>
             {locationLoading
               ? <ActivityIndicator size="small" color={T.primary} />
               : <Text style={s.chevron}>{showBranches ? '▲' : '▼'}</Text>
@@ -776,7 +820,7 @@ const s = StyleSheet.create({
   searchInput:     { flex: 1, height: 44, fontSize: 14, color: T.text },
   addBtn:          { backgroundColor: T.primary, borderRadius: T.radiusSm, paddingHorizontal: 12, paddingVertical: 6, marginVertical: 6 },
   addBtnText:      { color: '#fff', fontSize: 13, fontWeight: '600' },
-  suggestions:     { backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border, borderRadius: T.radius, marginTop: 4, overflow: 'hidden' },
+  suggestions:     { backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border, borderRadius: T.radius, marginTop: 4, overflow: 'hidden', maxHeight: 260 },
   suggItem:        { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 0.5, borderBottomColor: T.border },
   suggName:        { fontSize: 13, fontWeight: '500', color: T.text, marginBottom: 3 },
   suggCat:         { fontSize: 11, color: T.textHint, marginLeft: 4 },
@@ -784,7 +828,12 @@ const s = StyleSheet.create({
   badgeRow:        { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 2 },
   sectionHeader:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 },
   sectionTitle:    { fontSize: 13, fontWeight: '600', color: T.textSub, textTransform: 'uppercase', letterSpacing: 0.5 },
+  sectionSubtitle: { fontSize: 11, color: T.textHint, marginTop: 1 },
   chevron:         { fontSize: 12, color: T.textSub },
+  budgetRow:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 12, gap: 10 },
+  budgetLabel:     { fontSize: 13, color: T.textSub, fontWeight: '500', flexShrink: 0 },
+  budgetInput:     { flex: 1, height: 40, borderWidth: 0.5, borderColor: T.border, borderRadius: T.radiusSm, paddingHorizontal: 12, fontSize: 14, color: T.text, backgroundColor: T.bg },
+  budgetAmount:    { fontSize: 13, fontWeight: '600', color: T.primary, flexShrink: 0 },
   emptyItems:      { fontSize: 13, color: T.textHint, paddingVertical: 12, textAlign: 'center' },
   itemRow:         { flexDirection: 'row', alignItems: 'center', backgroundColor: T.bg, borderRadius: T.radiusSm, padding: 12, marginBottom: 8, borderWidth: 0.5, borderColor: T.border, gap: 8 },
   itemRowUnmatched: { borderColor: T.amber, backgroundColor: T.amberLight },
