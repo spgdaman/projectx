@@ -43,15 +43,19 @@ def scrape_quickmart_all():
     """Fan-out: fires one scrape_quickmart_branch task per active branch."""
     from core.models import RetailerBranch
 
-    branches = RetailerBranch.objects.filter(
-        retailer__name='Quickmart',
-        is_active=True,
-    ).values('name', 'external_id')
+    # external_id stores the full branch URL e.g. https://quickmart.co.ke/5301
+    branches = list(
+        RetailerBranch.objects.filter(
+            retailer__name='Quickmart',
+            is_active=True,
+            external_id__isnull=False,
+        ).values('name', 'external_id')
+    )
 
     if not branches:
         logger.warning(
-            '[Quickmart] No active branches — add them via Django admin '
-            'or run scrapers.tasks.discover_quickmart_branches'
+            '[Quickmart] No active branches with URLs — '
+            'run scrapers.tasks.discover_quickmart_branches first'
         )
         return {'enqueued': 0}
 
@@ -71,12 +75,17 @@ def scrape_quickmart_all():
     queue='quickmart-queue',
     name='scrapers.tasks.scrape_quickmart_branch',
 )
-def scrape_quickmart_branch(self, branch_name: str, branch_external_id: str = None):
+def scrape_quickmart_branch(self, branch_name: str, branch_url: str):
+    """
+    Scrape one Quickmart branch.
+    branch_url  — full URL, e.g. https://quickmart.co.ke/5301
+                  stored in RetailerBranch.external_id
+    """
     from scrapers.quickmart import QuickmartBranchScraper
     try:
         run = QuickmartBranchScraper(
             branch_name=branch_name,
-            branch_external_id=branch_external_id,
+            branch_url=branch_url,
         ).run()
         return {
             'retailer': 'Quickmart',
@@ -116,23 +125,21 @@ def scrape_carrefour(self):
         raise self.retry(exc=exc)
 
 
-# ── One-time: seed Quickmart branches ─────────────────────────────────────── #
+# ── One-time: seed Quickmart branches via Playwright ─────────────────────── #
 
 @shared_task(name='scrapers.tasks.discover_quickmart_branches')
 def discover_quickmart_branches():
     """
-    Scrapes the Quickmart store locator and populates RetailerBranch.
-    Run once before starting the beat schedule:
+    Use Playwright to scrape quickmart.co.ke/shops and populate RetailerBranch.
+    Stores the full branch URL in external_id so scrape_quickmart_branch
+    can navigate directly.
 
+    Run once before the beat schedule:
       python manage.py shell
       >>> from scrapers.tasks import discover_quickmart_branches
       >>> discover_quickmart_branches()
-
-    If this fails (selector mismatch), add branches manually in
-    Django admin → Core → Retailer branches.
     """
-    import requests
-    from bs4 import BeautifulSoup
+    from playwright.sync_api import sync_playwright
     from core.models import Retailer, RetailerBranch
 
     try:
@@ -141,41 +148,38 @@ def discover_quickmart_branches():
         logger.error('[Quickmart] Retailer not in DB — create it in Django admin first')
         return {'error': 'Retailer not found'}
 
-    HEADERS = {
-        'User-Agent': (
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-            '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-        )
-    }
-
-    created = 0
     try:
-        resp = requests.get('https://www.quickmart.co.ke/stores', headers=HEADERS, timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, 'html.parser')
-
-        els = (
-            soup.select('.store-name')
-            or soup.select('.location-name')
-            or soup.select('h3.branch-title')
-            or soup.select('[class*="store"] h3')
-        )
-
-        for el in els:
-            name = el.get_text(strip=True)
-            if name:
-                _, was_created = RetailerBranch.objects.get_or_create(
-                    retailer=retailer,
-                    name=name,
-                    defaults={'is_active': True},
-                )
-                if was_created:
-                    created += 1
-
-        logger.info('[Quickmart] Branch discovery: %d new branches created', created)
-
+        from scrapers.quickmart import discover_branches, UA
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            ctx = browser.new_context(
+                user_agent=UA,
+                viewport={'width': 1280, 'height': 900},
+            )
+            page = ctx.new_page()
+            branches = discover_branches(page)
+            browser.close()
     except Exception as e:
         logger.error('[Quickmart] Branch discovery failed: %s', e)
-        logger.info('Add branches manually: Django admin → Core → Retailer branches')
+        return {'error': str(e)}
 
-    return {'created': created}
+    created = updated = 0
+    for b in branches:
+        obj, was_created = RetailerBranch.objects.get_or_create(
+            retailer=retailer,
+            name=b['name'],
+            defaults={
+                'is_active':   True,
+                'external_id': b['url'],  # full URL e.g. https://quickmart.co.ke/5301
+            },
+        )
+        if was_created:
+            created += 1
+        elif obj.external_id != b['url']:
+            # Update URL if it changed
+            obj.external_id = b['url']
+            obj.save(update_fields=['external_id'])
+            updated += 1
+
+    logger.info('[Quickmart] Branch discovery: %d created, %d updated', created, updated)
+    return {'total': len(branches), 'created': created, 'updated': updated}
