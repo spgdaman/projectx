@@ -217,10 +217,10 @@ class BaseScraper:
             )
 
             try:
-                page.goto(url, wait_until='networkidle', timeout=30_000)
-                for _ in range(4):
-                    page.keyboard.press('End')
-                    page.wait_for_timeout(1_200)
+                # domcontentloaded avoids hanging on sites with persistent
+                # WebSocket / analytics connections (networkidle never fires)
+                page.goto(url, wait_until='domcontentloaded', timeout=30_000)
+                page.wait_for_timeout(2_000)
                 items = self.scrape_web(page)
             finally:
                 browser.close()

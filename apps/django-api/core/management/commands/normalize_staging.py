@@ -159,10 +159,15 @@ class Command(BaseCommand):
             if dry_run or not deals_to_upsert:
                 deals_to_upsert.clear()
                 return
-            # PostgreSQL upsert: INSERT ... ON CONFLICT (product_id, retailer_id)
-            # DO UPDATE SET current_price=…, old_price=…, link=…, scraped_at=…
+            # Deduplicate within the batch — ON CONFLICT DO UPDATE cannot affect
+            # the same row twice in one statement (e.g. same product scraped from
+            # multiple Quickmart branches ends up in the same 500-row flush).
+            # Keep the last occurrence (most recently scraped) per (product, retailer).
+            seen: dict[tuple, Deal] = {}
+            for d in deals_to_upsert:
+                seen[(d.product_id, d.retailer_id)] = d
             Deal.objects.bulk_create(
-                deals_to_upsert,
+                list(seen.values()),
                 update_conflicts=True,
                 unique_fields=['product', 'retailer'],
                 update_fields=['current_price', 'old_price', 'link', 'scraped_at', 'branch'],

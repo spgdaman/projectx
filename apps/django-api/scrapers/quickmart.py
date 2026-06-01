@@ -53,7 +53,7 @@ UA = (
     '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 )
 
-_BRANCH_NAME_RE = re.compile(r'switch to (.+?) \?', re.IGNORECASE)
+_BRANCH_NAME_RE = re.compile(r'switch to (.+?)\s*\?', re.IGNORECASE)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────── #
@@ -166,9 +166,15 @@ def get_categories(page, branch_url: str) -> list[dict]:
     ]:
         el = page.query_selector(sel)
         if el:
-            el.click()
-            page.wait_for_timeout(1500)
-            opened = True
+            if not el.is_enabled():
+                logger.debug('[Quickmart/%s] Categories button disabled — inactive branch', branch_url)
+                return []
+            try:
+                el.click(timeout=8_000)
+                page.wait_for_timeout(1500)
+                opened = True
+            except Exception:
+                pass
             break
 
     if not opened:
