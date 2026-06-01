@@ -350,9 +350,10 @@ class BasketOptimiserService:
         # Sort by discount % desc — biggest savings first
         candidates.sort(key=lambda c: c['discount'], reverse=True)
 
-        spent      = Decimal('0')
-        assignment = {}
-        unmatched  = []
+        spent        = Decimal('0')
+        assignment   = {}
+        unmatched    = []   # items with no deal found at any source
+        over_budget  = []   # items with deals that don't fit the budget
 
         for c in candidates:
             if c['deal'] is None:
@@ -365,13 +366,26 @@ class BasketOptimiserService:
                 assignment[c['item'].id] = (c['branch'], c['deal'])
                 spent += line_total
             else:
-                unmatched.append(c['item'].raw_query)
-                assignment[c['item'].id] = (None, None)
+                # Has a deal but won't fit — track separately so the UI can
+                # show a helpful "remove or increase budget" prompt
+                deal = c['deal']
+                item = c['item']
+                over_budget.append({
+                    'item_id':      item.id,
+                    'raw_query':    item.raw_query,
+                    'product_name': item.product.name if item.product else item.raw_query,
+                    'price':        str(deal.current_price),
+                    'old_price':    str(deal.old_price) if deal.old_price else None,
+                    'qty':          item.qty,
+                    'line_total':   str(deal.current_price * item.qty),
+                })
+                assignment[item.id] = (None, None)
 
         return self._build_plan(
             items=items,
             assignment=assignment,
             extra_unmatched=unmatched,
+            over_budget_items=over_budget,
         )
 
     # ── Helpers ──────────────────────────────────────────────────────── #
@@ -484,6 +498,7 @@ class BasketOptimiserService:
         items: list,
         assignment: dict,
         extra_unmatched: list = None,
+        over_budget_items: list = None,
     ) -> dict:
         """
         Builds the branch_plan JSON structure stored in ListOptimisationResult.
@@ -569,20 +584,22 @@ class BasketOptimiserService:
             branches_list.append(bg)
 
         return {
-            'branches':        branches_list,
-            'grand_total':     str(grand_total),
-            'total_saving':    str(total_saving),
-            'unmatched_items': unmatched,
+            'branches':          branches_list,
+            'grand_total':       str(grand_total),
+            'total_saving':      str(total_saving),
+            'unmatched_items':   unmatched,
+            'over_budget_items': list(over_budget_items or []),
         }
 
     def _empty_plan(self) -> dict:
         return {
-            'branches':        [],
-            'grand_total':     '0.00',
-            'total_saving':    '0.00',
-            'unmatched_items': [
+            'branches':          [],
+            'grand_total':       '0.00',
+            'total_saving':      '0.00',
+            'unmatched_items':   [
                 i.raw_query for i in self.list.items.filter(is_matched=False)
             ],
+            'over_budget_items': [],
         }
 
     def _save_result(self, plan: dict, mode: str):

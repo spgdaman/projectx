@@ -18,7 +18,7 @@
  *   <Stack.Screen name="ShoppingListResult"  component={ShoppingListResultScreen} />
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   View,
   Text,
@@ -552,7 +552,35 @@ export function ShoppingListResultScreen() {
     result: OptimisationResult
   }
 
-  const [result] = useState<OptimisationResult>(initialResult)
+  const [result, setResult]   = useState<OptimisationResult>(initialResult)
+  const [removing, setRemoving] = useState<number | null>(null)
+
+  const overBudget  = result.branch_plan.over_budget_items ?? []
+  const totalSaving = parseFloat(result.branch_plan.total_saving)
+  const grandTotal  = parseFloat(result.branch_plan.grand_total)
+  const savingPct   = grandTotal + totalSaving > 0
+    ? Math.round(totalSaving / (grandTotal + totalSaving) * 100)
+    : 0
+
+  const removeOverBudgetItem = async (itemId: number) => {
+    setRemoving(itemId)
+    try {
+      await shoppingListApi.removeItem(listId, itemId)
+      setResult(prev => ({
+        ...prev,
+        branch_plan: {
+          ...prev.branch_plan,
+          over_budget_items: prev.branch_plan.over_budget_items.filter(
+            i => i.item_id !== itemId,
+          ),
+        },
+      }))
+    } catch {
+      Alert.alert('Error', 'Could not remove item.')
+    } finally {
+      setRemoving(null)
+    }
+  }
 
   const handleShare = async () => {
     const lines: string[] = ['🛒 Bargain Hunters — Shopping List\n']
@@ -567,8 +595,13 @@ export function ShoppingListResultScreen() {
       lines.push(`  Subtotal: ${formatKES(group.branch_total)}`)
       lines.push('')
     }
-    lines.push(`Total: ${formatKES(result.branch_plan.grand_total)}`)
-    lines.push(`You save: ${formatKES(result.branch_plan.total_saving)}`)
+    if (overBudget.length) {
+      lines.push('⚠ Items beyond budget (not included):')
+      overBudget.forEach(i => lines.push(`  • ${i.product_name}  KES ${i.line_total}`))
+      lines.push('')
+    }
+    lines.push(`Grand total:  ${formatKES(result.branch_plan.grand_total)}`)
+    lines.push(`You save:     ${formatKES(result.branch_plan.total_saving)} (${savingPct}% off)`)
     await Share.share({ message: lines.join('\n') })
   }
 
@@ -626,16 +659,76 @@ export function ShoppingListResultScreen() {
         }
 
         ListFooterComponent={
-          <View style={s.resultFooter}>
-            <View style={s.totalRow}>
-              <Text style={s.totalLabel}>Total savings</Text>
-              <Text style={s.totalSaving}>{formatKES(result.branch_plan.total_saving)}</Text>
+          <>
+            {/* Grand total card */}
+            <View style={s.resultFooter}>
+              {totalSaving > 0 && (
+                <View style={s.totalRow}>
+                  <Text style={s.totalLabel}>Total savings</Text>
+                  <Text style={s.totalSaving}>
+                    −{formatKES(result.branch_plan.total_saving)}
+                    {savingPct > 0 && ` (${savingPct}% off)`}
+                  </Text>
+                </View>
+              )}
+              <View style={[s.totalRow, { borderTopWidth: 0.5, borderTopColor: T.border, marginTop: 6, paddingTop: 10 }]}>
+                <Text style={s.grandTotalLabel}>Grand total</Text>
+                <Text style={s.grandTotal}>{formatKES(result.branch_plan.grand_total)}</Text>
+              </View>
             </View>
-            <View style={s.totalRow}>
-              <Text style={s.grandTotalLabel}>Grand total</Text>
-              <Text style={s.grandTotal}>{formatKES(result.branch_plan.grand_total)}</Text>
-            </View>
-          </View>
+
+            {/* Over-budget section */}
+            {overBudget.length > 0 && (
+              <View style={s.overBudgetSection}>
+
+                {/* Banner */}
+                <View style={s.overBudgetBanner}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.overBudgetBannerTitle}>
+                      {overBudget.length} item{overBudget.length !== 1 ? 's' : ''} exceed{overBudget.length === 1 ? 's' : ''} your budget
+                    </Text>
+                    <Text style={s.overBudgetBannerSub}>
+                      Remove them or go back to increase your budget.
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={s.adjustBudgetBtn}
+                    onPress={() => navigation.navigate('ShoppingListBuilder', { listId })}
+                  >
+                    <Text style={s.adjustBudgetBtnText}>Adjust budget</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Over-budget line items */}
+                {overBudget.map(item => (
+                  <View key={item.item_id} style={s.overBudgetItem}>
+                    <View style={{ flex: 1, marginRight: 8 }}>
+                      <Text style={s.overBudgetName} numberOfLines={1}>
+                        {item.product_name}
+                      </Text>
+                      <Text style={s.overBudgetLabel}>Doesn't fit your budget</Text>
+                    </View>
+
+                    <View style={{ alignItems: 'flex-end', marginRight: 10 }}>
+                      <Text style={s.overBudgetPrice}>{formatKES(item.line_total)}</Text>
+                      <Text style={s.overBudgetQty}>× {item.qty} @ {formatKES(item.price)}</Text>
+                    </View>
+
+                    <TouchableOpacity
+                      style={s.removeOverBudgetBtn}
+                      onPress={() => removeOverBudgetItem(item.item_id)}
+                      disabled={removing === item.item_id}
+                    >
+                      {removing === item.item_id
+                        ? <ActivityIndicator size="small" color={T.danger} />
+                        : <Text style={s.removeOverBudgetBtnText}>Remove</Text>
+                      }
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )}
+          </>
         }
       />
 
@@ -739,4 +832,19 @@ const s = StyleSheet.create({
   totalSaving:         { fontSize: 15, fontWeight: '600', color: T.primary },
   grandTotalLabel:     { fontSize: 15, fontWeight: '600', color: T.text },
   grandTotal:          { fontSize: 20, fontWeight: '700', color: T.text },
+
+  // Over-budget section
+  overBudgetSection:      { marginHorizontal: 16, marginBottom: 16, borderRadius: T.radius, borderWidth: 1.5, borderColor: T.danger, overflow: 'hidden' },
+  overBudgetBanner:       { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, backgroundColor: T.dangerLight },
+  overBudgetBannerTitle:  { fontSize: 13, fontWeight: '600', color: T.danger, marginBottom: 2 },
+  overBudgetBannerSub:    { fontSize: 11, color: T.danger, opacity: 0.85 },
+  adjustBudgetBtn:        { paddingHorizontal: 10, paddingVertical: 6, borderRadius: T.radiusSm, borderWidth: 1, borderColor: T.danger, backgroundColor: '#fff' },
+  adjustBudgetBtnText:    { fontSize: 11, fontWeight: '700', color: T.danger },
+  overBudgetItem:         { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10, borderTopWidth: 0.5, borderTopColor: T.danger, backgroundColor: T.dangerLight },
+  overBudgetName:         { fontSize: 13, fontWeight: '500', color: T.danger, textDecorationLine: 'line-through' },
+  overBudgetLabel:        { fontSize: 10, color: T.danger, opacity: 0.75, marginTop: 1 },
+  overBudgetPrice:        { fontSize: 13, fontWeight: '600', color: T.danger },
+  overBudgetQty:          { fontSize: 10, color: T.danger, opacity: 0.75, marginTop: 1 },
+  removeOverBudgetBtn:    { paddingHorizontal: 10, paddingVertical: 6, borderRadius: T.radiusSm, borderWidth: 1, borderColor: T.danger, backgroundColor: '#fff', minWidth: 62, alignItems: 'center' },
+  removeOverBudgetBtnText: { fontSize: 11, fontWeight: '700', color: T.danger },
 })

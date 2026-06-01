@@ -97,6 +97,16 @@ export interface BranchPlanItem {
   saving:       string
 }
 
+export interface OverBudgetItem {
+  item_id:      number
+  raw_query:    string
+  product_name: string
+  price:        string
+  old_price:    string | null
+  qty:          number
+  line_total:   string
+}
+
 export interface BranchPlanGroup {
   branch_id:     number
   branch_name:   string
@@ -112,10 +122,11 @@ export interface OptimisationResult {
   grand_total: string
   total_saving: string
   branch_plan: {
-    branches:        BranchPlanGroup[]
-    grand_total:     string
-    total_saving:    string
-    unmatched_items: string[]
+    branches:          BranchPlanGroup[]
+    grand_total:       string
+    total_saving:      string
+    unmatched_items:   string[]
+    over_budget_items: OverBudgetItem[]
   }
   computed_at: string
   is_stale:    boolean

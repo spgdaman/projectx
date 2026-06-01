@@ -79,7 +79,7 @@ export function ShoppingListPage() {
     setTimeout(() => nameInputRef.current?.focus(), 50)
   }
 
-  const createList = async (e: React.FormEvent) => {
+  const createList = async (e: { preventDefault(): void }) => {
     e.preventDefault()
     const name = newListName.trim() || 'My shopping list'
     setCreating(true)
@@ -227,6 +227,7 @@ export function ShoppingListPage() {
             {view === 'result' && result && activeListId && (
               <ShoppingListResult
                 result={result}
+                listId={activeListId}
                 onBack={() => setResult(null)}
                 onEdit={() => setResult(null)}
               />
@@ -314,7 +315,7 @@ function ShoppingListBuilder({
     )
   }
 
-  const addByTyping = async (e: React.FormEvent) => {
+  const addByTyping = async (e: { preventDefault(): void }) => {
     e.preventDefault()
     if (!query.trim()) return
     const raw = query.trim(); setQuery(''); setShowSugg(false)
@@ -639,20 +640,44 @@ function ShoppingListBuilder({
 // ════════════════════════════════════════════════════════════════════════════ //
 
 function ShoppingListResult({
-  result,
+  result: initialResult,
+  listId,
   onBack: _onBack,
   onEdit,
 }: {
   result: OptimisationResult
+  listId: number
   onBack: () => void
   onEdit: () => void
 }) {
+  const [result, setResult] = useState(initialResult)
+  const [removing, setRemoving] = useState<number | null>(null)
+
   const plan        = result.branch_plan
+  const overBudget  = plan.over_budget_items ?? []
   const totalSaving = parseFloat(plan.total_saving)
   const grandTotal  = parseFloat(plan.grand_total)
   const savingPct   = grandTotal + totalSaving > 0
     ? Math.round(totalSaving / (grandTotal + totalSaving) * 100)
     : 0
+
+  const removeOverBudgetItem = async (itemId: number) => {
+    setRemoving(itemId)
+    try {
+      await shoppingListApi.removeItem(listId, itemId)
+      setResult(prev => ({
+        ...prev,
+        branch_plan: {
+          ...prev.branch_plan,
+          over_budget_items: prev.branch_plan.over_budget_items.filter(
+            i => i.item_id !== itemId,
+          ),
+        },
+      }))
+    } finally {
+      setRemoving(null)
+    }
+  }
 
   const handleShare = () => {
     const lines: string[] = ['🛒 Bargain Hunters Shopping List\n']
@@ -850,6 +875,67 @@ function ShoppingListResult({
           <span className="text-2xl font-bold text-gray-900">{formatKES(plan.grand_total)}</span>
         </div>
       </div>
+
+      {/* Over-budget items */}
+      {overBudget.length > 0 && (
+        <div className="border-t-4 border-red-200">
+
+          {/* Banner */}
+          <div className="px-5 py-4 bg-red-50 flex items-start gap-3">
+            <span className="text-red-400 text-lg mt-px">⚠</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-red-700">
+                {overBudget.length} item{overBudget.length !== 1 ? 's' : ''} exceed{overBudget.length === 1 ? 's' : ''} your budget
+              </p>
+              <p className="text-xs text-red-600 mt-0.5">
+                Remove them from your list, or go back and increase your budget to include them in your plan.
+              </p>
+            </div>
+            <button
+              onClick={onEdit}
+              className="flex-shrink-0 px-3 py-1.5 text-xs font-semibold bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+            >
+              Adjust budget
+            </button>
+          </div>
+
+          {/* Column labels */}
+          <div className="px-5 py-1.5 grid grid-cols-[1fr_3rem_6rem_6rem_auto] gap-x-3 bg-red-50 border-t border-red-100">
+            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide">Item</span>
+            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Qty</span>
+            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Unit price</span>
+            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Total</span>
+            <span />
+          </div>
+
+          {/* Over-budget line items */}
+          {overBudget.map(item => (
+            <div
+              key={item.item_id}
+              className="px-5 py-3 grid grid-cols-[1fr_3rem_6rem_6rem_auto] gap-x-3 items-center bg-red-50 border-t border-red-100"
+            >
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-red-400 line-through truncate">
+                  {item.product_name}
+                </p>
+                <p className="text-[11px] text-red-400 mt-0.5">
+                  Doesn't fit your budget
+                </p>
+              </div>
+              <span className="text-sm text-red-300 text-right tabular-nums">{item.qty}</span>
+              <span className="text-sm text-red-300 text-right tabular-nums">{formatKES(item.price)}</span>
+              <span className="text-sm font-semibold text-red-400 text-right tabular-nums">{formatKES(item.line_total)}</span>
+              <button
+                onClick={() => removeOverBudgetItem(item.item_id)}
+                disabled={removing === item.item_id}
+                className="px-2.5 py-1 text-[11px] font-semibold bg-white border border-red-300 text-red-500 rounded hover:bg-red-50 disabled:opacity-50 transition-colors whitespace-nowrap"
+              >
+                {removing === item.item_id ? '...' : 'Remove'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
