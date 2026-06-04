@@ -13,7 +13,9 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /repo
 
+# Copy root + workspace-local node_modules (npm doesn't always hoist to root)
 COPY --from=deps /repo/node_modules ./node_modules
+COPY --from=deps /repo/apps/web/node_modules ./apps/web/node_modules
 COPY --from=deps /repo/packages/api-client/package.json ./packages/api-client/package.json
 COPY packages/api-client/ ./packages/api-client/
 COPY apps/web/ ./apps/web/
@@ -23,9 +25,7 @@ WORKDIR /repo/apps/web
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Call next directly via full path — npm workspaces don't add the root
-# node_modules/.bin to PATH when running scripts in a sub-workspace.
-RUN /repo/node_modules/.bin/next build
+RUN ./node_modules/.bin/next build
 
 # ── Stage 3: production runner ────────────────────────────────────────────────
 FROM node:20-alpine AS runner
