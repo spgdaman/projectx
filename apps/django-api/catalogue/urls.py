@@ -1,7 +1,14 @@
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import path, include
 
+
+def health(request):
+    return JsonResponse({"status": "ok"})
+
+
 urlpatterns = [
+    path("health/", health),
     path("admin/", admin.site.urls),
     # Versioned REST API — consumed by mobile, web, and n8n
     path("api/v1/", include("core.api.urls")),
