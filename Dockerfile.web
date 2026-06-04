@@ -19,11 +19,12 @@ COPY packages/api-client/ ./packages/api-client/
 COPY apps/web/ ./apps/web/
 COPY package.json ./package.json
 
-WORKDIR /repo/apps/web
+WORKDIR /repo
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+# Run build from workspace root so node_modules/.bin is on PATH
+RUN npm run build --workspace=apps/web
 
 # ── Stage 3: production runner ────────────────────────────────────────────────
 FROM node:20-alpine AS runner
