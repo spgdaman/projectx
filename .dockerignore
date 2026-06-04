@@ -23,7 +23,16 @@ htmlcov
 apps/mobile
 apps/django-api/db.sqlite3
 apps/django-api/quickmart_output
-apps/django-api/*.py
+# Exclude standalone debug/scraper scripts but NOT manage.py
+apps/django-api/check_*.py
+apps/django-api/inspect_*.py
+apps/django-api/cleanup_*.py
+apps/django-api/count_*.py
+apps/django-api/rediscover_*.py
+apps/django-api/scrape_*.py
+apps/django-api/test_*.py
+apps/django-api/quickmart_*.py
+apps/django-api/quickmart_v2.py
 scraper
 shopping_list
 shopping_list_ui
