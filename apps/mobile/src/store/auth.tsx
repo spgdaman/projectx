@@ -44,15 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    SecureStore.getItemAsync('access_token').then((token) => {
-      if (!token) { setIsLoading(false); return; }
-      fetchMe()
-        .catch(async () => {
+    async function checkAuth() {
+      try {
+        const token = await SecureStore.getItemAsync('access_token');
+        if (!token) return;
+        await fetchMe();
+      } catch {
+        try {
           await SecureStore.deleteItemAsync('access_token');
           await SecureStore.deleteItemAsync('refresh_token');
-        })
-        .finally(() => setIsLoading(false));
-    });
+        } catch {}
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    checkAuth();
   }, [fetchMe]);
 
   const login = useCallback(async (phone: string, password: string) => {

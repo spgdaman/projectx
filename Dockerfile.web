@@ -1,0 +1,50 @@
+# ── Stage 1: install dependencies ────────────────────────────────────────────
+FROM node:20-alpine AS deps
+WORKDIR /repo
+
+# Copy workspace manifests so npm can resolve workspaces
+COPY package.json package-lock.json ./
+COPY packages/api-client/package.json ./packages/api-client/package.json
+COPY apps/web/package.json ./apps/web/package.json
+
+RUN npm ci
+
+# ── Stage 2: build ────────────────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+WORKDIR /repo
+
+COPY --from=deps /repo/node_modules ./node_modules
+COPY --from=deps /repo/packages/api-client/package.json ./packages/api-client/package.json
+COPY packages/api-client/ ./packages/api-client/
+COPY apps/web/ ./apps/web/
+COPY package.json ./package.json
+
+WORKDIR /repo/apps/web
+
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN npm run build
+
+# ── Stage 3: production runner ────────────────────────────────────────────────
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs
+
+# next build --output standalone copies only what's needed
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/public ./apps/web/public
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000 \
+    HOSTNAME="0.0.0.0"
+
+CMD ["node", "apps/web/server.js"]

@@ -1,0 +1,200 @@
+# ── Celery default queue ──────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-default
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-default
+  template:
+    metadata:
+      labels:
+        app: celery-default
+    spec:
+      containers:
+        - name: celery-default
+          image: localhost:5000/bargainhunters-celery:latest
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "default", "-c", "2", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+# ── Celery Naivas queue ───────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-naivas
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-naivas
+  template:
+    metadata:
+      labels:
+        app: celery-naivas
+    spec:
+      containers:
+        - name: celery-naivas
+          image: localhost:5000/bargainhunters-celery:latest
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "naivas-queue", "-c", "3", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+# ── Celery Carrefour queue ────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-carrefour
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-carrefour
+  template:
+    metadata:
+      labels:
+        app: celery-carrefour
+    spec:
+      containers:
+        - name: celery-carrefour
+          image: localhost:5000/bargainhunters-celery:latest
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "carrefour-queue", "-c", "5", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+# ── Celery Quickmart queue ────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-quickmart
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-quickmart
+  template:
+    metadata:
+      labels:
+        app: celery-quickmart
+    spec:
+      containers:
+        - name: celery-quickmart
+          image: localhost:5000/bargainhunters-celery:latest
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "quickmart-queue", "-c", "10", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: celery-quickmart-hpa
+  namespace: bargainhunters
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: celery-quickmart
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+# ── Celery Beat (scheduler) ───────────────────────────────────────────────────
+# IMPORTANT: replicas is hard-locked to 1 and must NEVER be increased.
+# Multiple beat instances would fire duplicate scheduled scraper tasks,
+# causing duplicate DB writes and corrupt scrape-run state.
+# Do NOT add an HPA to this deployment.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-beat
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-beat
+  strategy:
+    # Recreate (not RollingUpdate) prevents two beat processes overlapping
+    # during a deploy — an overlapping pair would also fire duplicate tasks.
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: celery-beat
+    spec:
+      containers:
+        - name: celery-beat
+          image: localhost:5000/bargainhunters-celery:latest
+          command:
+            - celery
+            - -A
+            - catalogue
+            - beat
+            - -l
+            - info
+            - --scheduler
+            - django_celery_beat.schedulers:DatabaseScheduler
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"

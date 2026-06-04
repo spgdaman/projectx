@@ -1,0 +1,132 @@
+name: Build & Deploy to K3s
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:   # allow manual trigger from GitHub UI
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false   # never cancel an in-flight deploy
+
+jobs:
+  deploy:
+    name: Build images → push to registry → deploy to K3s
+    runs-on: self-hosted   # the runner registered on the Contabo VPS
+    timeout-minutes: 30
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Set short SHA for image tagging ───────────────────────────────────
+      - name: Set image tag
+        id: tag
+        run: echo "sha=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      # ── 3. Build Django image ─────────────────────────────────────────────────
+      - name: Build Django image
+        run: |
+          docker build \
+            -f Dockerfile.django \
+            -t localhost:5000/bargainhunters-django:${{ steps.tag.outputs.sha }} \
+            -t localhost:5000/bargainhunters-django:latest \
+            .
+
+      # ── 4. Build Celery image ─────────────────────────────────────────────────
+      - name: Build Celery image
+        run: |
+          docker build \
+            -f Dockerfile.celery \
+            -t localhost:5000/bargainhunters-celery:${{ steps.tag.outputs.sha }} \
+            -t localhost:5000/bargainhunters-celery:latest \
+            .
+
+      # ── 5. Build Next.js web image ────────────────────────────────────────────
+      - name: Build Web image
+        run: |
+          docker build \
+            -f Dockerfile.web \
+            -t localhost:5000/bargainhunters-web:${{ steps.tag.outputs.sha }} \
+            -t localhost:5000/bargainhunters-web:latest \
+            .
+
+      # ── 6. Push all images to local registry ──────────────────────────────────
+      - name: Push images to local registry
+        run: |
+          docker push localhost:5000/bargainhunters-django:${{ steps.tag.outputs.sha }}
+          docker push localhost:5000/bargainhunters-django:latest
+          docker push localhost:5000/bargainhunters-celery:${{ steps.tag.outputs.sha }}
+          docker push localhost:5000/bargainhunters-celery:latest
+          docker push localhost:5000/bargainhunters-web:${{ steps.tag.outputs.sha }}
+          docker push localhost:5000/bargainhunters-web:latest
+
+      # ── 7. Apply / update K8s secret from GitHub secrets ─────────────────────
+      - name: Apply K8s secret
+        run: |
+          kubectl create secret generic bargainhunters-secret \
+            --namespace=bargainhunters \
+            --from-literal=SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            --from-literal=REDIS_URL="${{ secrets.REDIS_URL }}" \
+            --from-literal=CELERY_BROKER_URL="${{ secrets.CELERY_BROKER_URL }}" \
+            --from-literal=CELERY_RESULT_BACKEND="${{ secrets.CELERY_RESULT_BACKEND }}" \
+            --from-literal=MPESA_CONSUMER_KEY="${{ secrets.MPESA_CONSUMER_KEY }}" \
+            --from-literal=MPESA_CONSUMER_SECRET="${{ secrets.MPESA_CONSUMER_SECRET }}" \
+            --from-literal=MPESA_CALLBACK_URL="${{ secrets.MPESA_CALLBACK_URL }}" \
+            --save-config \
+            --dry-run=client \
+            -o yaml \
+          | kubectl apply -f -
+
+      # ── 8. Apply infrastructure manifests (idempotent) ────────────────────────
+      - name: Apply K8s manifests
+        run: |
+          kubectl apply -f k8s/00-namespace.yaml
+          kubectl apply -f k8s/01-configmap.yaml
+          kubectl apply -f k8s/03-postgres.yaml
+          kubectl apply -f k8s/04-redis.yaml
+          kubectl apply -f k8s/05-django.yaml
+          kubectl apply -f k8s/06-celery.yaml
+          kubectl apply -f k8s/07-web.yaml
+          kubectl apply -f k8s/08-ingress.yaml
+
+      # ── 9. Rolling restart to pull :latest images ─────────────────────────────
+      - name: Rollout restart all deployments
+        run: |
+          kubectl rollout restart deployment/django          -n bargainhunters
+          kubectl rollout restart deployment/celery-default  -n bargainhunters
+          kubectl rollout restart deployment/celery-naivas   -n bargainhunters
+          kubectl rollout restart deployment/celery-carrefour -n bargainhunters
+          kubectl rollout restart deployment/celery-quickmart -n bargainhunters
+          kubectl rollout restart deployment/celery-beat     -n bargainhunters
+          kubectl rollout restart deployment/web             -n bargainhunters
+
+      # ── 10. Wait for Django to finish rolling out ─────────────────────────────
+      - name: Wait for Django rollout
+        run: |
+          kubectl rollout status deployment/django \
+            -n bargainhunters \
+            --timeout=300s
+
+      # ── 11. Wait for Web rollout ──────────────────────────────────────────────
+      - name: Wait for Web rollout
+        run: |
+          kubectl rollout status deployment/web \
+            -n bargainhunters \
+            --timeout=300s
+
+      # ── 12. Prune old Docker images to keep disk usage in check ───────────────
+      - name: Prune dangling Docker images
+        run: docker image prune -f
+
+      # ── 13. Print deploy summary ──────────────────────────────────────────────
+      - name: Deploy summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  Deploy complete — SHA ${{ steps.tag.outputs.sha }}"
+          echo ""
+          kubectl get pods -n bargainhunters
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -43,6 +43,9 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# ─── K8s secret (contains real credentials — never commit) ───────────────────
+k8s/02-secret.yaml
+
 # ─── Lock files (keep package-lock.json in root for npm workspaces) ───────────
 apps/web/package-lock.json
 apps/mobile/package-lock.json

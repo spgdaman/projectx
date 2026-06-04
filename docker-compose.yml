@@ -1,0 +1,146 @@
+version: "3.9"
+
+# LOCAL DEVELOPMENT ONLY — do NOT use this in production.
+# Production runs on K3s; see k8s/ directory.
+
+services:
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: bargainhunters
+      POSTGRES_USER: bargainhunters
+      POSTGRES_PASSWORD: bargainhunters_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bargainhunters"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Django API ───────────────────────────────────────────────────────────────
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - static_files:/app/staticfiles
+
+  # ── Celery — default queue ───────────────────────────────────────────────────
+  celery-default:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    restart: unless-stopped
+    command: ["celery", "-A", "catalogue", "worker", "-Q", "default", "-c", "2", "-l", "info"]
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery — Naivas scraper queue ────────────────────────────────────────────
+  celery-naivas:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    restart: unless-stopped
+    command: ["celery", "-A", "catalogue", "worker", "-Q", "naivas-queue", "-c", "3", "-l", "info"]
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery — Carrefour scraper queue ─────────────────────────────────────────
+  celery-carrefour:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    restart: unless-stopped
+    command: ["celery", "-A", "catalogue", "worker", "-Q", "carrefour-queue", "-c", "5", "-l", "info"]
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery — Quickmart scraper queue ─────────────────────────────────────────
+  celery-quickmart:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    restart: unless-stopped
+    command: ["celery", "-A", "catalogue", "worker", "-Q", "quickmart-queue", "-c", "10", "-l", "info"]
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery Beat (scheduler) ──────────────────────────────────────────────────
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    restart: unless-stopped
+    command:
+      - celery
+      - -A
+      - catalogue
+      - beat
+      - -l
+      - info
+      - --scheduler
+      - django_celery_beat.schedulers:DatabaseScheduler
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Next.js web app ──────────────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:8000
+    depends_on:
+      - django
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_files:

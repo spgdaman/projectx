@@ -1,0 +1,32 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY apps/django-api/requirements*.txt ./
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && pip install gunicorn==22.0.0 django-celery-beat==2.6.0
+
+# Install Playwright + Chromium for scraper tasks
+RUN pip install playwright && playwright install chromium \
+    && playwright install-deps chromium
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser && chown -R appuser /app
+USER appuser
+
+COPY --chown=appuser apps/django-api/ .
+
+# No EXPOSE — Celery workers don't serve HTTP.
+# No CMD — each K8s Deployment overrides the command per queue.
