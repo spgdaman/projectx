@@ -177,15 +177,9 @@ spec:
       containers:
         - name: celery-beat
           image: localhost:5000/bargainhunters-celery:latest
-          command:
-            - celery
-            - -A
-            - catalogue
-            - beat
-            - -l
-            - info
-            - --scheduler
-            - django_celery_beat.schedulers:DatabaseScheduler
+          # Using default PersistentScheduler — django_celery_beat not yet in
+          # INSTALLED_APPS. Schedules are defined in settings.CELERY_BEAT_SCHEDULE.
+          command: ["celery", "-A", "catalogue", "beat", "-l", "info"]
           envFrom:
             - configMapRef:
                 name: bargainhunters-config

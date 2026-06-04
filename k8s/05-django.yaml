@@ -76,6 +76,9 @@ spec:
             httpGet:
               path: /api/
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: www.bargainhunters.co.ke
             initialDelaySeconds: 30
             periodSeconds: 30
             failureThreshold: 3
@@ -83,6 +86,9 @@ spec:
             httpGet:
               path: /api/
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: www.bargainhunters.co.ke
             initialDelaySeconds: 10
             periodSeconds: 10
             failureThreshold: 3
