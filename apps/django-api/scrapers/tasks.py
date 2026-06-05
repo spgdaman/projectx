@@ -41,6 +41,7 @@ def scrape_naivas(self):
         run = scraper.run()
         run.celery_task_id = self.request.id or ''
         run.save(update_fields=['celery_task_id'])
+        normalize_staging.delay()
         return {
             'retailer':         'Naivas',
             'status':           run.status,
@@ -109,6 +110,7 @@ def scrape_quickmart_branch(self, branch_name: str, branch_url: str):
         run = scraper.run()
         run.celery_task_id = self.request.id or ''
         run.save(update_fields=['celery_task_id'])
+        normalize_staging.delay()
         return {
             'retailer':         'Quickmart',
             'branch':           branch_name,
@@ -143,6 +145,7 @@ def scrape_chandarana(self):
         run = scraper.run()
         run.celery_task_id = self.request.id or ''
         run.save(update_fields=['celery_task_id'])
+        normalize_staging.delay()
         return {
             'retailer':         'Chandarana',
             'status':           run.status,
@@ -173,6 +176,7 @@ def scrape_carrefour(self):
     from scrapers.carrefour import CarrefourScraper
     try:
         run = CarrefourScraper().run()
+        normalize_staging.delay()
         return {
             'retailer': 'Carrefour',
             'status':   run.status,
