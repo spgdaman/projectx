@@ -133,12 +133,13 @@ class BaseScraper:
     def write_to_staging(self, items: list, run) -> int:
         from core.models import StagingProduct
 
-        written = 0
+        written = new_count = skipped = 0
         for item in items:
             price = item.get('price')
             external_id = item.get('external_id') or item.get('product_name', '')
 
             if price and not self.price_has_changed(str(external_id), price):
+                skipped += 1
                 continue
 
             lookup = dict(
@@ -161,19 +162,28 @@ class BaseScraper:
             qs = StagingProduct.objects.filter(**lookup)
             count = qs.count()
             if count > 1:
-                # Collapse duplicates — keep the first, delete the rest
                 qs.exclude(pk=qs.first().pk).delete()
                 qs.update(**defaults)
             elif count == 1:
                 qs.update(**defaults)
             else:
                 StagingProduct.objects.create(**lookup, **defaults)
+                new_count += 1
             written += 1
 
         run.deals_found += len(items)
         run.deals_changed += written
-        run.save(update_fields=['deals_found', 'deals_changed'])
+        run.products_new += new_count
+        run.products_skipped += skipped
+        run.save(update_fields=['deals_found', 'deals_changed', 'products_new', 'products_skipped'])
         return written
+
+    def record_page_scraped(self, run, http_error: bool = False):
+        """Call once per page/URL fetched to increment page and error counters."""
+        run.pages_scraped += 1
+        if http_error:
+            run.http_errors += 1
+        run.save(update_fields=['pages_scraped', 'http_errors'])
 
     # ── Playwright fallback ──────────────────────────────────────────── #
 
@@ -221,7 +231,7 @@ class BaseScraper:
                 # WebSocket / analytics connections (networkidle never fires)
                 page.goto(url, wait_until='domcontentloaded', timeout=30_000)
                 page.wait_for_timeout(2_000)
-                items = self.scrape_web(page)
+                items = self.scrape_web(page, run=getattr(self, '_current_run', None))
             finally:
                 browser.close()
 
@@ -250,6 +260,7 @@ class BaseScraper:
             strategy='api',
             status='running',
         )
+        self._current_run = run
 
         try:
             logger.info('[%s] Starting API strategy', label)

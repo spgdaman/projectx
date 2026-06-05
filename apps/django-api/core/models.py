@@ -365,6 +365,11 @@ class ScraperRun(models.Model):
     status = models.CharField(max_length=20, default='running', choices=STATUS_CHOICES)
     deals_found = models.IntegerField(default=0)
     deals_changed = models.IntegerField(default=0)
+    products_new = models.IntegerField(default=0)      # first-ever sighting
+    products_skipped = models.IntegerField(default=0)  # price unchanged
+    pages_scraped = models.IntegerField(default=0)     # pages/URLs fetched
+    http_errors = models.IntegerField(default=0)       # failed HTTP requests
+    celery_task_id = models.CharField(max_length=255, blank=True)
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
     error = models.TextField(blank=True)
@@ -379,6 +384,12 @@ class ScraperRun(models.Model):
     def __str__(self):
         branch_str = f' / {self.branch.name}' if self.branch else ''
         return f'{self.retailer.name}{branch_str} — {self.strategy} — {self.status} ({self.started_at.date()})'
+
+    @property
+    def duration_seconds(self):
+        if self.finished_at and self.started_at:
+            return round((self.finished_at - self.started_at).total_seconds(), 1)
+        return None
 
     def finish(self, status='success', error=''):
         self.status = status

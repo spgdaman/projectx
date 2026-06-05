@@ -58,7 +58,7 @@ class NaivasScraper(BaseScraper):
 
     # ── Playwright strategy ──────────────────────────────────────────── #
 
-    def scrape_web(self, page) -> list:
+    def scrape_web(self, page, run=None) -> list:
         """
         Scrape all DEAL_PAGES. Called by BaseScraper._run_playwright_fallback()
         which has already navigated to get_offers_url(). We navigate further
@@ -68,14 +68,23 @@ class NaivasScraper(BaseScraper):
 
         for page_url in DEAL_PAGES:
             logger.info('[Naivas] Scraping %s', page_url)
+            http_error = False
             try:
                 resp = page.goto(page_url, wait_until='networkidle', timeout=30_000)
                 if resp.status >= 400:
                     logger.warning('[Naivas] %s returned HTTP %d', page_url, resp.status)
+                    http_error = True
+                    if run:
+                        self.record_page_scraped(run, http_error=True)
                     continue
             except Exception as e:
                 logger.warning('[Naivas] Failed to load %s: %s', page_url, e)
+                if run:
+                    self.record_page_scraped(run, http_error=True)
                 continue
+
+            if run:
+                self.record_page_scraped(run, http_error=False)
 
             # Scroll down to trigger Livewire lazy-loading
             for _ in range(6):
