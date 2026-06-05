@@ -54,11 +54,10 @@ def normalize_staging(batch_size: int = BATCH) -> dict:
         history_written=0,  skipped=0,        errors=0,
     )
 
-    qs = StagingProduct.objects.order_by('id')
-    offset = 0
-
     while True:
-        batch = list(qs[offset: offset + batch_size])
+        # Always fetch from the top — rows are deleted per batch so offset
+        # shifts would skip unprocessed rows if we incremented an offset.
+        batch = list(StagingProduct.objects.order_by('id')[:batch_size])
         if not batch:
             break
 
@@ -67,12 +66,11 @@ def normalize_staging(batch_size: int = BATCH) -> dict:
                 batch, retailers, branches, cat_map, stats,
             )
         except Exception as exc:
-            logger.error('normalize_staging: batch at offset %d failed: %s', offset, exc)
+            logger.error('normalize_staging: batch %d..%d failed: %s',
+                         batch[0].id, batch[-1].id, exc)
             stats['errors'] += len(batch)
-            offset += batch_size
-            continue
-
-        offset += batch_size
+            # Delete the failed batch so we don't loop forever on it
+            StagingProduct.objects.filter(id__in=[s.id for s in batch]).delete()
 
     logger.info(
         'normalize_staging done — products +%d ~%d | deals +%d ~%d | '
