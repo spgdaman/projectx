@@ -1,7 +1,7 @@
 """
 scrapers/tasks.py
 ------------------
-Celery tasks for all three scrapers.
+Celery tasks for all four scrapers.
 """
 
 import logging
@@ -110,6 +110,39 @@ def scrape_quickmart_branch(self, branch_name: str, branch_url: str):
         }
     except Exception as exc:
         logger.error('[Quickmart/%s] Task failed: %s', branch_name, exc)
+        raise self.retry(exc=exc)
+
+
+# ── Chandarana ────────────────────────────────────────────────────────────── #
+
+@shared_task(
+    bind=True,
+    max_retries=3,
+    default_retry_delay=300,
+    queue='chandarana-queue',
+    name='scrapers.tasks.scrape_chandarana',
+)
+def scrape_chandarana(self):
+    from scrapers.chandarana import ChandaranaScraper
+    try:
+        scraper = ChandaranaScraper()
+        run = scraper.run()
+        run.celery_task_id = self.request.id or ''
+        run.save(update_fields=['celery_task_id'])
+        return {
+            'retailer':         'Chandarana',
+            'status':           run.status,
+            'strategy':         run.strategy,
+            'found':            run.deals_found,
+            'changed':          run.deals_changed,
+            'new':              run.products_new,
+            'skipped':          run.products_skipped,
+            'pages':            run.pages_scraped,
+            'http_errors':      run.http_errors,
+            'duration_seconds': run.duration_seconds,
+        }
+    except Exception as exc:
+        logger.error('[Chandarana] Task failed: %s', exc)
         raise self.retry(exc=exc)
 
 
