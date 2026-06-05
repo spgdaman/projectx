@@ -409,6 +409,30 @@ class AdminUsersViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({"is_staff": profile.user.is_staff})
 
 
+class AdminTriggerScraperView(APIView):
+    """Manually queue a scraper task — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    _TASKS = {
+        'naivas':     'scrapers.tasks.scrape_naivas',
+        'quickmart':  'scrapers.tasks.scrape_quickmart_all',
+        'chandarana': 'scrapers.tasks.scrape_chandarana',
+        'carrefour':  'scrapers.tasks.scrape_carrefour',
+    }
+
+    def post(self, request, retailer):
+        key = retailer.lower()
+        task_name = self._TASKS.get(key)
+        if not task_name:
+            return Response(
+                {'detail': f'Unknown retailer: {retailer}. Valid: {list(self._TASKS)}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        from celery import current_app
+        result = current_app.send_task(task_name)
+        return Response({'task_id': result.id, 'retailer': retailer, 'queued': True})
+
+
 class AdminScraperRunsView(APIView):
     """Paginated scraper run history — staff only."""
     permission_classes = [permissions.IsAdminUser]

@@ -105,4 +105,6 @@ export const adminApi = {
   toggleAdmin: (id: number) => apiClient.post(`/admin/users/${id}/toggle_admin/`),
   scraperRuns: (params?: { retailer?: string; status?: string; page?: number }) =>
     apiClient.get("/admin/scraper-runs/", { params }),
+  triggerScrape: (retailer: string) =>
+    apiClient.post(`/admin/trigger-scrape/${retailer}/`),
 };

@@ -29,9 +29,21 @@ export default function AdminUsersPage() {
         .then((r) => r.data),
   });
 
+  const [adminError, setAdminError] = useState<string | null>(null);
+  const [adminSuccess, setAdminSuccess] = useState<string | null>(null);
+
   const toggleAdmin = useMutation({
     mutationFn: (id: number) => adminApi.toggleAdmin(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: (_data, _id) => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      setAdminSuccess("Admin status updated.");
+      setTimeout(() => setAdminSuccess(null), 3000);
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.detail ?? err?.message ?? "Failed to update admin status.";
+      setAdminError(msg);
+      setTimeout(() => setAdminError(null), 5000);
+    },
   });
 
   const users = data?.results ?? [];
@@ -45,6 +57,17 @@ export default function AdminUsersPage() {
           <p className="text-gray-500 text-sm mt-1">{data?.count ?? 0} registered users</p>
         </div>
       </div>
+
+      {adminSuccess && (
+        <div className="mb-4 bg-green-50 border border-green-200 text-green-700 text-sm font-medium rounded-lg px-4 py-3">
+          ✓ {adminSuccess}
+        </div>
+      )}
+      {adminError && (
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-lg px-4 py-3">
+          ✕ {adminError}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
