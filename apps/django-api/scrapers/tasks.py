@@ -1,7 +1,7 @@
 """
 scrapers/tasks.py
 ------------------
-Celery tasks for all four scrapers.
+Celery tasks for all four scrapers + staging normalization.
 """
 
 import logging
@@ -9,6 +9,20 @@ import logging
 from celery import group, shared_task
 
 logger = logging.getLogger(__name__)
+
+
+# ── Staging → Products / Deals ────────────────────────────────────────────── #
+
+@shared_task(
+    name='scrapers.tasks.normalize_staging',
+    queue='default',
+    max_retries=2,
+    default_retry_delay=60,
+)
+def normalize_staging():
+    """Drain StagingProduct → Product + Deal + PriceHistory."""
+    from core.services.normalize import normalize_staging as _run
+    return _run()
 
 
 # ── Naivas ─────────────────────────────────────────────────────────────────── #

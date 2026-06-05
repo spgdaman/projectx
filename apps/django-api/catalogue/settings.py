@@ -167,6 +167,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'scrapers.tasks.scrape_chandarana',
         'schedule': crontab(hour='*/4'),
     },
+    'normalize-staging': {
+        'task': 'scrapers.tasks.normalize_staging',
+        'schedule': crontab(minute='*/30'),
+    },
 }
 
 CELERY_TASK_ROUTES = {
