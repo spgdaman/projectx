@@ -396,3 +396,179 @@ class ScraperRun(models.Model):
         self.finished_at = timezone.now()
         self.error = error
         self.save(update_fields=['status', 'finished_at', 'error'])
+
+
+class CategorySynonym(models.Model):
+    """
+    Maps a raw retailer category string to a master Category. Populated
+    automatically when human review confirms a mapping; also editable in
+    Django admin.
+
+    level:
+      0 = matched from category_name        (L0)
+      1 = matched from sub_category_name    (L1)
+      2 = matched from sub_category_2_name  (L2)
+
+    The unique_together on (raw_name, retailer, level) means the same string
+    can mean different things at different depths for different retailers, but
+    is normalised within each combination.
+    """
+    raw_name = models.CharField(
+        max_length=255,
+        help_text="Exact string from the retailer (after normalisation — lowercased, stripped, no double spaces)"
+    )
+    retailer = models.ForeignKey(
+        'Retailer',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text="Null means this alias applies to all retailers"
+    )
+    master_category = models.ForeignKey(
+        'Category',
+        on_delete=models.CASCADE,
+        related_name='synonyms'
+    )
+    level = models.IntegerField(
+        default=0,
+        choices=[(0, 'L0 category'), (1, 'L1 sub-category'), (2, 'L2 sub-category 2')],
+        help_text="Which StagingProduct field this raw_name came from"
+    )
+    source = models.CharField(
+        max_length=20,
+        default='manual',
+        choices=[
+            ('manual', 'Added manually'),
+            ('human', 'Confirmed by human review'),
+            ('fuzzy', 'Auto-confirmed by fuzzy match'),
+        ]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('raw_name', 'retailer', 'level')
+        verbose_name_plural = 'Category synonyms'
+        indexes = [
+            models.Index(fields=['raw_name', 'level'], name='catsynonym_name_level_idx'),
+        ]
+
+    def __str__(self):
+        retailer_str = self.retailer.name if self.retailer else 'all'
+        return f'"{self.raw_name}" [L{self.level}, {retailer_str}] → {self.master_category}'
+
+
+class CategoryKeywordRule(models.Model):
+    """
+    If a product's name contains `keyword`, map it to `master_category`.
+    Priority controls which rule wins when multiple keywords match — higher wins.
+
+    match_field controls which StagingProduct field to search. 'any' searches
+    all three category fields and the product name.
+    """
+    keyword = models.CharField(
+        max_length=100,
+        help_text="Case-insensitive. Matched as a whole word where possible."
+    )
+    master_category = models.ForeignKey(
+        'Category',
+        on_delete=models.CASCADE,
+        related_name='keyword_rules'
+    )
+    priority = models.IntegerField(
+        default=0,
+        help_text="Higher value = checked first. Use 100+ for specific brand rules, 10-99 for product type rules, 1-9 for generic category rules."
+    )
+    match_field = models.CharField(
+        max_length=20,
+        default='product_name',
+        choices=[
+            ('product_name', 'Product name only'),
+            ('any_category', 'Any category field'),
+            ('any', 'Product name + all category fields'),
+        ]
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-priority']
+        verbose_name_plural = 'Category keyword rules'
+        indexes = [
+            models.Index(fields=['keyword', 'is_active'], name='catkeyword_kw_active_idx'),
+        ]
+
+    def __str__(self):
+        return f'"{self.keyword}" → {self.master_category} (priority {self.priority})'
+
+
+class MappingReviewQueue(models.Model):
+    """
+    Products that reached the end of Tiers 1-4 without a confident mapping.
+    Shown in Django admin for human review.
+
+    tier_reached: which tier this product fell through.
+      0 = never entered pipeline (error)
+      1 = failed Tier 1 (no exact match at any level)
+      2 = failed Tier 2 (no synonym at any level)
+      3 = failed Tier 3 (no keyword matched)
+      4 = failed Tier 4 (fuzzy score < threshold)
+
+    best_fuzzy_suggestion: the master category with the highest fuzzy score,
+      stored so the admin reviewer sees a suggestion even without the LLM.
+
+    resolved: True once a human has confirmed or corrected the mapping.
+    """
+    staging_product = models.ForeignKey(
+        'StagingProduct',
+        on_delete=models.CASCADE,
+        related_name='review_queue_entries'
+    )
+    retailer = models.ForeignKey(
+        'Retailer',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    tier_reached = models.IntegerField(
+        default=4,
+        help_text="Last tier attempted before giving up"
+    )
+    best_fuzzy_suggestion = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='fuzzy_suggestions',
+        help_text="Highest-scoring fuzzy match, shown as a suggestion in admin"
+    )
+    best_fuzzy_score = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="rapidfuzz score 0-100 for the fuzzy suggestion"
+    )
+    best_fuzzy_level = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="Which level (0/1/2) produced the best fuzzy score"
+    )
+    resolved = models.BooleanField(default=False)
+    resolved_category = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='resolved_review_queue'
+    )
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = 'Mapping review queue'
+        indexes = [
+            models.Index(fields=['resolved', 'created_at'], name='reviewqueue_resolved_idx'),
+        ]
+
+    def __str__(self):
+        status = "resolved" if self.resolved else "pending"
+        return f'{self.staging_product.product_name} — tier {self.tier_reached} — {status}'

@@ -167,6 +167,17 @@ def _process_batch(batch, retailers, branches, cat_map, stats) -> None:
     for (rid, name), (sp, retailer, branch) in sp_by_product.items():
         rcat          = get_rcat(rid, sp.category_name)
         master_cat    = cat_map.get((rid, sp.category_name)) if sp.category_name else None
+        # Fallback: if the L0 cat_map misses, try the hierarchy-aware mapper
+        # (uses L2→L1→L0 and Tiers 1-4). The module-level singleton caches
+        # master categories and keyword rules across the batch.
+        if master_cat is None:
+            try:
+                from core.services.category_mapper import category_mapper as _cm
+                _r = _cm.map(sp)
+                if _r.matched:
+                    master_cat = _r.category
+            except Exception as _exc:
+                logger.debug('category_mapper fallback failed for %s: %s', sp.product_name, _exc)
         shelf_price   = sp.old_price if sp.old_price else sp.price
 
         existing = existing_products.get((rid, name))

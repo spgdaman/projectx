@@ -1,9 +1,14 @@
 from django.contrib import admin
 from django.urls import path
 from django.template.response import TemplateResponse
-from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription, UserProfile, Payment, ScraperRun
+from .models import (
+    Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal,
+    StagingProduct, RetailerBranch, Subscription, UserProfile, Payment,
+    ScraperRun, CategorySynonym, CategoryKeywordRule, MappingReviewQueue,
+)
 from django.utils.html import format_html
 from difflib import SequenceMatcher
+from django.utils import timezone
 from core.services.subscriptions import update_product_subscription
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -261,3 +266,120 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(Deal, DealAdmin)   # ✔ FIXED TYPO
 admin.site.register(StagingProduct, StagingProductAdmin)
 admin.site.register(RetailerBranch, admin.ModelAdmin)
+
+
+@admin.register(CategorySynonym)
+class CategorySynonymAdmin(admin.ModelAdmin):
+    list_display  = ('raw_name', 'level', 'retailer', 'master_category', 'source', 'created_at')
+    list_filter   = ('level', 'retailer', 'source')
+    search_fields = ('raw_name', 'master_category__name')
+    ordering      = ('level', 'raw_name')
+
+
+@admin.register(CategoryKeywordRule)
+class CategoryKeywordRuleAdmin(admin.ModelAdmin):
+    list_display  = ('keyword', 'master_category', 'priority', 'match_field', 'is_active')
+    list_filter   = ('is_active', 'match_field', 'master_category')
+    search_fields = ('keyword',)
+    ordering      = ('-priority', 'keyword')
+
+
+@admin.register(MappingReviewQueue)
+class MappingReviewQueueAdmin(admin.ModelAdmin):
+    list_display  = (
+        'product_name_display', 'retailer', 'all_category_levels',
+        'tier_reached', 'fuzzy_suggestion_display', 'resolved', 'created_at',
+    )
+    list_filter   = ('resolved', 'tier_reached', 'retailer')
+    search_fields = ('staging_product__product_name', 'staging_product__category_name')
+    readonly_fields = (
+        'staging_product', 'retailer', 'tier_reached', 'best_fuzzy_score',
+        'best_fuzzy_level', 'created_at', 'all_category_levels_detail',
+    )
+    actions = ['confirm_fuzzy_suggestion', 'mark_no_mapping']
+
+    def product_name_display(self, obj):
+        return obj.staging_product.product_name
+    product_name_display.short_description = 'Product'
+
+    def all_category_levels(self, obj):
+        sp = obj.staging_product
+        parts = [p for p in [sp.category_name, sp.sub_category_name, sp.sub_category_2_name] if p]
+        return ' > '.join(parts)
+    all_category_levels.short_description = 'Retailer cats'
+
+    def all_category_levels_detail(self, obj):
+        return self.all_category_levels(obj)
+    all_category_levels_detail.short_description = 'Retailer category path'
+
+    def fuzzy_suggestion_display(self, obj):
+        if obj.best_fuzzy_suggestion:
+            score = obj.best_fuzzy_score or 0
+            return f'{obj.best_fuzzy_suggestion} ({score:.0f}%)'
+        return '—'
+    fuzzy_suggestion_display.short_description = 'Best fuzzy match'
+
+    @admin.action(description='Confirm fuzzy suggestion as mapping')
+    def confirm_fuzzy_suggestion(self, request, queryset):
+        from core.models import CategoryMapping, CategorySynonym, Product, RetailerCategory
+
+        confirmed = 0
+        for entry in queryset.select_related(
+            'staging_product', 'best_fuzzy_suggestion', 'retailer'
+        ):
+            if not entry.best_fuzzy_suggestion:
+                continue
+
+            sp = entry.staging_product
+            master = entry.best_fuzzy_suggestion
+            level = entry.best_fuzzy_level
+
+            # Record synonym at the matched level
+            if level is not None:
+                from core.services.category_mapper import CategoryMapper
+                level_field_map = {
+                    2: sp.sub_category_2_name,
+                    1: sp.sub_category_name,
+                    0: sp.category_name,
+                }
+                raw_name = level_field_map.get(level)
+                if raw_name:
+                    norm = CategoryMapper.normalise(raw_name)
+                    CategorySynonym.objects.get_or_create(
+                        raw_name=norm,
+                        level=level,
+                        retailer=entry.retailer,
+                        defaults={'master_category': master, 'source': 'human'},
+                    )
+
+            # Create CategoryMapping for top-level category if possible
+            if sp.category_name and entry.retailer:
+                rc, _ = RetailerCategory.objects.get_or_create(
+                    retailer=entry.retailer,
+                    name=sp.category_name,
+                )
+                CategoryMapping.objects.get_or_create(
+                    retailer_category=rc,
+                    defaults={'master_category': master},
+                )
+
+            # Update linked Product
+            Product.objects.filter(
+                retailer=entry.retailer,
+                name=sp.product_name,
+                master_category__isnull=True,
+            ).update(master_category=master)
+
+            # Resolve the queue entry
+            entry.resolved = True
+            entry.resolved_category = master
+            entry.resolved_at = timezone.now()
+            entry.save(update_fields=['resolved', 'resolved_category', 'resolved_at'])
+            confirmed += 1
+
+        self.message_user(request, f'{confirmed} entries confirmed and resolved.')
+
+    @admin.action(description='Mark as reviewed (no mapping)')
+    def mark_no_mapping(self, request, queryset):
+        updated = queryset.update(resolved=True, resolved_category=None, resolved_at=timezone.now())
+        self.message_user(request, f'{updated} entries marked as reviewed (no mapping).')
