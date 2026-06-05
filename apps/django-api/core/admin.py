@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.template.response import TemplateResponse
-from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription, UserProfile, Payment
+from .models import Category, Retailer, RetailerCategory, CategoryMapping, Product, Deal, StagingProduct, RetailerBranch, Subscription, UserProfile, Payment, ScraperRun
 from django.utils.html import format_html
 from difflib import SequenceMatcher
 from core.services.subscriptions import update_product_subscription
@@ -210,6 +210,48 @@ class PaymentAdmin(admin.ModelAdmin):
     )
     list_filter = ("provider", "status")
     search_fields = ("user__username", "reference")
+
+@admin.register(ScraperRun)
+class ScraperRunAdmin(admin.ModelAdmin):
+    list_display = (
+        'started_at', 'retailer', 'branch', 'strategy',
+        'status_badge', 'deals_found', 'deals_changed',
+        'products_new', 'products_skipped', 'pages_scraped',
+        'http_errors', 'duration_seconds',
+    )
+    list_filter  = ('retailer', 'strategy', 'status')
+    search_fields = ('retailer__name', 'branch__name', 'celery_task_id')
+    readonly_fields = (
+        'retailer', 'branch', 'strategy', 'status', 'started_at', 'finished_at',
+        'deals_found', 'deals_changed', 'products_new', 'products_skipped',
+        'pages_scraped', 'http_errors', 'celery_task_id', 'error',
+    )
+    ordering = ('-started_at',)
+    date_hierarchy = 'started_at'
+
+    _STATUS_COLORS = {
+        'success': '#16a34a',
+        'failed':  '#dc2626',
+        'partial': '#d97706',
+        'running': '#2563eb',
+    }
+
+    def status_badge(self, obj):
+        color = self._STATUS_COLORS.get(obj.status, '#6b7280')
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:4px;font-size:11px;font-weight:600">{}</span>',
+            color, obj.status.upper(),
+        )
+    status_badge.short_description = 'Status'
+    status_badge.admin_order_field = 'status'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Retailer, admin.ModelAdmin)

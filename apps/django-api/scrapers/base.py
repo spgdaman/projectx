@@ -119,8 +119,12 @@ class BaseScraper:
 
     def price_has_changed(self, external_id: str, new_price: Decimal) -> bool:
         key = self._cache_key(external_id)
-        cached = _redis.get(key)
-        _redis.set(key, str(new_price), ex=PRICE_CACHE_TTL)
+        try:
+            cached = _redis.get(key)
+            _redis.set(key, str(new_price), ex=PRICE_CACHE_TTL)
+        except Exception:
+            # Redis unavailable — fail open so writes always proceed
+            return True
         if cached is None:
             return True
         try:
