@@ -402,6 +402,50 @@ class AdminUsersViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({"is_staff": profile.user.is_staff})
 
 
+class AdminScraperRunsView(APIView):
+    """Paginated scraper run history — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from core.models import ScraperRun
+        from django.core.paginator import Paginator
+
+        qs = ScraperRun.objects.select_related('retailer', 'branch').order_by('-started_at')
+
+        if retailer := request.query_params.get('retailer'):
+            qs = qs.filter(retailer__name__icontains=retailer)
+        if status_filter := request.query_params.get('status'):
+            qs = qs.filter(status=status_filter)
+
+        page_num = max(1, int(request.query_params.get('page', 1)))
+        paginator = Paginator(qs, 50)
+        page = paginator.get_page(page_num)
+
+        return Response({
+            'count': paginator.count,
+            'num_pages': paginator.num_pages,
+            'results': [
+                {
+                    'id':               r.id,
+                    'retailer':         r.retailer.name,
+                    'branch':           r.branch.name if r.branch else None,
+                    'strategy':         r.strategy,
+                    'status':           r.status,
+                    'deals_found':      r.deals_found,
+                    'deals_changed':    r.deals_changed,
+                    'products_new':     r.products_new,
+                    'products_skipped': r.products_skipped,
+                    'pages_scraped':    r.pages_scraped,
+                    'http_errors':      r.http_errors,
+                    'duration_seconds': r.duration_seconds,
+                    'started_at':       r.started_at,
+                    'error':            r.error[:400] if r.error else '',
+                }
+                for r in page
+            ],
+        })
+
+
 class AdminCategoryMappingViewSet(viewsets.ModelViewSet):
     """Category mapping CRUD — staff only."""
     permission_classes = [permissions.IsAdminUser]

@@ -16,6 +16,7 @@ from .views import (
     AdminStatsView,
     AdminUsersViewSet,
     AdminCategoryMappingViewSet,
+    AdminScraperRunsView,
 )
 
 router = DefaultRouter()
@@ -42,6 +43,7 @@ urlpatterns = [
 
     # Admin (staff only)
     path("admin/stats/", AdminStatsView.as_view(), name="admin-stats"),
+    path("admin/scraper-runs/", AdminScraperRunsView.as_view(), name="admin-scraper-runs"),
     path("admin/", include(admin_router.urls)),
 
     # Resource router
