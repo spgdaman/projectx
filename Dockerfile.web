@@ -23,7 +23,9 @@ COPY package.json ./package.json
 
 WORKDIR /repo/apps/web
 
-ENV NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_API_URL=https://www.bargainhunters.co.ke/api/v1
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 RUN ./node_modules/.bin/next build
 
