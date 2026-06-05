@@ -122,9 +122,9 @@ export function ShoppingListPage() {
           </button>
         </div>
 
-        <div className="flex gap-6">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6">
           {/* Left: list sidebar */}
-          <div className="w-64 flex-shrink-0">
+          <div className="w-full md:w-64 md:flex-shrink-0">
 
             {/* Inline create form */}
             {showNewForm && (
@@ -199,7 +199,7 @@ export function ShoppingListPage() {
           </div>
 
           {/* Right: main panel */}
-          <div className="flex-1 min-w-0">
+          <div className="w-full md:flex-1 min-w-0">
             {view === 'home' && (
               <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
                 <p className="text-gray-400 text-sm mb-4">
@@ -451,7 +451,7 @@ function ShoppingListBuilder({
         )}
       </div>
 
-      <div className="grid grid-cols-2 divide-x divide-gray-100">
+      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
 
         {/* Left: items */}
         <div className="p-5">
@@ -710,12 +710,12 @@ function ShoppingListResult({
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
 
       {/* Receipt header */}
-      <div className="px-5 py-4 bg-brand-50 border-b border-brand-100 flex items-center justify-between">
+      <div className="px-5 py-4 bg-brand-50 border-b border-brand-100 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-semibold text-brand-700 uppercase tracking-widest mb-1">
             Best deal plan
           </p>
-          <div className="flex items-baseline gap-2">
+          <div className="flex flex-wrap items-baseline gap-2">
             <span className="text-2xl font-bold text-gray-900">{formatKES(plan.grand_total)}</span>
             {totalSaving > 0 && (
               <span className="text-sm font-semibold text-brand-600">
@@ -727,7 +727,7 @@ function ShoppingListResult({
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <button
             onClick={handleShare}
             className="px-3 py-1.5 text-xs font-medium bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -783,10 +783,10 @@ function ShoppingListResult({
             </div>
 
             {/* Column labels */}
-            <div className="px-5 py-1.5 grid grid-cols-[1fr_3rem_6rem_6rem] gap-x-3 border-b border-gray-100 bg-gray-50">
+            <div className="px-5 py-1.5 grid grid-cols-[1fr_5rem] md:grid-cols-[1fr_3rem_6rem_6rem] gap-x-3 border-b border-gray-100 bg-gray-50">
               <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Item</span>
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Qty</span>
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Unit price</span>
+              <span className="hidden md:block text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Qty</span>
+              <span className="hidden md:block text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Unit price</span>
               <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-right">Total</span>
             </div>
 
@@ -802,11 +802,15 @@ function ShoppingListResult({
               return (
                 <div
                   key={item.item_id}
-                  className="px-5 py-3 grid grid-cols-[1fr_3rem_6rem_6rem] gap-x-3 items-start border-b border-gray-50 last:border-0"
+                  className="px-5 py-3 grid grid-cols-[1fr_5rem] md:grid-cols-[1fr_3rem_6rem_6rem] gap-x-3 items-start border-b border-gray-50 last:border-0"
                 >
                   {/* Product + discount info */}
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 leading-snug">{item.product_name}</p>
+                    {/* Mobile: qty × unit price inline */}
+                    <p className="md:hidden text-xs text-gray-500 mt-0.5">
+                      {item.qty} × {formatKES(item.price)}
+                    </p>
                     {oldPrice && (
                       <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                         <span className="text-[11px] text-gray-400 line-through">
@@ -826,13 +830,13 @@ function ShoppingListResult({
                     )}
                   </div>
 
-                  {/* Qty */}
-                  <span className="text-sm text-gray-600 text-right tabular-nums pt-px">
+                  {/* Qty — desktop only */}
+                  <span className="hidden md:block text-sm text-gray-600 text-right tabular-nums pt-px">
                     {item.qty}
                   </span>
 
-                  {/* Unit price */}
-                  <span className="text-sm text-gray-700 text-right tabular-nums pt-px">
+                  {/* Unit price — desktop only */}
+                  <span className="hidden md:block text-sm text-gray-700 text-right tabular-nums pt-px">
                     {formatKES(item.price)}
                   </span>
 
@@ -900,11 +904,11 @@ function ShoppingListResult({
           </div>
 
           {/* Column labels */}
-          <div className="px-5 py-1.5 grid grid-cols-[1fr_3rem_6rem_6rem_auto] gap-x-3 bg-red-50 border-t border-red-100">
+          <div className="px-5 py-1.5 grid grid-cols-[1fr_auto] md:grid-cols-[1fr_3rem_6rem_6rem_auto] gap-x-3 bg-red-50 border-t border-red-100">
             <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide">Item</span>
-            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Qty</span>
-            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Unit price</span>
-            <span className="text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Total</span>
+            <span className="hidden md:block text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Qty</span>
+            <span className="hidden md:block text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Unit price</span>
+            <span className="hidden md:block text-[10px] font-semibold text-red-400 uppercase tracking-wide text-right">Total</span>
             <span />
           </div>
 
@@ -912,19 +916,20 @@ function ShoppingListResult({
           {overBudget.map(item => (
             <div
               key={item.item_id}
-              className="px-5 py-3 grid grid-cols-[1fr_3rem_6rem_6rem_auto] gap-x-3 items-center bg-red-50 border-t border-red-100"
+              className="px-5 py-3 grid grid-cols-[1fr_auto] md:grid-cols-[1fr_3rem_6rem_6rem_auto] gap-x-3 items-center bg-red-50 border-t border-red-100"
             >
               <div className="min-w-0">
                 <p className="text-sm font-medium text-red-400 line-through truncate">
                   {item.product_name}
                 </p>
                 <p className="text-[11px] text-red-400 mt-0.5">
+                  <span className="md:hidden">{item.qty} × {formatKES(item.price)} · </span>
                   Doesn't fit your budget
                 </p>
               </div>
-              <span className="text-sm text-red-300 text-right tabular-nums">{item.qty}</span>
-              <span className="text-sm text-red-300 text-right tabular-nums">{formatKES(item.price)}</span>
-              <span className="text-sm font-semibold text-red-400 text-right tabular-nums">{formatKES(item.line_total)}</span>
+              <span className="hidden md:block text-sm text-red-300 text-right tabular-nums">{item.qty}</span>
+              <span className="hidden md:block text-sm text-red-300 text-right tabular-nums">{formatKES(item.price)}</span>
+              <span className="hidden md:block text-sm font-semibold text-red-400 text-right tabular-nums">{formatKES(item.line_total)}</span>
               <button
                 onClick={() => removeOverBudgetItem(item.item_id)}
                 disabled={removing === item.item_id}

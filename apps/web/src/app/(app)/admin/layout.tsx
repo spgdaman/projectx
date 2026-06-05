@@ -30,21 +30,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex gap-6 min-h-[calc(100vh-3.5rem)]">
-      {/* Sidebar */}
-      <aside className="w-52 shrink-0">
-        <div className="bg-white rounded-2xl border border-gray-100 p-3 sticky top-20">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
+    <div className="flex flex-col md:flex-row gap-4 md:gap-6 min-h-[calc(100vh-3.5rem)]">
+      {/* Sidebar — horizontal tab strip on mobile, vertical panel on desktop */}
+      <aside className="md:w-52 md:shrink-0">
+        <div className="bg-white rounded-2xl border border-gray-100 p-2 md:p-3 md:sticky md:top-20">
+          <p className="hidden md:block text-xs font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
             Admin
           </p>
-          <nav className="space-y-0.5">
+          <nav className="flex md:flex-col overflow-x-auto gap-1 md:gap-0 md:space-y-0.5 scrollbar-none">
             {NAV.map(({ href, label, exact }) => {
               const active = exact ? path === href : path.startsWith(href);
               return (
                 <Link
                   key={href}
                   href={href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap shrink-0 ${
                     active
                       ? "bg-brand-50 text-brand-700"
                       : "text-gray-600 hover:bg-gray-50"

@@ -55,7 +55,7 @@ export function AppNavbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-brand-600 text-lg shrink-0">
           <span>🏷️</span>
-          <span className="hidden sm:inline">Bargain Hunters</span>
+          <span>Bargain Hunters</span>
         </Link>
 
         {/* Desktop nav */}
