@@ -91,6 +91,20 @@ services:
       redis:
         condition: service_healthy
 
+  # ── Celery — Chandarana scraper queue ────────────────────────────────────────
+  celery-chandarana:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    restart: unless-stopped
+    command: ["celery", "-A", "catalogue", "worker", "-Q", "chandarana-queue", "-c", "3", "-l", "info"]
+    env_file: apps/django-api/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   # ── Celery — Quickmart scraper queue ─────────────────────────────────────────
   celery-quickmart:
     build:

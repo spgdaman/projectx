@@ -97,6 +97,39 @@ spec:
               memory: "512Mi"
               cpu: "500m"
 ---
+# ── Celery Chandarana queue ───────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-chandarana
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-chandarana
+  template:
+    metadata:
+      labels:
+        app: celery-chandarana
+    spec:
+      containers:
+        - name: celery-chandarana
+          image: localhost:5000/bargainhunters-celery:latest
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "chandarana-queue", "-c", "3", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
 # ── Celery Quickmart queue ────────────────────────────────────────────────────
 apiVersion: apps/v1
 kind: Deployment
