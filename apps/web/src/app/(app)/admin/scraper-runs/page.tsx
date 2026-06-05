@@ -29,12 +29,14 @@ const STATUS_STYLES: Record<string, string> = {
   running: "bg-blue-100 text-blue-700",
 };
 
-const RETAILERS = [
+const SCRAPERS = [
   { key: "naivas",     label: "Naivas" },
   { key: "chandarana", label: "Chandarana" },
   { key: "quickmart",  label: "Quickmart" },
   { key: "carrefour",  label: "Carrefour" },
 ];
+
+const RETAILERS = SCRAPERS;
 
 const STRATEGY_LABEL: Record<string, string> = {
   api:     "API",
@@ -70,14 +72,18 @@ export default function ScraperRunsPage() {
   const trigger = useMutation({
     mutationFn: (key: string) => adminApi.triggerScrape(key),
     onSuccess: (_data, key) => {
-      const label = RETAILERS.find(r => r.key === key)?.label ?? key;
-      setTriggerMsg({ retailer: label, ok: true, text: `${label} scraper queued — check the table below for the new run.` });
+      const isNormalize = key === "normalize";
+      const label = SCRAPERS.find(r => r.key === key)?.label ?? key;
+      const text = isNormalize
+        ? "Normalization queued — staging rows will be promoted to deals within minutes."
+        : `${label} scraper queued — check the table below for the new run.`;
+      setTriggerMsg({ retailer: label, ok: true, text });
       setTimeout(() => setTriggerMsg(null), 6000);
       setTimeout(() => qc.invalidateQueries({ queryKey: ["admin-scraper-runs"] }), 3000);
     },
     onError: (_err, key) => {
-      const label = RETAILERS.find(r => r.key === key)?.label ?? key;
-      setTriggerMsg({ retailer: label, ok: false, text: `Failed to queue ${label} scraper — is Celery running?` });
+      const label = SCRAPERS.find(r => r.key === key)?.label ?? key;
+      setTriggerMsg({ retailer: label, ok: false, text: `Failed to queue ${label} — is Celery running?` });
       setTimeout(() => setTriggerMsg(null), 6000);
     },
   });
@@ -96,35 +102,64 @@ export default function ScraperRunsPage() {
       </div>
 
       {/* ── Trigger panel ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-          Manually trigger a scrape
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {RETAILERS.map(({ key, label }) => {
-            const isRunning = trigger.isPending && trigger.variables === key;
-            return (
-              <button
-                key={key}
-                onClick={() => trigger.mutate(key)}
-                disabled={trigger.isPending}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition
-                  ${isRunning
-                    ? "bg-brand-50 border-brand-300 text-brand-700"
-                    : "bg-white border-gray-200 text-gray-700 hover:border-brand-400 hover:text-brand-700"
-                  } disabled:opacity-60`}
-              >
-                {isRunning
-                  ? <span className="w-3.5 h-3.5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
-                  : <span>▶</span>
-                }
-                {label}
-              </button>
-            );
-          })}
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6 space-y-4">
+        {/* Scraper triggers */}
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            Trigger scrape
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {SCRAPERS.map(({ key, label }) => {
+              const isRunning = trigger.isPending && trigger.variables === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => trigger.mutate(key)}
+                  disabled={trigger.isPending}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition
+                    ${isRunning
+                      ? "bg-brand-50 border-brand-300 text-brand-700"
+                      : "bg-white border-gray-200 text-gray-700 hover:border-brand-400 hover:text-brand-700"
+                    } disabled:opacity-60`}
+                >
+                  {isRunning
+                    ? <span className="w-3.5 h-3.5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
+                    : <span>▶</span>
+                  }
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Normalize trigger */}
+        <div className="border-t border-gray-100 pt-3">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            Normalize staging → deals
+          </p>
+          <p className="text-xs text-gray-400 mb-2">
+            Promotes any rows in the staging table to Products &amp; Deals. Runs automatically after each scrape — only needed manually if a scrape completed but deals aren&apos;t showing.
+          </p>
+          <button
+            onClick={() => trigger.mutate("normalize")}
+            disabled={trigger.isPending}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition
+              ${trigger.isPending && trigger.variables === "normalize"
+                ? "bg-green-50 border-green-300 text-green-700"
+                : "bg-white border-gray-200 text-gray-700 hover:border-green-400 hover:text-green-700"
+              } disabled:opacity-60`}
+          >
+            {trigger.isPending && trigger.variables === "normalize"
+              ? <span className="w-3.5 h-3.5 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+              : <span>⚡</span>
+            }
+            Run normalization now
+          </button>
+        </div>
+
         {triggerMsg && (
-          <p className={`mt-3 text-sm font-medium ${triggerMsg.ok ? "text-green-700" : "text-red-600"}`}>
+          <p className={`text-sm font-medium ${triggerMsg.ok ? "text-green-700" : "text-red-600"}`}>
             {triggerMsg.ok ? "✓" : "✕"} {triggerMsg.text}
           </p>
         )}

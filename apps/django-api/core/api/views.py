@@ -418,6 +418,7 @@ class AdminTriggerScraperView(APIView):
         'quickmart':  'scrapers.tasks.scrape_quickmart_all',
         'chandarana': 'scrapers.tasks.scrape_chandarana',
         'carrefour':  'scrapers.tasks.scrape_carrefour',
+        'normalize':  'scrapers.tasks.normalize_staging',
     }
 
     def post(self, request, retailer):
