@@ -193,7 +193,7 @@ class DealViewSet(viewsets.ReadOnlyModelViewSet):
                     output_field=FloatField(),
                 )
             )
-            .order_by("-scraped_at")
+            .order_by("-discount_pct_db", "-scraped_at")
         )
         params = self.request.query_params
         if retailer_id := params.get("retailer"):
@@ -210,6 +210,13 @@ class DealViewSet(viewsets.ReadOnlyModelViewSet):
                 qs = qs.filter(discount_pct_db__gte=float(min_discount))
             except (ValueError, TypeError):
                 pass
+        ordering = params.get("ordering")
+        if ordering == "newest":
+            qs = qs.order_by("-scraped_at")
+        elif ordering == "price_asc":
+            qs = qs.order_by("current_price", "-discount_pct_db")
+        elif ordering == "price_desc":
+            qs = qs.order_by("-current_price", "-discount_pct_db")
         return qs
 
 

@@ -59,7 +59,7 @@ export const authApi = {
 };
 
 export const dealsApi = {
-  list: (params?: { retailer?: number; category?: number; search?: string; page?: number }) =>
+  list: (params?: { retailer?: number; category?: number; search?: string; page?: number; ordering?: string }) =>
     apiClient.get("/deals/", { params }),
   detail: (id: number) => apiClient.get(`/deals/${id}/`),
 };

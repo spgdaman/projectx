@@ -16,6 +16,7 @@ export default function DealsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [retailerId, setRetailerId] = useState<number | undefined>();
   const [categoryId, setCategoryId] = useState<number | undefined>();
+  const [ordering, setOrdering] = useState("");
   const [subscribing, setSubscribing] = useState<number | null>(null);
   const [successId, setSuccessId] = useState<number | null>(null);
 
@@ -29,12 +30,13 @@ export default function DealsPage() {
   }
 
   const { data: dealsData, isLoading } = useQuery({
-    queryKey: ["deals", debouncedSearch, retailerId, categoryId, page],
+    queryKey: ["deals", debouncedSearch, retailerId, categoryId, ordering, page],
     queryFn: () =>
       dealsApi.list({
         search: debouncedSearch || undefined,
         retailer: retailerId,
         category: categoryId,
+        ordering: ordering || undefined,
         page,
       }),
     select: (r) => r.data,
@@ -114,6 +116,16 @@ export default function DealsPage() {
           {(categoriesData ?? []).map((c: any) => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
+        </select>
+        <select
+          className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+          value={ordering}
+          onChange={(e) => { setOrdering(e.target.value); setPage(1); }}
+        >
+          <option value="">Best discount</option>
+          <option value="newest">Newest first</option>
+          <option value="price_asc">Price: low to high</option>
+          <option value="price_desc">Price: high to low</option>
         </select>
       </div>
 
