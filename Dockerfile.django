@@ -2,8 +2,7 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
 
@@ -17,13 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY apps/django-api/requirements*.txt ./
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && pip install gunicorn==22.0.0 django-celery-beat==2.6.0
-
-# Install Playwright + Chromium for scraper tasks
-RUN pip install playwright \
-    && playwright install-deps chromium \
-    && playwright install chromium \
-    && chmod -R 755 /ms-playwright
+    && pip install gunicorn==22.0.0
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser /app
