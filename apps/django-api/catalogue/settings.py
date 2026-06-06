@@ -167,6 +167,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'scrapers.tasks.reap_orphaned_runs',
         'schedule': crontab(minute='*/30'),
     },
+    'process-alerts': {
+        'task': 'core.tasks.process_alerts',
+        'schedule': crontab(hour='*/4'),
+    },
 }
 
 CELERY_TASK_ROUTES = {

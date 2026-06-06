@@ -10,9 +10,21 @@ Bulk strategy (per batch of 500 rows):
        one SELECT → split into new / changed → bulk_create + bulk_update.
   4. Same bulk pattern for Deals.
   5. bulk_create all PriceHistory records for the batch.
-  6. Delete the staging rows for the batch immediately.
+  6. Delete only fully-mapped staging rows (product + deal + master_category).
+     Rows that have no master_category are left in staging for manual review.
 
 ~12 queries per 500-row batch vs ~600 k queries for the old per-row approach.
+
+Category resolution uses three paths in order:
+  1. Fast path: (retailer_id, cat_name) lookup in cat_map for L2 → L1 → L0.
+     cat_map is pre-built from CategoryMapping (Tier 1 only). Covers the common
+     case with zero extra queries per product.
+  2. Full 4-tier pipeline: if the fast path misses on all three levels, falls
+     back to CategoryMapper.map() which tries Tiers 1-4 (exact, synonym,
+     keyword, fuzzy) across all levels.
+  3. No match: master_category is left None. The staging row is NOT deleted —
+     it stays in StagingProduct for manual review / re-run after mappings are
+     updated.
 
 Call from Celery:  scrapers.tasks.normalize_staging
 Call manually:     from core.services.normalize import normalize_staging
@@ -165,11 +177,15 @@ def _process_batch(batch, retailers, branches, cat_map, stats) -> None:
     update_fields_set: dict = {}  # product_key → set of fields
 
     for (rid, name), (sp, retailer, branch) in sp_by_product.items():
-        rcat          = get_rcat(rid, sp.category_name)
-        master_cat    = cat_map.get((rid, sp.category_name)) if sp.category_name else None
-        # Fallback: if the L0 cat_map misses, try the hierarchy-aware mapper
-        # (uses L2→L1→L0 and Tiers 1-4). The module-level singleton caches
-        # master categories and keyword rules across the batch.
+        rcat = get_rcat(rid, sp.category_name)
+        # Fast path: check L2 → L1 → L0 against cat_map (CategoryMapping Tier 1 only)
+        master_cat = (
+            cat_map.get((rid, sp.sub_category_2_name))
+            or cat_map.get((rid, sp.sub_category_name))
+            or cat_map.get((rid, sp.category_name))
+        ) if sp.category_name else None
+
+        # Full 4-tier pipeline if fast path missed
         if master_cat is None:
             try:
                 from core.services.category_mapper import category_mapper as _cm
@@ -177,7 +193,7 @@ def _process_batch(batch, retailers, branches, cat_map, stats) -> None:
                 if _r.matched:
                     master_cat = _r.category
             except Exception as _exc:
-                logger.debug('category_mapper fallback failed for %s: %s', sp.product_name, _exc)
+                logger.debug('category_mapper failed for %s: %s', sp.product_name, _exc)
         shelf_price   = sp.old_price if sp.old_price else sp.price
 
         existing = existing_products.get((rid, name))
@@ -301,5 +317,24 @@ def _process_batch(batch, retailers, branches, cat_map, stats) -> None:
         PriceHistory.objects.bulk_create(history_rows, ignore_conflicts=False)
         stats['history_written'] += len(history_rows)
 
-    # ── 4. Delete processed staging rows ─────────────────────────────── #
-    StagingProduct.objects.filter(id__in=[sp.id for sp, _, _ in valid]).delete()
+    # ── 4. Delete only fully-mapped staging rows ─────────────────────── #
+    # Rows with no master_category stay in staging for manual review.
+    to_delete_ids: list = []
+    to_skip_ids: list = []
+
+    for sp, retailer, branch in valid:
+        product = existing_products.get((retailer.id, sp.product_name))
+        if product and product.master_category_id:
+            to_delete_ids.append(sp.id)
+        else:
+            to_skip_ids.append(sp.id)
+            logger.debug(
+                'Staging row %d (%s) has no master_category — leaving in staging',
+                sp.id, sp.product_name)
+
+    if to_delete_ids:
+        StagingProduct.objects.filter(id__in=to_delete_ids).delete()
+
+    logger.info(
+        'Batch: deleted=%d kept_unmapped=%d',
+        len(to_delete_ids), len(to_skip_ids))

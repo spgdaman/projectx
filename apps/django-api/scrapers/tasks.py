@@ -74,7 +74,16 @@ def reap_orphaned_runs():
 def normalize_staging():
     """Drain StagingProduct → Product + Deal + PriceHistory."""
     from core.services.normalize import normalize_staging as _run
-    return _run()
+    result = _run()
+    process_alerts_task.delay()
+    return result
+
+
+@shared_task(name='core.tasks.process_alerts', queue='default')
+def process_alerts_task():
+    """Run after every normalize_staging completes and on the 4-hour schedule."""
+    from django.core.management import call_command
+    call_command('process_alerts')
 
 
 # ── Naivas ─────────────────────────────────────────────────────────────────── #

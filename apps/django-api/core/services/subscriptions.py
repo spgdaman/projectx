@@ -27,7 +27,8 @@ def deactivate_subscription(subscription):
 
 def update_product_subscription(subscription, new_product):
     subscription.product = new_product
-    subscription.category = new_product.master_category
+    # Do NOT set category directly — the model save() override handles this
+    # based on target_type='product'. Let the model enforce its own invariants.
     subscription.last_updated_at = timezone.now()
     subscription.save()
 

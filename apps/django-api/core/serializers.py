@@ -10,6 +10,7 @@ from .models import (
     Deal,
     Subscription,
     Payment,
+    AlertLog,
 )
 
 
@@ -195,6 +196,48 @@ class PaymentSerializer(serializers.ModelSerializer):
             "completed_at",
             "expires_at",
         ]
+
+
+class AlertLogSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(
+        source='deal.product.name', read_only=True)
+    retailer_name = serializers.CharField(
+        source='deal.retailer.name', read_only=True)
+    current_price = serializers.DecimalField(
+        source='deal.current_price',
+        max_digits=12, decimal_places=2,
+        read_only=True)
+    old_price = serializers.DecimalField(
+        source='deal.old_price',
+        max_digits=12, decimal_places=2,
+        read_only=True)
+    discount_pct = serializers.SerializerMethodField()
+    product_image = serializers.URLField(
+        source='deal.product.image_url',
+        read_only=True)
+    deal_url = serializers.URLField(
+        source='deal.link', read_only=True)
+    target_type = serializers.CharField(
+        source='subscription.target_type', read_only=True)
+
+    class Meta:
+        model = AlertLog
+        fields = [
+            'id', 'sent_at', 'product_name',
+            'retailer_name', 'current_price',
+            'old_price', 'discount_pct',
+            'product_image', 'deal_url',
+            'target_type', 'is_read',
+        ]
+
+    def get_discount_pct(self, obj):
+        d = obj.deal
+        if d.old_price and d.current_price \
+                and d.old_price > d.current_price:
+            return int(
+                (d.old_price - d.current_price)
+                / d.old_price * 100)
+        return None
 
 
 class InitiatePaymentSerializer(serializers.Serializer):

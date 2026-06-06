@@ -15,6 +15,8 @@ Usage:
   # result.tier      — which tier matched (1-4) or None
   # result.level     — which level matched (0-2) or None
   # result.score     — fuzzy score if tier==4, else None
+  # result.category_depth — nesting depth (root=0) or None
+  # result.category_path  — 'Food > Dairy > Milk' or None
 """
 
 import logging
@@ -37,6 +39,8 @@ class MappingResult:
     level: Optional[int] = None         # 0=L0, 1=L1, 2=L2
     score: Optional[float] = None       # fuzzy score 0-100
     matched_on: Optional[str] = None    # the string that matched
+    category_depth: Optional[int] = None
+    category_path: Optional[str] = None
 
     @property
     def matched(self) -> bool:
@@ -105,6 +109,34 @@ class CategoryMapper:
         self._load_keyword_rules()
         return {sp.id: self.map(sp) for sp in staging_products}
 
+    # ── Static helpers ───────────────────────────────────────────────────── #
+
+    @staticmethod
+    def category_depth(category) -> int:
+        """
+        Depth in the master hierarchy.
+        Root (parent=None) = 0. Each nesting = +1.
+        """
+        depth = 0
+        node = category
+        while node.parent_id is not None:
+            depth += 1
+            node = node.parent
+            if depth > 10:  # safety: bad data guard
+                break
+        return depth
+
+    @staticmethod
+    def category_path(category) -> str:
+        """Full path string: 'Food > Dairy > Milk'"""
+        parts = []
+        node = category
+        while node is not None:
+            parts.append(node.name)
+            node = node.parent
+        parts.reverse()
+        return ' > '.join(parts)
+
     # ── Helper: extract levels ───────────────────────────────────────────── #
 
     def _get_levels(self, sp) -> list:
@@ -167,10 +199,13 @@ class CategoryMapper:
 
     def _tier1_exact(self, levels, retailer) -> MappingResult:
         """
-        Look up each level in CategoryMapping (the existing table).
-        Tries the retailer's RetailerCategory → CategoryMapping chain.
+        Collect ALL matching CategoryMappings across all levels, then return
+        the one pointing to the deepest master_category (not just the first).
         """
         from core.models import RetailerCategory, CategoryMapping
+
+        best_result = MappingResult()
+        best_depth = -1
 
         for level, raw in levels:
             rc_qs = (
@@ -182,45 +217,67 @@ class CategoryMapper:
             for rc in rc_qs:
                 try:
                     mapping = CategoryMapping.objects.get(retailer_category=rc)
-                    logger.debug('[T1] Matched "%s" (L%d) → %s', raw, level, mapping.master_category)
-                    return MappingResult(
-                        category=mapping.master_category,
-                        tier=1, level=level, matched_on=raw,
-                    )
+                    depth = CategoryMapper.category_depth(mapping.master_category)
+                    if depth > best_depth:
+                        best_depth = depth
+                        best_result = MappingResult(
+                            category=mapping.master_category,
+                            tier=1, level=level, matched_on=raw,
+                            category_depth=depth,
+                            category_path=CategoryMapper.category_path(
+                                mapping.master_category),
+                        )
+                        logger.debug(
+                            '[T1] Matched "%s" (L%d, depth=%d) → %s',
+                            raw, level, depth, mapping.master_category)
                 except CategoryMapping.DoesNotExist:
                     continue
 
-        return MappingResult()
+        return best_result
 
     # ── Tier 2: Synonym match ────────────────────────────────────────────── #
 
     def _tier2_synonym(self, levels, retailer) -> MappingResult:
         """
-        Look up each level's normalised string in CategorySynonym.
-        Retailer-specific synonyms take priority over global ones.
+        Collect ALL matching synonyms across all levels, return the one
+        pointing to the deepest master_category.
         """
         from core.models import CategorySynonym
+
+        best_result = MappingResult()
+        best_depth = -1
 
         for level, raw in levels:
             norm = self.normalise(raw)
 
-            syn = (
+            syns = (
                 CategorySynonym.objects
                 .filter(raw_name=norm, level=level)
                 .filter(Q(retailer=retailer) | Q(retailer__isnull=True))
-                .select_related('master_category')
-                .order_by(F('retailer').asc(nulls_last=True))  # retailer-specific before global
-                .first()
+                .select_related(
+                    'master_category',
+                    'master_category__parent',
+                    'master_category__parent__parent',
+                )
+                .order_by(F('retailer').asc(nulls_last=True))
             )
 
-            if syn:
-                logger.debug('[T2] Synonym "%s" (L%d) → %s', norm, level, syn.master_category)
-                return MappingResult(
-                    category=syn.master_category,
-                    tier=2, level=level, matched_on=norm,
-                )
+            for syn in syns:
+                depth = CategoryMapper.category_depth(syn.master_category)
+                if depth > best_depth:
+                    best_depth = depth
+                    best_result = MappingResult(
+                        category=syn.master_category,
+                        tier=2, level=level, matched_on=norm,
+                        category_depth=depth,
+                        category_path=CategoryMapper.category_path(
+                            syn.master_category),
+                    )
+                    logger.debug(
+                        '[T2] Synonym "%s" (L%d, depth=%d) → %s',
+                        norm, level, depth, syn.master_category)
 
-        return MappingResult()
+        return best_result
 
     # ── Tier 3: Keyword rules ────────────────────────────────────────────── #
 
@@ -231,17 +288,20 @@ class CategoryMapper:
         self._keyword_rules = list(
             CategoryKeywordRule.objects
             .filter(is_active=True)
-            .select_related('master_category')
+            .select_related(
+                'master_category',
+                'master_category__parent',
+                'master_category__parent__parent',
+            )
             .order_by('-priority')
         )
         logger.debug('[T3] Loaded %d keyword rules', len(self._keyword_rules))
 
     def _tier3_keyword(self, sp) -> MappingResult:
         """
-        Test active keyword rules against the product's name and/or category
-        fields. Rules checked in priority order (highest first). First match
-        wins. Keyword matching is word-boundary aware: "oil" matches
-        "Cooking Oil" but not "Foil".
+        Collect ALL matching keyword rules, then pick the one with highest
+        priority. Break priority ties by choosing the deeper (more specific)
+        category.
         """
         self._load_keyword_rules()
 
@@ -252,6 +312,7 @@ class CategoryMapper:
         any_cat      = f'{cat} {sub1} {sub2}'
         any_all      = f'{product_name} {cat} {sub1} {sub2}'
 
+        matches = []
         for rule in self._keyword_rules:
             kw = rule.keyword.lower()
             pattern = r'\b' + re.escape(kw) + r'\b'
@@ -264,27 +325,44 @@ class CategoryMapper:
                 haystack = any_all.lower()
 
             if re.search(pattern, haystack):
-                logger.debug('[T3] Keyword "%s" matched "%s" → %s', kw, product_name, rule.master_category)
-                return MappingResult(
-                    category=rule.master_category,
-                    tier=3, level=None, matched_on=kw,
-                )
+                depth = CategoryMapper.category_depth(rule.master_category)
+                matches.append((rule, depth))
 
-        return MappingResult()
+        if not matches:
+            return MappingResult()
+
+        # Highest priority first; break ties by depth (deeper = more specific)
+        matches.sort(key=lambda x: (x[0].priority, x[1]), reverse=True)
+        best_rule, best_depth = matches[0]
+
+        logger.debug(
+            '[T3] Keyword "%s" matched "%s" (depth=%d) → %s',
+            best_rule.keyword, product_name, best_depth, best_rule.master_category)
+        return MappingResult(
+            category=best_rule.master_category,
+            tier=3, level=None, matched_on=best_rule.keyword,
+            category_depth=best_depth,
+            category_path=CategoryMapper.category_path(best_rule.master_category),
+        )
 
     # ── Tier 4: Fuzzy match ──────────────────────────────────────────────── #
 
     def _load_master_categories(self):
         """
         Load all master category names into memory for fast fuzzy comparison.
-        Stored as list of (Category instance, name string, normalised string).
+        Stored as list of (Category, name, normalised, depth) 4-tuples.
         """
         if self._master_categories is not None:
             return
         from core.models import Category
-        cats = Category.objects.all().select_related('parent')
+        cats = Category.objects.all().select_related(
+            'parent',
+            'parent__parent',
+            'parent__parent__parent',
+        )
         self._master_categories = [
-            (c, c.name, self.normalise(c.name))
+            (c, c.name, self.normalise(c.name),
+             CategoryMapper.category_depth(c))
             for c in cats
         ]
         logger.debug('[T4] Loaded %d master categories for fuzzy', len(self._master_categories))
@@ -292,10 +370,9 @@ class CategoryMapper:
     def _tier4_fuzzy(self, levels) -> MappingResult:
         """
         For each level (deepest first), run rapidfuzz token_set_ratio against
-        all master category names. Returns the first match above
-        FUZZY_THRESHOLD.
-
-        If rapidfuzz is not installed, logs a warning and returns empty result.
+        all master category names. A small depth bonus (max 3 pts) breaks score
+        ties in favour of leaf categories, but the raw score governs the
+        threshold check.
         """
         try:
             from rapidfuzz import fuzz
@@ -311,19 +388,28 @@ class CategoryMapper:
             norm = self.normalise(raw)
             best_score = 0.0
             best_cat = None
+            best_effective = 0.0
 
-            for cat, cat_name, cat_norm in self._master_categories:
+            for cat, cat_name, cat_norm, cat_depth in self._master_categories:
                 score = fuzz.token_set_ratio(norm, cat_norm)
-                if score > best_score:
-                    best_score = score
+                # Depth bonus: max 3 pts so leaves beat roots on score ties
+                effective = score + min(cat_depth, 3)
+                if effective > best_effective:
+                    best_effective = effective
+                    best_score = score  # real score for threshold check
                     best_cat = cat
 
             if best_score >= FUZZY_THRESHOLD and best_cat:
-                logger.debug('[T4] Fuzzy "%s" (L%d) → %s (score %.1f)', norm, level, best_cat, best_score)
+                depth = CategoryMapper.category_depth(best_cat)
+                logger.debug(
+                    '[T4] Fuzzy "%s" (L%d) → %s (score %.1f, depth=%d)',
+                    norm, level, best_cat, best_score, depth)
                 return MappingResult(
                     category=best_cat,
                     tier=4, level=level,
                     score=best_score, matched_on=norm,
+                    category_depth=depth,
+                    category_path=CategoryMapper.category_path(best_cat),
                 )
 
             if best_score > (best_result.score or 0):

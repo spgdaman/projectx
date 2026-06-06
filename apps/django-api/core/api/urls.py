@@ -3,6 +3,10 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (
+    AlertLogView,
+    AlertMarkReadView,
+    alert_unread_count,
+    mark_all_alerts_read,
     LoginView,
     RegisterView,
     MeView,
@@ -33,6 +37,12 @@ admin_router.register(r"users", AdminUsersViewSet, basename="admin-users")
 admin_router.register(r"mappings", AdminCategoryMappingViewSet, basename="admin-mappings")
 
 urlpatterns = [
+    # Alerts
+    path("alerts/", AlertLogView.as_view(), name="alert-log"),
+    path("alerts/unread-count/", alert_unread_count, name="alert-unread-count"),
+    path("alerts/read-all/", mark_all_alerts_read, name="alert-read-all"),
+    path("alerts/<int:pk>/read/", AlertMarkReadView.as_view(), name="alert-mark-read"),
+
     # Auth
     path("auth/login/", LoginView.as_view(), name="api-login"),
     path("auth/register/", RegisterView.as_view(), name="api-register"),

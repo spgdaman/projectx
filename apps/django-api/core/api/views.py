@@ -8,14 +8,15 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action
+from rest_framework import generics, viewsets, status, permissions
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models import (
+    AlertLog,
     Category,
     CategoryMapping,
     Retailer,
@@ -27,6 +28,7 @@ from core.models import (
     UserProfile,
 )
 from core.serializers import (
+    AlertLogSerializer,
     CategorySerializer,
     CategoryTreeSerializer,
     RetailerSerializer,
@@ -537,3 +539,72 @@ class AdminCategoryMappingViewSet(viewsets.ModelViewSet):
         except CategoryMapping.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# ── Alert views ───────────────────────────────────────────────────────────────
+
+class AlertLogView(generics.ListAPIView):
+    """
+    GET /api/alerts/
+    Returns the logged-in user's alert history, most recent first.
+    Supports ?limit=N (default 50, max 200).
+    """
+    serializer_class = AlertLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = AlertLog.objects.filter(
+            subscription__user=self.request.user,
+        ).select_related(
+            'deal', 'deal__product',
+            'deal__retailer',
+            'deal__product__master_category',
+            'subscription',
+        ).order_by('-sent_at')
+
+        limit = min(
+            int(self.request.query_params.get('limit', 50)),
+            200)
+        return qs[:limit]
+
+
+class AlertMarkReadView(generics.UpdateAPIView):
+    """
+    PATCH /api/alerts/<id>/read/
+    Marks a specific alert as read.
+    """
+    serializer_class = AlertLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['patch']
+
+    def get_queryset(self):
+        return AlertLog.objects.filter(
+            subscription__user=self.request.user)
+
+    def partial_update(self, request, *args, **kwargs):
+        alert = self.get_object()
+        alert.is_read = True
+        alert.save(update_fields=['is_read'])
+        return Response(self.get_serializer(alert).data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def mark_all_alerts_read(request):
+    """POST /api/alerts/read-all/"""
+    AlertLog.objects.filter(
+        subscription__user=request.user,
+        is_read=False,
+    ).update(is_read=True)
+    return Response({'status': 'ok'})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def alert_unread_count(request):
+    """GET /api/alerts/unread-count/"""
+    count = AlertLog.objects.filter(
+        subscription__user=request.user,
+        is_read=False,
+    ).count()
+    return Response({'unread': count})

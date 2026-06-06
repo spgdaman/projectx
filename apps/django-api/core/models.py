@@ -256,6 +256,7 @@ class AlertLog(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     deal = models.ForeignKey("Deal", on_delete=models.CASCADE)
     sent_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
 
 class Payment(models.Model):
     PAYMENT_PROVIDER_CHOICES = (
