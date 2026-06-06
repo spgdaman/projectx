@@ -11,6 +11,33 @@ from celery import group, shared_task
 logger = logging.getLogger(__name__)
 
 
+# ── Orphan reaper ─────────────────────────────────────────────────────────── #
+
+@shared_task(
+    name='scrapers.tasks.reap_orphaned_runs',
+    queue='default',
+)
+def reap_orphaned_runs():
+    """
+    Mark any ScraperRun stuck in 'running' for > 2 h as failed.
+    Guards against worker crashes or pod evictions that skip the finish() call.
+    """
+    from django.utils import timezone
+    from datetime import timedelta
+    from core.models import ScraperRun
+
+    cutoff = timezone.now() - timedelta(hours=2)
+    qs = ScraperRun.objects.filter(status='running', started_at__lt=cutoff)
+    count = qs.update(
+        status='failed',
+        finished_at=timezone.now(),
+        error='Orphaned — worker terminated before completion',
+    )
+    if count:
+        logger.warning('[reaper] Marked %d orphaned run(s) as failed', count)
+    return {'reaped': count}
+
+
 # ── Staging → Products / Deals ────────────────────────────────────────────── #
 
 @shared_task(
