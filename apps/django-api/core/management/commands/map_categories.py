@@ -138,7 +138,7 @@ class Command(BaseCommand):
         self.stdout.write('  Tier 2 (synonym):  {:>6} products'.format(counters['matched_t2']))
         self.stdout.write('  Tier 3 (keyword):  {:>6} products'.format(counters['matched_t3']))
         self.stdout.write('  Tier 4 (fuzzy):    {:>6} products'.format(counters['matched_t4']))
-        self.stdout.write('  ' + '─' * 30)
+        self.stdout.write('  ' + '-' * 30)
         self.stdout.write('  Total matched:     {:>6} / {}'.format(total_matched, total))
         self.stdout.write('  Unmatched (queue): {:>6}'.format(counters['unmatched']))
         self.stdout.write('  Errors:            {:>6}'.format(counters['errors']))
