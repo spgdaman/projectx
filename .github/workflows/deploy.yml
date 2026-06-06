@@ -18,7 +18,7 @@ jobs:
     steps:
       # ── 1. Checkout ──────────────────────────────────────────────────────────
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # ── 1b. Fix git safe.directory (self-hosted runner runs as different user)
       - name: Fix git safe directory
@@ -101,11 +101,10 @@ jobs:
       - name: Rollout restart all deployments
         run: |
           kubectl rollout restart deployment/django          -n bargainhunters
-          kubectl rollout restart deployment/celery-default   -n bargainhunters
-          kubectl rollout restart deployment/celery-naivas    -n bargainhunters
-          kubectl rollout restart deployment/celery-carrefour -n bargainhunters
+          kubectl rollout restart deployment/celery-default    -n bargainhunters
+          kubectl rollout restart deployment/celery-naivas     -n bargainhunters
           kubectl rollout restart deployment/celery-chandarana -n bargainhunters
-          kubectl rollout restart deployment/celery-quickmart -n bargainhunters
+          kubectl rollout restart deployment/celery-quickmart  -n bargainhunters
           kubectl rollout restart deployment/celery-beat      -n bargainhunters
           kubectl rollout restart deployment/web              -n bargainhunters
 
