@@ -50,7 +50,9 @@ spec:
       containers:
         - name: celery-naivas
           image: localhost:5000/bargainhunters-celery:latest
-          command: ["celery", "-A", "catalogue", "worker", "-Q", "naivas-queue", "-c", "3", "-l", "info"]
+          # concurrency 1: Naivas falls back to Playwright which is memory-heavy;
+          # single worker avoids two Playwright instances competing for RAM.
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "naivas-queue", "-c", "1", "-l", "info"]
           envFrom:
             - configMapRef:
                 name: bargainhunters-config
@@ -58,11 +60,11 @@ spec:
                 name: bargainhunters-secret
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
 ---
 # ── Celery Carrefour queue ────────────────────────────────────────────────────
 apiVersion: apps/v1
