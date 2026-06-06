@@ -151,7 +151,9 @@ spec:
       containers:
         - name: celery-quickmart
           image: localhost:5000/bargainhunters-celery:latest
-          command: ["celery", "-A", "catalogue", "worker", "-Q", "quickmart-queue", "-c", "10", "-l", "info"]
+          # concurrency 3: each branch task spawns a Playwright instance; 3 at a
+          # time keeps peak RAM under 1Gi while still parallelising branch scrapes.
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "quickmart-queue", "-c", "3", "-l", "info"]
           envFrom:
             - configMapRef:
                 name: bargainhunters-config
@@ -159,10 +161,10 @@ spec:
                 name: bargainhunters-secret
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "250m"
             limits:
-              memory: "512Mi"
+              memory: "1Gi"
               cpu: "500m"
 ---
 apiVersion: autoscaling/v2
