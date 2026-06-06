@@ -66,39 +66,6 @@ spec:
               memory: "1Gi"
               cpu: "500m"
 ---
-# ── Celery Carrefour queue ────────────────────────────────────────────────────
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: celery-carrefour
-  namespace: bargainhunters
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: celery-carrefour
-  template:
-    metadata:
-      labels:
-        app: celery-carrefour
-    spec:
-      containers:
-        - name: celery-carrefour
-          image: localhost:5000/bargainhunters-celery:latest
-          command: ["celery", "-A", "catalogue", "worker", "-Q", "carrefour-queue", "-c", "5", "-l", "info"]
-          envFrom:
-            - configMapRef:
-                name: bargainhunters-config
-            - secretRef:
-                name: bargainhunters-secret
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
----
 # ── Celery Chandarana queue ───────────────────────────────────────────────────
 apiVersion: apps/v1
 kind: Deployment
@@ -133,13 +100,16 @@ spec:
               cpu: "500m"
 ---
 # ── Celery Quickmart queue ────────────────────────────────────────────────────
+# PAUSED — replicas: 0. Quickmart Playwright branch-scraping OOMs at concurrency > 1.
+# Re-enable after confirming a lightweight API endpoint via DevTools.
+# Manual scrape: python manage.py scrape_quickmart
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: celery-quickmart
   namespace: bargainhunters
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: celery-quickmart

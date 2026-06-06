@@ -34,9 +34,10 @@ import requests
 
 from .base import APIError, BaseScraper, logger
 
-BASE_URL = 'https://foodplus.co.ke'
+BASE_URL  = 'https://foodplus.co.ke'
 MEDIA_URL = f'{BASE_URL}/pub/media/catalog/product'
-API_URL = f'{BASE_URL}/rest/V1/products'
+API_URL   = f'{BASE_URL}/rest/V1/products'
+CAT_URL   = f'{BASE_URL}/rest/V1/categories'
 PAGE_SIZE = 200
 UA = (
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
@@ -48,8 +49,84 @@ class ChandaranaScraper(BaseScraper):
     retailer_name = 'Chandarana'
     rate_limit_seconds = 0.3
 
+    def __init__(self):
+        super().__init__()
+        self._category_tree: dict = {}  # populated once per scrape_api() call
+
     def get_offers_url(self) -> str:
         return f'{BASE_URL}/specials'
+
+    # ── Category tree ────────────────────────────────────────────────── #
+
+    def _fetch_category_tree(self, session: requests.Session) -> None:
+        """Fetch Magento 2 category tree once per run into self._category_tree."""
+        try:
+            resp = session.get(CAT_URL, timeout=30)
+            if resp.status_code != 200:
+                logger.warning('[Chandarana] Category tree: HTTP %d', resp.status_code)
+                return
+            tree: dict = {}
+            self._walk_category_node(resp.json(), tree)
+            self._category_tree = tree
+            logger.info('[Chandarana] Category tree: %d nodes loaded', len(tree))
+        except Exception as exc:
+            logger.warning('[Chandarana] Category tree fetch failed: %s', exc)
+
+    def _walk_category_node(self, node: dict, tree: dict) -> None:
+        cat_id = node.get('id')
+        if cat_id:
+            tree[str(cat_id)] = {
+                'name':      node.get('name', ''),
+                'level':     node.get('level', 0),
+                'parent_id': str(node.get('parent_id', 0)),
+            }
+        for child in node.get('children_data', []):
+            self._walk_category_node(child, tree)
+
+    def _resolve_categories(self, cat_ids: list) -> tuple:
+        """
+        Given a list of Magento category IDs, return the 3-level path
+        (category_name, sub_category_name, sub_category_2_name) by walking
+        up from the deepest matched node.  Skips Magento root nodes (level < 2).
+        """
+        if not cat_ids or not self._category_tree:
+            return None, None, None
+
+        tree = self._category_tree
+
+        # Pick the deepest (most specific) category
+        best_cid, best_level = None, -1
+        for cid in cat_ids:
+            cat = tree.get(str(cid))
+            if cat and cat['level'] > best_level:
+                best_level = cat['level']
+                best_cid = str(cid)
+
+        if not best_cid:
+            return None, None, None
+
+        # Walk up and collect names; skip Magento system roots (level 0 and 1)
+        path: list = []
+        cid = best_cid
+        visited: set = set()
+        while cid and cid not in visited:
+            visited.add(cid)
+            cat = tree.get(cid)
+            if not cat:
+                break
+            if cat['level'] >= 2:
+                path.append(cat['name'])
+            parent_id = cat.get('parent_id', '0')
+            if parent_id in ('0', '1', cid):
+                break
+            cid = parent_id
+
+        path.reverse()  # top-level first
+        return (
+            path[0] if len(path) > 0 else None,
+            path[1] if len(path) > 1 else None,
+            path[2] if len(path) > 2 else None,
+        )
 
     # ── API strategy ─────────────────────────────────────────────────── #
 
@@ -57,6 +134,8 @@ class ChandaranaScraper(BaseScraper):
         today = date.today().strftime('%Y-%m-%d 00:00:00')
         session = requests.Session()
         session.headers.update({'User-Agent': UA, 'Accept': 'application/json'})
+
+        self._fetch_category_tree(session)
 
         all_items: list = []
         page = 1
@@ -139,13 +218,33 @@ class ChandaranaScraper(BaseScraper):
         image_path = ca.get('image') or ca.get('small_image') or ca.get('thumbnail')
         image_url  = f'{MEDIA_URL}{image_path}' if image_path else None
 
+        # Extract category IDs: prefer extension_attributes.category_links,
+        # fall back to the category_ids custom attribute (comma-separated string)
+        cat_ids: list = []
+        ext = product.get('extension_attributes', {})
+        for link in ext.get('category_links', []):
+            cid = link.get('category_id')
+            if cid:
+                cat_ids.append(str(cid))
+        if not cat_ids:
+            raw = ca.get('category_ids', '')
+            if isinstance(raw, str):
+                cat_ids = [x.strip() for x in raw.split(',') if x.strip()]
+            elif isinstance(raw, list):
+                cat_ids = [str(x) for x in raw]
+
+        cat_name, sub_cat, sub_cat_2 = self._resolve_categories(cat_ids)
+
         return {
-            'product_name': name,
-            'external_id':  sku,
-            'product_url':  product_url,
-            'image_url':    image_url,
-            'price':        special_price,
-            'old_price':    regular_price,
+            'product_name':        name,
+            'external_id':         sku,
+            'product_url':         product_url,
+            'image_url':           image_url,
+            'price':               special_price,
+            'old_price':           regular_price,
+            'category_name':       cat_name,
+            'sub_category_name':   sub_cat,
+            'sub_category_2_name': sub_cat_2,
         }
 
     # ── Playwright fallback ──────────────────────────────────────────── #

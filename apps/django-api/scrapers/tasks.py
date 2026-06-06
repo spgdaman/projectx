@@ -4,11 +4,36 @@ scrapers/tasks.py
 Celery tasks for all four scrapers + staging normalization.
 """
 
+import contextlib
 import logging
 
+import redis as redis_lib
 from celery import group, shared_task
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+
+# ── Distributed scraper lock ──────────────────────────────────────────────── #
+
+@contextlib.contextmanager
+def scraper_lock(retailer_name: str, timeout: int = 3600):
+    """
+    Acquire a Redis NX lock for a scraper run. Yields True if acquired,
+    False if another worker already holds the lock. Always releases on exit.
+    timeout: seconds before Redis auto-expires the key (safety net for crashes).
+    """
+    r = redis_lib.from_url(
+        getattr(settings, 'REDIS_URL', 'redis://localhost:6379/1'),
+        decode_responses=True,
+    )
+    key = f'scraper_lock:{retailer_name}'
+    acquired = r.set(key, '1', nx=True, ex=timeout)
+    try:
+        yield acquired
+    finally:
+        if acquired:
+            r.delete(key)
 
 
 # ── Orphan reaper ─────────────────────────────────────────────────────────── #
@@ -63,59 +88,51 @@ def normalize_staging():
 )
 def scrape_naivas(self):
     from scrapers.naivas import NaivasScraper
-    try:
-        scraper = NaivasScraper()
-        run = scraper.run()
-        run.celery_task_id = self.request.id or ''
-        run.save(update_fields=['celery_task_id'])
-        normalize_staging.delay()
-        return {
-            'retailer':         'Naivas',
-            'status':           run.status,
-            'strategy':         run.strategy,
-            'found':            run.deals_found,
-            'changed':          run.deals_changed,
-            'new':              run.products_new,
-            'skipped':          run.products_skipped,
-            'pages':            run.pages_scraped,
-            'http_errors':      run.http_errors,
-            'duration_seconds': run.duration_seconds,
-        }
-    except Exception as exc:
-        logger.error('[Naivas] Task failed: %s', exc)
-        raise self.retry(exc=exc)
+    with scraper_lock('naivas') as acquired:
+        if not acquired:
+            logger.info('[Naivas] Already running — skipping duplicate task')
+            return {'skipped': 'locked'}
+        try:
+            run = NaivasScraper().run()
+            if run is None:
+                return {'skipped': 'recent_run_exists'}
+            run.celery_task_id = self.request.id or ''
+            run.save(update_fields=['celery_task_id'])
+            normalize_staging.delay()
+            return {
+                'retailer':         'Naivas',
+                'status':           run.status,
+                'strategy':         run.strategy,
+                'found':            run.deals_found,
+                'changed':          run.deals_changed,
+                'new':              run.products_new,
+                'skipped':          run.products_skipped,
+                'pages':            run.pages_scraped,
+                'http_errors':      run.http_errors,
+                'duration_seconds': run.duration_seconds,
+            }
+        except Exception as exc:
+            logger.error('[Naivas] Task failed: %s', exc)
+            raise self.retry(exc=exc)
 
 
 # ── Quickmart ─────────────────────────────────────────────────────────────── #
 
+# QUICKMART SCRAPING PAUSED
+# Branch-specific Playwright produces one Playwright instance per branch (~200–300 MB each).
+# With 9+ branches this OOMs the worker. Scheduled scraping is disabled until a lightweight
+# API endpoint is confirmed via DevTools. Use: python manage.py scrape_quickmart (manual only).
+# Re-enable by removing the early-return guards below and adding scrape-quickmart back to
+# CELERY_BEAT_SCHEDULE in settings.py.
+
 @shared_task(name='scrapers.tasks.scrape_quickmart_all')
 def scrape_quickmart_all():
     """Fan-out: fires one scrape_quickmart_branch task per active branch."""
-    from core.models import RetailerBranch
-
-    # external_id stores the full branch URL e.g. https://quickmart.co.ke/5301
-    branches = list(
-        RetailerBranch.objects.filter(
-            retailer__name='Quickmart',
-            is_active=True,
-            external_id__isnull=False,
-        ).values('name', 'external_id')
+    logger.warning(
+        '[Quickmart] Scheduled scraping is PAUSED. '
+        'Run manually: python manage.py scrape_quickmart'
     )
-
-    if not branches:
-        logger.warning(
-            '[Quickmart] No active branches with URLs — '
-            'run scrapers.tasks.discover_quickmart_branches first'
-        )
-        return {'enqueued': 0}
-
-    job = group(
-        scrape_quickmart_branch.s(b['name'], b['external_id'])
-        for b in branches
-    )
-    job.apply_async()
-    logger.info('[Quickmart] Enqueued %d branch tasks', len(branches))
-    return {'enqueued': len(branches)}
+    return {'status': 'paused'}
 
 
 @shared_task(
@@ -131,29 +148,12 @@ def scrape_quickmart_branch(self, branch_name: str, branch_url: str):
     branch_url  — full URL, e.g. https://quickmart.co.ke/5301
                   stored in RetailerBranch.external_id
     """
-    from scrapers.quickmart import QuickmartBranchScraper
-    try:
-        scraper = QuickmartBranchScraper(branch_name=branch_name, branch_url=branch_url)
-        run = scraper.run()
-        run.celery_task_id = self.request.id or ''
-        run.save(update_fields=['celery_task_id'])
-        normalize_staging.delay()
-        return {
-            'retailer':         'Quickmart',
-            'branch':           branch_name,
-            'status':           run.status,
-            'strategy':         run.strategy,
-            'found':            run.deals_found,
-            'changed':          run.deals_changed,
-            'new':              run.products_new,
-            'skipped':          run.products_skipped,
-            'pages':            run.pages_scraped,
-            'http_errors':      run.http_errors,
-            'duration_seconds': run.duration_seconds,
-        }
-    except Exception as exc:
-        logger.error('[Quickmart/%s] Task failed: %s', branch_name, exc)
-        raise self.retry(exc=exc)
+    logger.warning(
+        '[Quickmart/%s] Branch scraping is PAUSED. '
+        'Run manually: python manage.py scrape_quickmart',
+        branch_name,
+    )
+    return {'status': 'paused', 'branch': branch_name}
 
 
 # ── Chandarana ────────────────────────────────────────────────────────────── #
@@ -167,27 +167,32 @@ def scrape_quickmart_branch(self, branch_name: str, branch_url: str):
 )
 def scrape_chandarana(self):
     from scrapers.chandarana import ChandaranaScraper
-    try:
-        scraper = ChandaranaScraper()
-        run = scraper.run()
-        run.celery_task_id = self.request.id or ''
-        run.save(update_fields=['celery_task_id'])
-        normalize_staging.delay()
-        return {
-            'retailer':         'Chandarana',
-            'status':           run.status,
-            'strategy':         run.strategy,
-            'found':            run.deals_found,
-            'changed':          run.deals_changed,
-            'new':              run.products_new,
-            'skipped':          run.products_skipped,
-            'pages':            run.pages_scraped,
-            'http_errors':      run.http_errors,
-            'duration_seconds': run.duration_seconds,
-        }
-    except Exception as exc:
-        logger.error('[Chandarana] Task failed: %s', exc)
-        raise self.retry(exc=exc)
+    with scraper_lock('chandarana') as acquired:
+        if not acquired:
+            logger.info('[Chandarana] Already running — skipping duplicate task')
+            return {'skipped': 'locked'}
+        try:
+            run = ChandaranaScraper().run()
+            if run is None:
+                return {'skipped': 'recent_run_exists'}
+            run.celery_task_id = self.request.id or ''
+            run.save(update_fields=['celery_task_id'])
+            normalize_staging.delay()
+            return {
+                'retailer':         'Chandarana',
+                'status':           run.status,
+                'strategy':         run.strategy,
+                'found':            run.deals_found,
+                'changed':          run.deals_changed,
+                'new':              run.products_new,
+                'skipped':          run.products_skipped,
+                'pages':            run.pages_scraped,
+                'http_errors':      run.http_errors,
+                'duration_seconds': run.duration_seconds,
+            }
+        except Exception as exc:
+            logger.error('[Chandarana] Task failed: %s', exc)
+            raise self.retry(exc=exc)
 
 
 # ── Carrefour ─────────────────────────────────────────────────────────────── #

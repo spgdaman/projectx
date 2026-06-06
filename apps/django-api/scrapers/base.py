@@ -250,13 +250,29 @@ class BaseScraper:
 
     # ── Main entry point ─────────────────────────────────────────────── #
 
-    def run(self):
+    def run(self, force: bool = False):
+        from datetime import timedelta
         from core.models import ScraperRun
 
         label = (
             f'{self.retailer_name}'
             + (f'/{self.branch_name}' if self.branch_name else '')
         )
+
+        # Skip if a successful run finished within the last 2 hours.
+        # Pass force=True (or set _force=True before calling run()) to bypass.
+        if not force and not getattr(self, '_force', False):
+            recent = ScraperRun.objects.filter(
+                retailer=self.retailer,
+                branch=self.branch,
+                status='success',
+                finished_at__gte=timezone.now() - timedelta(hours=2),
+            ).exists()
+            if recent:
+                logger.info(
+                    '[%s] Skipping — successful run completed within last 2 h', label
+                )
+                return None
 
         run = ScraperRun.objects.create(
             retailer=self.retailer,
