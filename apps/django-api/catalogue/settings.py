@@ -155,14 +155,6 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'scrapers.tasks.scrape_naivas',
         'schedule': crontab(hour='*/4'),
     },
-    'scrape-quickmart': {
-        'task': 'scrapers.tasks.scrape_quickmart_all',
-        'schedule': crontab(hour='*/6'),
-    },
-    'scrape-carrefour': {
-        'task': 'scrapers.tasks.scrape_carrefour',
-        'schedule': crontab(hour='*/4'),
-    },
     'scrape-chandarana': {
         'task': 'scrapers.tasks.scrape_chandarana',
         'schedule': crontab(hour='*/4'),
@@ -174,11 +166,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 CELERY_TASK_ROUTES = {
-    'scrapers.tasks.scrape_naivas':           {'queue': 'naivas-queue'},
-    'scrapers.tasks.scrape_carrefour':        {'queue': 'carrefour-queue'},
-    'scrapers.tasks.scrape_chandarana':       {'queue': 'chandarana-queue'},
-    'scrapers.tasks.scrape_quickmart_all':    {'queue': 'default'},
-    'scrapers.tasks.scrape_quickmart_branch': {'queue': 'quickmart-queue'},
+    'scrapers.tasks.scrape_naivas':     {'queue': 'naivas-queue'},
+    'scrapers.tasks.scrape_chandarana': {'queue': 'chandarana-queue'},
 }
 
 # ---------------------------------------------------------------------------
