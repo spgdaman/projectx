@@ -107,4 +107,8 @@ export const adminApi = {
     apiClient.get("/admin/scraper-runs/", { params }),
   triggerScrape: (retailer: string) =>
     apiClient.post(`/admin/trigger-scrape/${retailer}/`),
+  uncategorizedProducts: (params?: { search?: string; retailer?: number; page?: number }) =>
+    apiClient.get("/admin/uncategorized-products/", { params }),
+  setProductCategory: (productId: number, masterCategoryId: number) =>
+    apiClient.patch(`/admin/products/${productId}/set-category/`, { master_category_id: masterCategoryId }),
 };

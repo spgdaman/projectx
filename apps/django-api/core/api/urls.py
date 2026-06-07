@@ -24,6 +24,8 @@ from .views import (
     AdminTriggerScraperView,
     AdminMapCategoriesView,
     AdminImportKeywordRulesView,
+    AdminUncategorizedProductsView,
+    AdminSetProductCategoryView,
 )
 
 router = DefaultRouter()
@@ -60,6 +62,8 @@ urlpatterns = [
     path("admin/trigger-scrape/<str:retailer>/", AdminTriggerScraperView.as_view(), name="admin-trigger-scrape"),
     path("admin/map-categories/", AdminMapCategoriesView.as_view(), name="admin-map-categories"),
     path("admin/import-keyword-rules/", AdminImportKeywordRulesView.as_view(), name="admin-import-keyword-rules"),
+    path("admin/uncategorized-products/", AdminUncategorizedProductsView.as_view(), name="admin-uncategorized-products"),
+    path("admin/products/<int:pk>/set-category/", AdminSetProductCategoryView.as_view(), name="admin-set-product-category"),
     path("admin/", include(admin_router.urls)),
 
     # Resource router

@@ -483,6 +483,64 @@ class AdminMapCategoriesView(APIView):
         return Response({'output': out.getvalue()})
 
 
+class AdminUncategorizedProductsView(APIView):
+    """Paginated list of products with no master_category — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from core.models import Product
+        from django.core.paginator import Paginator
+
+        qs = (
+            Product.objects
+            .filter(master_category__isnull=True)
+            .select_related('retailer')
+            .order_by('retailer__name', 'name')
+        )
+        if search := request.query_params.get('search', '').strip():
+            qs = qs.filter(name__icontains=search)
+        if retailer_id := request.query_params.get('retailer', '').strip():
+            qs = qs.filter(retailer_id=retailer_id)
+
+        paginator = Paginator(qs, 50)
+        page = paginator.get_page(int(request.query_params.get('page', 1)))
+        return Response({
+            'count': paginator.count,
+            'num_pages': paginator.num_pages,
+            'results': [
+                {
+                    'id': p.id,
+                    'name': p.name,
+                    'image_url': p.image_url,
+                    'retailer': {'id': p.retailer_id, 'name': p.retailer.name},
+                }
+                for p in page
+            ],
+        })
+
+
+class AdminSetProductCategoryView(APIView):
+    """Set master_category on a single Product — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def patch(self, request, pk):
+        from core.models import Category, Product
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+        category_id = request.data.get('master_category_id')
+        if not category_id:
+            return Response({'detail': 'master_category_id required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            category = Category.objects.get(pk=category_id)
+        except Category.DoesNotExist:
+            return Response({'detail': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+        product.master_category = category
+        product.save(update_fields=['master_category'])
+        return Response({'id': product.id, 'master_category': {'id': category.id, 'name': category.name}})
+
+
 class AdminImportKeywordRulesView(APIView):
     """
     Bulk-import CategoryKeywordRule records — staff only.
