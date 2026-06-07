@@ -67,7 +67,7 @@ class Command(BaseCommand):
                     if result.matched:
                         self.stdout.write(
                             f'  [T{result.tier}/L{result.level}] {sp.product_name} '
-                            f'({cats}) → {result.category}'
+                            f'({cats}) -> {result.category}'
                         )
                     else:
                         self.stdout.write(f'  [MISS] {sp.product_name} ({cats})')
