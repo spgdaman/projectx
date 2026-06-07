@@ -147,9 +147,6 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         if retailer_id := self.request.query_params.get("retailer"):
             from core.services.alert_resolver import get_category_descendants
             # Include a root if it OR any of its descendants has a product from this retailer
-            all_cat_ids = set(
-                Category.objects.values_list("id", flat=True)
-            )
             roots_with_products = set()
             for root in qs:
                 desc_ids = get_category_descendants(root)
@@ -158,7 +155,10 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
                     master_category_id__in=desc_ids,
                 ).exists():
                     roots_with_products.add(root.id)
-            qs = qs.filter(id__in=roots_with_products)
+            # If no categorized products exist yet for this retailer, fall back to all roots
+            # so the dropdown is never empty (data quality issue, not a user-facing error)
+            if roots_with_products:
+                qs = qs.filter(id__in=roots_with_products)
         return qs
 
     @action(detail=False, methods=["get"])
@@ -456,6 +456,25 @@ class AdminTriggerScraperView(APIView):
         from celery import current_app
         result = current_app.send_task(task_name)
         return Response({'task_id': result.id, 'retailer': retailer, 'queued': True})
+
+
+class AdminMapCategoriesView(APIView):
+    """Run map_categories management command synchronously — staff only."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        from django.core.management import call_command
+        from io import StringIO
+        retailer = request.data.get('retailer')
+        out = StringIO()
+        kwargs = {'stdout': out}
+        if retailer:
+            kwargs['retailer'] = retailer
+        try:
+            call_command('map_categories', **kwargs)
+        except Exception as exc:
+            return Response({'error': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'output': out.getvalue()})
 
 
 class AdminScraperRunsView(APIView):
