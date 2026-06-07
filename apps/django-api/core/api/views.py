@@ -459,7 +459,11 @@ class AdminTriggerScraperView(APIView):
 
 
 class AdminMapCategoriesView(APIView):
-    """Run map_categories management command synchronously — staff only."""
+    """
+    Run category mapping on production data — staff only.
+    Runs map_categories (staging-based) then categorize_products (keyword-based
+    direct pass) so products without staging rows also get categorized.
+    """
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
@@ -467,11 +471,13 @@ class AdminMapCategoriesView(APIView):
         from io import StringIO
         retailer = request.data.get('retailer')
         out = StringIO()
-        kwargs = {'stdout': out}
+        kwargs = {'stdout': out, 'stderr': out}
         if retailer:
             kwargs['retailer'] = retailer
         try:
             call_command('map_categories', **kwargs)
+            out.write('\n--- direct keyword pass ---\n')
+            call_command('categorize_products', **kwargs)
         except Exception as exc:
             return Response({'error': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({'output': out.getvalue()})
