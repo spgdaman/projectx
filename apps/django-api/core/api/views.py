@@ -483,6 +483,44 @@ class AdminMapCategoriesView(APIView):
         return Response({'output': out.getvalue()})
 
 
+class AdminImportKeywordRulesView(APIView):
+    """
+    Bulk-import CategoryKeywordRule records — staff only.
+    Accepts a JSON array of rule dicts (Django fixture format or plain dicts).
+    Idempotent: existing rules with the same PK are skipped.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        from core.models import Category, CategoryKeywordRule
+        rules = request.data if isinstance(request.data, list) else request.data.get('rules', [])
+        if not rules:
+            return Response({'error': 'POST a JSON array of rule objects'}, status=status.HTTP_400_BAD_REQUEST)
+
+        created = skipped = errors = 0
+        for entry in rules:
+            fields = entry.get('fields', entry)
+            try:
+                cat_id = fields['master_category']
+                cat = Category.objects.get(pk=cat_id)
+                _, was_created = CategoryKeywordRule.objects.get_or_create(
+                    keyword=fields['keyword'],
+                    master_category=cat,
+                    defaults={
+                        'priority': fields.get('priority', 100),
+                        'match_field': fields.get('match_field', 'product_name'),
+                        'is_active': fields.get('is_active', True),
+                    },
+                )
+                if was_created:
+                    created += 1
+                else:
+                    skipped += 1
+            except Exception as exc:
+                errors += 1
+        return Response({'created': created, 'skipped': skipped, 'errors': errors})
+
+
 class AdminScraperRunsView(APIView):
     """Paginated scraper run history — staff only."""
     permission_classes = [permissions.IsAdminUser]

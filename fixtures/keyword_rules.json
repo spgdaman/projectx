@@ -1,0 +1,6938 @@
+[
+{
+  "model": "core.categorykeywordrule",
+  "pk": 1,
+  "fields": {
+    "keyword": "absolut",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.612Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 2,
+  "fields": {
+    "keyword": "smirnoff",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.618Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 3,
+  "fields": {
+    "keyword": "jameson",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.621Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 4,
+  "fields": {
+    "keyword": "jamesons",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.625Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 5,
+  "fields": {
+    "keyword": "chivas",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.630Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 6,
+  "fields": {
+    "keyword": "glenlivet",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.635Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 7,
+  "fields": {
+    "keyword": "captain morgan",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.640Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 8,
+  "fields": {
+    "keyword": "olmeca",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.645Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 9,
+  "fields": {
+    "keyword": "martell",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.650Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 10,
+  "fields": {
+    "keyword": "beefeater",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.656Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 11,
+  "fields": {
+    "keyword": "malfy",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.662Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 12,
+  "fields": {
+    "keyword": "kibao",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.668Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 13,
+  "fields": {
+    "keyword": "khor",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.672Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 14,
+  "fields": {
+    "keyword": "morosha",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.677Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 15,
+  "fields": {
+    "keyword": "pervak",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.684Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 16,
+  "fields": {
+    "keyword": "richot",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.688Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 17,
+  "fields": {
+    "keyword": "shustoff",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.691Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 18,
+  "fields": {
+    "keyword": "royal king",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.696Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 19,
+  "fields": {
+    "keyword": "caribia",
+    "master_category": 47,
+    "priority": 120,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.700Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 20,
+  "fields": {
+    "keyword": "royal circle",
+    "master_category": 47,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.704Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 21,
+  "fields": {
+    "keyword": "harrison",
+    "master_category": 47,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.709Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 22,
+  "fields": {
+    "keyword": "macintyres",
+    "master_category": 47,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.715Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 23,
+  "fields": {
+    "keyword": "black & white",
+    "master_category": 47,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.718Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 24,
+  "fields": {
+    "keyword": "hunters choice",
+    "master_category": 47,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.721Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 25,
+  "fields": {
+    "keyword": "frontera",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.725Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 26,
+  "fields": {
+    "keyword": "drostdy",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.730Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 27,
+  "fields": {
+    "keyword": "calvet",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.732Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 28,
+  "fields": {
+    "keyword": "argento",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.737Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 29,
+  "fields": {
+    "keyword": "esporao",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.741Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 30,
+  "fields": {
+    "keyword": "vondeling",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.744Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 31,
+  "fields": {
+    "keyword": "boska",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.747Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 32,
+  "fields": {
+    "keyword": "bacalhoa",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.751Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 33,
+  "fields": {
+    "keyword": "oreanda",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.754Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 34,
+  "fields": {
+    "keyword": "itinera",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.758Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 35,
+  "fields": {
+    "keyword": "assobio",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.763Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 36,
+  "fields": {
+    "keyword": "mikado",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.766Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 37,
+  "fields": {
+    "keyword": "alandra",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.771Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 38,
+  "fields": {
+    "keyword": "amarone",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.775Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 39,
+  "fields": {
+    "keyword": "angelo",
+    "master_category": 46,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.778Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 40,
+  "fields": {
+    "keyword": "mosketto",
+    "master_category": 46,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.782Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 41,
+  "fields": {
+    "keyword": "steinbock",
+    "master_category": 46,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.788Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 42,
+  "fields": {
+    "keyword": "hunters cider",
+    "master_category": 45,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.791Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 43,
+  "fields": {
+    "keyword": "hunters 330ml",
+    "master_category": 45,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.795Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 44,
+  "fields": {
+    "keyword": "vodka",
+    "master_category": 47,
+    "priority": 95,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.799Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 45,
+  "fields": {
+    "keyword": "whisky",
+    "master_category": 47,
+    "priority": 95,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.803Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 46,
+  "fields": {
+    "keyword": "whiskey",
+    "master_category": 47,
+    "priority": 95,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.806Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 47,
+  "fields": {
+    "keyword": "brandy",
+    "master_category": 47,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.809Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 48,
+  "fields": {
+    "keyword": "cognac",
+    "master_category": 47,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.813Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 49,
+  "fields": {
+    "keyword": "tequila",
+    "master_category": 47,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.817Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 50,
+  "fields": {
+    "keyword": "gin",
+    "master_category": 47,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.821Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 51,
+  "fields": {
+    "keyword": "rum",
+    "master_category": 47,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.826Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 52,
+  "fields": {
+    "keyword": "cider",
+    "master_category": 45,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.829Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 53,
+  "fields": {
+    "keyword": "prosecco",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.832Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 54,
+  "fields": {
+    "keyword": "malbec",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.836Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 55,
+  "fields": {
+    "keyword": "merlot",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.840Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 56,
+  "fields": {
+    "keyword": "chardonnay",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.843Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 57,
+  "fields": {
+    "keyword": "sauvignon",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.848Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 58,
+  "fields": {
+    "keyword": "cabernet",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.851Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 59,
+  "fields": {
+    "keyword": "shiraz",
+    "master_category": 46,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.856Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 60,
+  "fields": {
+    "keyword": "port wine",
+    "master_category": 46,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.859Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 61,
+  "fields": {
+    "keyword": "wine",
+    "master_category": 46,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.862Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 62,
+  "fields": {
+    "keyword": "brookside",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.866Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 63,
+  "fields": {
+    "keyword": "daima",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.870Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 64,
+  "fields": {
+    "keyword": "tuzo",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.874Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 65,
+  "fields": {
+    "keyword": "lato",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.877Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 66,
+  "fields": {
+    "keyword": "fresha",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.880Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 67,
+  "fields": {
+    "keyword": "molo",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.884Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 68,
+  "fields": {
+    "keyword": "kcc",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.887Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 69,
+  "fields": {
+    "keyword": "vito",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.891Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 70,
+  "fields": {
+    "keyword": "creambell",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.895Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 71,
+  "fields": {
+    "keyword": "aberdare",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.898Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 72,
+  "fields": {
+    "keyword": "abony",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.902Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 73,
+  "fields": {
+    "keyword": "sirimon",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.904Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 74,
+  "fields": {
+    "keyword": "dairyland",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.908Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 75,
+  "fields": {
+    "keyword": "yoghurt",
+    "master_category": 12,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.911Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 76,
+  "fields": {
+    "keyword": "yogurt",
+    "master_category": 12,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.915Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 77,
+  "fields": {
+    "keyword": "cheese",
+    "master_category": 12,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.919Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 78,
+  "fields": {
+    "keyword": "milk",
+    "master_category": 12,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.922Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 79,
+  "fields": {
+    "keyword": "aquamist",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.925Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 80,
+  "fields": {
+    "keyword": "dormans",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.930Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 81,
+  "fields": {
+    "keyword": "gibsons",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.933Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 82,
+  "fields": {
+    "keyword": "kericho gold",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.937Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 83,
+  "fields": {
+    "keyword": "baraka chai",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.939Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 84,
+  "fields": {
+    "keyword": "faraja",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.943Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 85,
+  "fields": {
+    "keyword": "nescafe",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.947Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 86,
+  "fields": {
+    "keyword": "maccoffee",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.950Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 87,
+  "fields": {
+    "keyword": "alicafe",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.954Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 88,
+  "fields": {
+    "keyword": "score",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.958Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 89,
+  "fields": {
+    "keyword": "monster",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.960Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 90,
+  "fields": {
+    "keyword": "highlands",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.964Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 91,
+  "fields": {
+    "keyword": "orchid valley",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.968Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 92,
+  "fields": {
+    "keyword": "pepsi",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.971Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 93,
+  "fields": {
+    "keyword": "mirinda",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.975Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 94,
+  "fields": {
+    "keyword": "fix8",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.978Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 95,
+  "fields": {
+    "keyword": "quencher",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.981Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 96,
+  "fields": {
+    "keyword": "ketepa",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.986Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 97,
+  "fields": {
+    "keyword": "club soda",
+    "master_category": 9,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.989Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 98,
+  "fields": {
+    "keyword": "aquaclear",
+    "master_category": 9,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.993Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 99,
+  "fields": {
+    "keyword": "pep",
+    "master_category": 9,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:07.997Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 100,
+  "fields": {
+    "keyword": "kombucha",
+    "master_category": 9,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.000Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 101,
+  "fields": {
+    "keyword": "cordial",
+    "master_category": 9,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.004Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 102,
+  "fields": {
+    "keyword": "juice",
+    "master_category": 9,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.008Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 103,
+  "fields": {
+    "keyword": "coffee",
+    "master_category": 9,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.012Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 104,
+  "fields": {
+    "keyword": "soda",
+    "master_category": 9,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.015Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 105,
+  "fields": {
+    "keyword": "water",
+    "master_category": 9,
+    "priority": 60,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.020Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 106,
+  "fields": {
+    "keyword": "fresh fri",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.023Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 107,
+  "fields": {
+    "keyword": "kasuku",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.026Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 108,
+  "fields": {
+    "keyword": "tily",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.030Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 109,
+  "fields": {
+    "keyword": "rinsun",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.033Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 110,
+  "fields": {
+    "keyword": "rina",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.037Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 111,
+  "fields": {
+    "keyword": "elianto",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.040Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 112,
+  "fields": {
+    "keyword": "prestige",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.043Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 113,
+  "fields": {
+    "keyword": "blue band",
+    "master_category": 15,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.046Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 114,
+  "fields": {
+    "keyword": "avena",
+    "master_category": 15,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.050Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 115,
+  "fields": {
+    "keyword": "captain cook",
+    "master_category": 15,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.054Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 116,
+  "fields": {
+    "keyword": "kentaste",
+    "master_category": 15,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.057Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 117,
+  "fields": {
+    "keyword": "breadbest",
+    "master_category": 15,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.060Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 118,
+  "fields": {
+    "keyword": "sunflower",
+    "master_category": 15,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.063Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 119,
+  "fields": {
+    "keyword": "olive oil",
+    "master_category": 15,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.067Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 120,
+  "fields": {
+    "keyword": "margarine",
+    "master_category": 15,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.069Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 122,
+  "fields": {
+    "keyword": "kaputei",
+    "master_category": 18,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.076Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 123,
+  "fields": {
+    "keyword": "peptang",
+    "master_category": 18,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.079Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 124,
+  "fields": {
+    "keyword": "lyons",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.083Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 125,
+  "fields": {
+    "keyword": "ketchup",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.086Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 126,
+  "fields": {
+    "keyword": "mayonnaise",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.089Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 127,
+  "fields": {
+    "keyword": "mustard",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.091Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 128,
+  "fields": {
+    "keyword": "vinegar",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.095Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 129,
+  "fields": {
+    "keyword": "chutney",
+    "master_category": 18,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.098Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 130,
+  "fields": {
+    "keyword": "pesto",
+    "master_category": 18,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.102Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 131,
+  "fields": {
+    "keyword": "jam",
+    "master_category": 18,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.106Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 132,
+  "fields": {
+    "keyword": "sauce",
+    "master_category": 18,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.108Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 133,
+  "fields": {
+    "keyword": "cadbury",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.113Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 134,
+  "fields": {
+    "keyword": "nuvita",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.115Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 135,
+  "fields": {
+    "keyword": "manji",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.118Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 136,
+  "fields": {
+    "keyword": "bdelo",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.123Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 137,
+  "fields": {
+    "keyword": "nutro",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.126Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 138,
+  "fields": {
+    "keyword": "maltesers",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.130Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 139,
+  "fields": {
+    "keyword": "twix",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.134Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 140,
+  "fields": {
+    "keyword": "mars",
+    "master_category": 17,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.138Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 141,
+  "fields": {
+    "keyword": "skittles",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.142Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 142,
+  "fields": {
+    "keyword": "haldiram",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.146Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 143,
+  "fields": {
+    "keyword": "bugles",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.150Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 144,
+  "fields": {
+    "keyword": "bazooka",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.155Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 145,
+  "fields": {
+    "keyword": "poco loco",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.158Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 146,
+  "fields": {
+    "keyword": "biscuit",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.162Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 147,
+  "fields": {
+    "keyword": "biscuits",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.165Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 148,
+  "fields": {
+    "keyword": "chocolate",
+    "master_category": 17,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.169Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 149,
+  "fields": {
+    "keyword": "crisps",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.174Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 150,
+  "fields": {
+    "keyword": "wafer",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.177Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 151,
+  "fields": {
+    "keyword": "cookie",
+    "master_category": 17,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.181Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 152,
+  "fields": {
+    "keyword": "cookies",
+    "master_category": 17,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.184Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 153,
+  "fields": {
+    "keyword": "cracker",
+    "master_category": 17,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.187Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 154,
+  "fields": {
+    "keyword": "candy",
+    "master_category": 17,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.190Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 155,
+  "fields": {
+    "keyword": "tortilla",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.195Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 156,
+  "fields": {
+    "keyword": "snack",
+    "master_category": 17,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.198Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 157,
+  "fields": {
+    "keyword": "snacks",
+    "master_category": 17,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.201Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 158,
+  "fields": {
+    "keyword": "weetabix",
+    "master_category": 14,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.204Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 159,
+  "fields": {
+    "keyword": "quaker",
+    "master_category": 14,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.207Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 160,
+  "fields": {
+    "keyword": "alpen",
+    "master_category": 14,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.211Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 161,
+  "fields": {
+    "keyword": "grainmill",
+    "master_category": 14,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.215Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 162,
+  "fields": {
+    "keyword": "temmys",
+    "master_category": 14,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.218Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 163,
+  "fields": {
+    "keyword": "oats",
+    "master_category": 14,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.221Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 164,
+  "fields": {
+    "keyword": "cereal",
+    "master_category": 14,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.224Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 165,
+  "fields": {
+    "keyword": "cereals",
+    "master_category": 14,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.228Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 166,
+  "fields": {
+    "keyword": "porridge",
+    "master_category": 14,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.232Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 167,
+  "fields": {
+    "keyword": "daawat",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.235Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 168,
+  "fields": {
+    "keyword": "sunrice",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.238Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 169,
+  "fields": {
+    "keyword": "pearl rice",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.242Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 170,
+  "fields": {
+    "keyword": "ranee",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.247Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 171,
+  "fields": {
+    "keyword": "kpl",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.252Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 172,
+  "fields": {
+    "keyword": "royal umbrella",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.255Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 173,
+  "fields": {
+    "keyword": "nala",
+    "master_category": 16,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.258Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 174,
+  "fields": {
+    "keyword": "santa lucia",
+    "master_category": 16,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.263Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 175,
+  "fields": {
+    "keyword": "italiano",
+    "master_category": 16,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.267Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 176,
+  "fields": {
+    "keyword": "pembe",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.271Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 177,
+  "fields": {
+    "keyword": "ndovu",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.275Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 178,
+  "fields": {
+    "keyword": "amaize",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.277Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 179,
+  "fields": {
+    "keyword": "dola",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.281Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 180,
+  "fields": {
+    "keyword": "soko",
+    "master_category": 16,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.284Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 181,
+  "fields": {
+    "keyword": "spaghetti",
+    "master_category": 16,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.287Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 182,
+  "fields": {
+    "keyword": "pasta",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.292Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 183,
+  "fields": {
+    "keyword": "rice",
+    "master_category": 16,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.294Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 184,
+  "fields": {
+    "keyword": "flour",
+    "master_category": 16,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.298Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 185,
+  "fields": {
+    "keyword": "noodle",
+    "master_category": 16,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.301Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 186,
+  "fields": {
+    "keyword": "noodles",
+    "master_category": 16,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.305Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 187,
+  "fields": {
+    "keyword": "maize",
+    "master_category": 16,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.308Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 188,
+  "fields": {
+    "keyword": "farmers choice",
+    "master_category": 11,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.313Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 189,
+  "fields": {
+    "keyword": "kenchic",
+    "master_category": 11,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.316Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 190,
+  "fields": {
+    "keyword": "qmp",
+    "master_category": 11,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.319Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 191,
+  "fields": {
+    "keyword": "sardines",
+    "master_category": 11,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.322Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 192,
+  "fields": {
+    "keyword": "sardine",
+    "master_category": 11,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.326Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 193,
+  "fields": {
+    "keyword": "tuna",
+    "master_category": 11,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.329Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 194,
+  "fields": {
+    "keyword": "anchovies",
+    "master_category": 11,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.333Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 195,
+  "fields": {
+    "keyword": "sausage",
+    "master_category": 11,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.337Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 196,
+  "fields": {
+    "keyword": "smokies",
+    "master_category": 11,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.340Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 197,
+  "fields": {
+    "keyword": "pork mince",
+    "master_category": 11,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.344Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 198,
+  "fields": {
+    "keyword": "beef",
+    "master_category": 11,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.348Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 199,
+  "fields": {
+    "keyword": "chicken",
+    "master_category": 11,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.352Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 200,
+  "fields": {
+    "keyword": "bread",
+    "master_category": 13,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.355Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 201,
+  "fields": {
+    "keyword": "cake",
+    "master_category": 13,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.359Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 202,
+  "fields": {
+    "keyword": "frozen",
+    "master_category": 19,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.364Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 203,
+  "fields": {
+    "keyword": "ariel",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.366Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 204,
+  "fields": {
+    "keyword": "persil",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.371Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 205,
+  "fields": {
+    "keyword": "omo",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.374Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 206,
+  "fields": {
+    "keyword": "toss",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.378Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 207,
+  "fields": {
+    "keyword": "gama",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.380Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 208,
+  "fields": {
+    "keyword": "comfort",
+    "master_category": 29,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.385Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 209,
+  "fields": {
+    "keyword": "downy",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.389Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 210,
+  "fields": {
+    "keyword": "sta-soft",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.392Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 211,
+  "fields": {
+    "keyword": "sta soft",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.396Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 212,
+  "fields": {
+    "keyword": "sunlight",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.399Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 213,
+  "fields": {
+    "keyword": "jamaa",
+    "master_category": 29,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.403Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 214,
+  "fields": {
+    "keyword": "cuddles",
+    "master_category": 29,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.407Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 215,
+  "fields": {
+    "keyword": "detergent",
+    "master_category": 29,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.410Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 216,
+  "fields": {
+    "keyword": "laundry",
+    "master_category": 29,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.413Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 217,
+  "fields": {
+    "keyword": "washing powder",
+    "master_category": 29,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.416Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 218,
+  "fields": {
+    "keyword": "machine wash",
+    "master_category": 29,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.419Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 219,
+  "fields": {
+    "keyword": "fabric softener",
+    "master_category": 29,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.422Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 220,
+  "fields": {
+    "keyword": "clorox",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.426Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 221,
+  "fields": {
+    "keyword": "topex",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.429Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 222,
+  "fields": {
+    "keyword": "rinz",
+    "master_category": 30,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.433Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 223,
+  "fields": {
+    "keyword": "bytex",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.436Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 224,
+  "fields": {
+    "keyword": "magnee",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.440Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 225,
+  "fields": {
+    "keyword": "biochem",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.442Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 226,
+  "fields": {
+    "keyword": "bioclean",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.447Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 227,
+  "fields": {
+    "keyword": "germol",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.449Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 228,
+  "fields": {
+    "keyword": "roberts",
+    "master_category": 30,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.454Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 229,
+  "fields": {
+    "keyword": "rush",
+    "master_category": 30,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.458Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 230,
+  "fields": {
+    "keyword": "sanex",
+    "master_category": 30,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.461Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 231,
+  "fields": {
+    "keyword": "wills",
+    "master_category": 30,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.465Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 232,
+  "fields": {
+    "keyword": "bleach",
+    "master_category": 30,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.468Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 233,
+  "fields": {
+    "keyword": "disinfectant",
+    "master_category": 30,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.471Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 234,
+  "fields": {
+    "keyword": "antiseptic",
+    "master_category": 30,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.475Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 235,
+  "fields": {
+    "keyword": "bella",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.478Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 236,
+  "fields": {
+    "keyword": "celine",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.481Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 237,
+  "fields": {
+    "keyword": "dawn",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.485Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 238,
+  "fields": {
+    "keyword": "fiesta",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.488Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 239,
+  "fields": {
+    "keyword": "flora",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.492Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 240,
+  "fields": {
+    "keyword": "livelle",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.496Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 241,
+  "fields": {
+    "keyword": "petals",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.499Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 242,
+  "fields": {
+    "keyword": "rosy",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.503Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 243,
+  "fields": {
+    "keyword": "tena",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.506Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 244,
+  "fields": {
+    "keyword": "toilex",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.510Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 245,
+  "fields": {
+    "keyword": "velvex",
+    "master_category": 32,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.513Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 246,
+  "fields": {
+    "keyword": "hanan",
+    "master_category": 32,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.518Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 247,
+  "fields": {
+    "keyword": "tissue",
+    "master_category": 32,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.521Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 248,
+  "fields": {
+    "keyword": "serviette",
+    "master_category": 32,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.524Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 249,
+  "fields": {
+    "keyword": "serviettes",
+    "master_category": 32,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.527Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 250,
+  "fields": {
+    "keyword": "napkin",
+    "master_category": 32,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.530Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 251,
+  "fields": {
+    "keyword": "napkins",
+    "master_category": 32,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.535Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 252,
+  "fields": {
+    "keyword": "toilet roll",
+    "master_category": 32,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.538Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 253,
+  "fields": {
+    "keyword": "toilet rolls",
+    "master_category": 32,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.542Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 254,
+  "fields": {
+    "keyword": "general fresh",
+    "master_category": 33,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.545Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 255,
+  "fields": {
+    "keyword": "dr marcus",
+    "master_category": 33,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.548Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 256,
+  "fields": {
+    "keyword": "fresh day",
+    "master_category": 33,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.552Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 257,
+  "fields": {
+    "keyword": "tropikal",
+    "master_category": 33,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.555Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 258,
+  "fields": {
+    "keyword": "freshener",
+    "master_category": 33,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.560Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 259,
+  "fields": {
+    "keyword": "diffuser",
+    "master_category": 33,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.563Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 260,
+  "fields": {
+    "keyword": "rim block",
+    "master_category": 33,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.566Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 261,
+  "fields": {
+    "keyword": "toilet block",
+    "master_category": 33,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.570Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 262,
+  "fields": {
+    "keyword": "scotch brite",
+    "master_category": 31,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.573Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 263,
+  "fields": {
+    "keyword": "kleenit",
+    "master_category": 31,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.577Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 264,
+  "fields": {
+    "keyword": "scouring",
+    "master_category": 31,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.580Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 265,
+  "fields": {
+    "keyword": "scrubber",
+    "master_category": 31,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.583Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 266,
+  "fields": {
+    "keyword": "loofah",
+    "master_category": 31,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.586Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 267,
+  "fields": {
+    "keyword": "sponge",
+    "master_category": 31,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.590Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 268,
+  "fields": {
+    "keyword": "mortein",
+    "master_category": 34,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.594Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 269,
+  "fields": {
+    "keyword": "doom",
+    "master_category": 34,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.598Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 270,
+  "fields": {
+    "keyword": "insecticide",
+    "master_category": 34,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.601Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 271,
+  "fields": {
+    "keyword": "mosquito",
+    "master_category": 34,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.605Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 272,
+  "fields": {
+    "keyword": "colgate",
+    "master_category": 23,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.609Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 273,
+  "fields": {
+    "keyword": "sensodyne",
+    "master_category": 23,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.612Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 274,
+  "fields": {
+    "keyword": "aquafresh",
+    "master_category": 23,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.616Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 275,
+  "fields": {
+    "keyword": "dabur",
+    "master_category": 23,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.620Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 276,
+  "fields": {
+    "keyword": "toothpaste",
+    "master_category": 23,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.624Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 277,
+  "fields": {
+    "keyword": "toothbrush",
+    "master_category": 23,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.628Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 278,
+  "fields": {
+    "keyword": "t/paste",
+    "master_category": 23,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.632Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 279,
+  "fields": {
+    "keyword": "tbrush",
+    "master_category": 23,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.635Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 280,
+  "fields": {
+    "keyword": "mouthwash",
+    "master_category": 23,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.638Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 281,
+  "fields": {
+    "keyword": "dettol",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.643Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 282,
+  "fields": {
+    "keyword": "nivea",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.646Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 283,
+  "fields": {
+    "keyword": "dove",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.650Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 284,
+  "fields": {
+    "keyword": "carex",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.653Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 285,
+  "fields": {
+    "keyword": "imperial leather",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.656Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 286,
+  "fields": {
+    "keyword": "palmolive",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.661Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 287,
+  "fields": {
+    "keyword": "radox",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.664Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 288,
+  "fields": {
+    "keyword": "dalan",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.667Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 289,
+  "fields": {
+    "keyword": "sawa",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.671Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 290,
+  "fields": {
+    "keyword": "geisha",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.675Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 291,
+  "fields": {
+    "keyword": "flamingo",
+    "master_category": 21,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.678Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 292,
+  "fields": {
+    "keyword": "nice & lovely",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.681Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 293,
+  "fields": {
+    "keyword": "nice and lovely",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.684Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 294,
+  "fields": {
+    "keyword": "ixora",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.688Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 295,
+  "fields": {
+    "keyword": "hobby",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.692Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 296,
+  "fields": {
+    "keyword": "clere",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.697Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 297,
+  "fields": {
+    "keyword": "vaseline",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.700Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 298,
+  "fields": {
+    "keyword": "brio",
+    "master_category": 21,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.704Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 299,
+  "fields": {
+    "keyword": "lanzo",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.708Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 300,
+  "fields": {
+    "keyword": "astonish",
+    "master_category": 21,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.711Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 301,
+  "fields": {
+    "keyword": "biogel",
+    "master_category": 21,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.715Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 302,
+  "fields": {
+    "keyword": "unac",
+    "master_category": 21,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.719Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 303,
+  "fields": {
+    "keyword": "il ",
+    "master_category": 21,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.723Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 304,
+  "fields": {
+    "keyword": "body wash",
+    "master_category": 21,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.728Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 305,
+  "fields": {
+    "keyword": "bodywash",
+    "master_category": 21,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.733Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 306,
+  "fields": {
+    "keyword": "body lotion",
+    "master_category": 21,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.737Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 307,
+  "fields": {
+    "keyword": "lotion",
+    "master_category": 21,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.741Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 308,
+  "fields": {
+    "keyword": "handwash",
+    "master_category": 21,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.746Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 309,
+  "fields": {
+    "keyword": "hand wash",
+    "master_category": 21,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.749Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 310,
+  "fields": {
+    "keyword": "soap",
+    "master_category": 21,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.752Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 311,
+  "fields": {
+    "keyword": "petroleum",
+    "master_category": 21,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.757Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 312,
+  "fields": {
+    "keyword": "deodorant",
+    "master_category": 21,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.761Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 313,
+  "fields": {
+    "keyword": "roll on",
+    "master_category": 21,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.764Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 314,
+  "fields": {
+    "keyword": "roll-on",
+    "master_category": 21,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.768Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 315,
+  "fields": {
+    "keyword": "pantene",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.771Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 316,
+  "fields": {
+    "keyword": "tresemme",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.775Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 317,
+  "fields": {
+    "keyword": "head & shoulders",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.779Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 318,
+  "fields": {
+    "keyword": "loreal elvive",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.783Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 319,
+  "fields": {
+    "keyword": "organics",
+    "master_category": 22,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.787Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 320,
+  "fields": {
+    "keyword": "vatika",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.791Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 321,
+  "fields": {
+    "keyword": "clear",
+    "master_category": 22,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.795Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 322,
+  "fields": {
+    "keyword": "snf",
+    "master_category": 22,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.800Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 323,
+  "fields": {
+    "keyword": "shampoo",
+    "master_category": 22,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.803Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 324,
+  "fields": {
+    "keyword": "hair oil",
+    "master_category": 22,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.808Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 325,
+  "fields": {
+    "keyword": "styling gel",
+    "master_category": 22,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.812Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 326,
+  "fields": {
+    "keyword": "relaxer",
+    "master_category": 22,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.815Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 327,
+  "fields": {
+    "keyword": "garnier",
+    "master_category": 26,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.819Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 328,
+  "fields": {
+    "keyword": "himalaya",
+    "master_category": 26,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.822Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 329,
+  "fields": {
+    "keyword": "loreal paris",
+    "master_category": 26,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.827Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 330,
+  "fields": {
+    "keyword": "mamaearth",
+    "master_category": 26,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.830Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 331,
+  "fields": {
+    "keyword": "cheetah",
+    "master_category": 26,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.834Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 332,
+  "fields": {
+    "keyword": "brut",
+    "master_category": 26,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.837Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 333,
+  "fields": {
+    "keyword": "girlfriend",
+    "master_category": 26,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.841Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 334,
+  "fields": {
+    "keyword": "serum",
+    "master_category": 26,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.846Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 335,
+  "fields": {
+    "keyword": "edt",
+    "master_category": 26,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.850Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 336,
+  "fields": {
+    "keyword": "edp",
+    "master_category": 26,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.856Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 337,
+  "fields": {
+    "keyword": "perfume",
+    "master_category": 26,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.862Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 338,
+  "fields": {
+    "keyword": "face wash",
+    "master_category": 26,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.865Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 339,
+  "fields": {
+    "keyword": "pampers",
+    "master_category": 25,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.869Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 340,
+  "fields": {
+    "keyword": "huggies",
+    "master_category": 25,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.873Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 341,
+  "fields": {
+    "keyword": "cussons",
+    "master_category": 25,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.877Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 342,
+  "fields": {
+    "keyword": "nipnap",
+    "master_category": 25,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.881Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 343,
+  "fields": {
+    "keyword": "softcare",
+    "master_category": 25,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.884Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 344,
+  "fields": {
+    "keyword": "mamaearth baby",
+    "master_category": 25,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.889Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 345,
+  "fields": {
+    "keyword": "diapers",
+    "master_category": 25,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.892Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 346,
+  "fields": {
+    "keyword": "diaper",
+    "master_category": 25,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.896Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 347,
+  "fields": {
+    "keyword": "nappies",
+    "master_category": 25,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.900Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 348,
+  "fields": {
+    "keyword": "nappy",
+    "master_category": 25,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.906Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 349,
+  "fields": {
+    "keyword": "baby wipes",
+    "master_category": 25,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.910Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 350,
+  "fields": {
+    "keyword": "baby",
+    "master_category": 25,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.913Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 351,
+  "fields": {
+    "keyword": "wipes",
+    "master_category": 25,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.917Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 352,
+  "fields": {
+    "keyword": "always",
+    "master_category": 24,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.921Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 353,
+  "fields": {
+    "keyword": "kotex",
+    "master_category": 24,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.925Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 354,
+  "fields": {
+    "keyword": "sofy",
+    "master_category": 24,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.928Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 355,
+  "fields": {
+    "keyword": "velvex conforta",
+    "master_category": 24,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.931Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 356,
+  "fields": {
+    "keyword": "sanitary",
+    "master_category": 24,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.935Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 357,
+  "fields": {
+    "keyword": "panty",
+    "master_category": 24,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.939Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 358,
+  "fields": {
+    "keyword": "condom",
+    "master_category": 27,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.943Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 359,
+  "fields": {
+    "keyword": "condoms",
+    "master_category": 27,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.946Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 360,
+  "fields": {
+    "keyword": "contempo",
+    "master_category": 27,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.948Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 361,
+  "fields": {
+    "keyword": "protein bar",
+    "master_category": 27,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.953Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 362,
+  "fields": {
+    "keyword": "supplement",
+    "master_category": 27,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.955Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 363,
+  "fields": {
+    "keyword": "friskies",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.958Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 364,
+  "fields": {
+    "keyword": "snappy tom",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.962Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 365,
+  "fields": {
+    "keyword": "tlc",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.966Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 366,
+  "fields": {
+    "keyword": "go cat",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.969Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 367,
+  "fields": {
+    "keyword": "gnawlers",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.973Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 368,
+  "fields": {
+    "keyword": "bchoice",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.977Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 369,
+  "fields": {
+    "keyword": "bark bite",
+    "master_category": 50,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.982Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 370,
+  "fields": {
+    "keyword": "dog food",
+    "master_category": 50,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.986Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 371,
+  "fields": {
+    "keyword": "cat food",
+    "master_category": 50,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.989Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 372,
+  "fields": {
+    "keyword": "pet food",
+    "master_category": 50,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.993Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 373,
+  "fields": {
+    "keyword": "dog",
+    "master_category": 50,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:08.995Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 374,
+  "fields": {
+    "keyword": "pet",
+    "master_category": 50,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.000Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 375,
+  "fields": {
+    "keyword": "mika",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.003Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 376,
+  "fields": {
+    "keyword": "ramtons",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.006Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 377,
+  "fields": {
+    "keyword": "samsung",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.010Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 378,
+  "fields": {
+    "keyword": "oryx",
+    "master_category": 2,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.013Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 379,
+  "fields": {
+    "keyword": "sinbo",
+    "master_category": 2,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.016Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 380,
+  "fields": {
+    "keyword": "fame",
+    "master_category": 2,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.020Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 381,
+  "fields": {
+    "keyword": "kettle",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.024Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 382,
+  "fields": {
+    "keyword": "blender",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.027Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 383,
+  "fields": {
+    "keyword": "microwave",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.031Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 384,
+  "fields": {
+    "keyword": "mwave",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.034Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 385,
+  "fields": {
+    "keyword": "juicer",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.038Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 386,
+  "fields": {
+    "keyword": "toaster",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.040Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 387,
+  "fields": {
+    "keyword": "dispenser",
+    "master_category": 4,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.044Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 388,
+  "fields": {
+    "keyword": "wdispenser",
+    "master_category": 4,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.047Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 389,
+  "fields": {
+    "keyword": "air fryer",
+    "master_category": 4,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.050Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 390,
+  "fields": {
+    "keyword": "fryer",
+    "master_category": 4,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.054Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 391,
+  "fields": {
+    "keyword": "fridge",
+    "master_category": 3,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.058Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 392,
+  "fields": {
+    "keyword": "freezer",
+    "master_category": 3,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.061Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 393,
+  "fields": {
+    "keyword": "washer",
+    "master_category": 3,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.064Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 394,
+  "fields": {
+    "keyword": "wmachine",
+    "master_category": 3,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.067Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 395,
+  "fields": {
+    "keyword": "washing machine",
+    "master_category": 3,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.070Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 396,
+  "fields": {
+    "keyword": "cooker",
+    "master_category": 43,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.073Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 397,
+  "fields": {
+    "keyword": "television",
+    "master_category": 5,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.077Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 398,
+  "fields": {
+    "keyword": "subwoofer",
+    "master_category": 5,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.080Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 399,
+  "fields": {
+    "keyword": "soundbar",
+    "master_category": 5,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.083Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 400,
+  "fields": {
+    "keyword": "sound bar",
+    "master_category": 5,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.086Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 401,
+  "fields": {
+    "keyword": "tv",
+    "master_category": 5,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.090Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 402,
+  "fields": {
+    "keyword": "luminarc",
+    "master_category": 36,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.093Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 403,
+  "fields": {
+    "keyword": "regal",
+    "master_category": 36,
+    "priority": 95,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.095Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 404,
+  "fields": {
+    "keyword": "flask",
+    "master_category": 36,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.099Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 405,
+  "fields": {
+    "keyword": "barbie",
+    "master_category": 40,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.101Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 406,
+  "fields": {
+    "keyword": "hot wheels",
+    "master_category": 40,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.104Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 407,
+  "fields": {
+    "keyword": "uno",
+    "master_category": 40,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.107Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 408,
+  "fields": {
+    "keyword": "toy",
+    "master_category": 40,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.110Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 409,
+  "fields": {
+    "keyword": "doll",
+    "master_category": 40,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.114Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 410,
+  "fields": {
+    "keyword": "carwash",
+    "master_category": 42,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.117Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 411,
+  "fields": {
+    "keyword": "car wash",
+    "master_category": 42,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.119Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 412,
+  "fields": {
+    "keyword": "luggage",
+    "master_category": 49,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:47:09.124Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 413,
+  "fields": {
+    "keyword": "masterchef",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.200Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 414,
+  "fields": {
+    "keyword": "blueband",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.227Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 415,
+  "fields": {
+    "keyword": "golden fry",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.230Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 416,
+  "fields": {
+    "keyword": "golden drop",
+    "master_category": 15,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.234Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 417,
+  "fields": {
+    "keyword": "cooking oil",
+    "master_category": 15,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.237Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 418,
+  "fields": {
+    "keyword": "vegetable oil",
+    "master_category": 15,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.240Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 419,
+  "fields": {
+    "keyword": "kol",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.244Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 420,
+  "fields": {
+    "keyword": "kenylon",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.247Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 421,
+  "fields": {
+    "keyword": "zesta",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.249Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 422,
+  "fields": {
+    "keyword": "shalimar",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.253Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 423,
+  "fields": {
+    "keyword": "maggi",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.257Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 424,
+  "fields": {
+    "keyword": "pepper",
+    "master_category": 18,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.260Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 425,
+  "fields": {
+    "keyword": "tomato paste",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.263Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 426,
+  "fields": {
+    "keyword": "salad cream",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.267Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 427,
+  "fields": {
+    "keyword": "curry paste",
+    "master_category": 18,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.270Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 428,
+  "fields": {
+    "keyword": "alpro",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.273Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 429,
+  "fields": {
+    "keyword": "frusion",
+    "master_category": 12,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.276Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 430,
+  "fields": {
+    "keyword": "cheddar",
+    "master_category": 12,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.279Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 431,
+  "fields": {
+    "keyword": "mozzarella",
+    "master_category": 12,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.283Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 432,
+  "fields": {
+    "keyword": "choco primo",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.286Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 433,
+  "fields": {
+    "keyword": "cocoa primo",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.290Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 434,
+  "fields": {
+    "keyword": "trufoods",
+    "master_category": 9,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.292Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 435,
+  "fields": {
+    "keyword": "orchird",
+    "master_category": 9,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.295Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 436,
+  "fields": {
+    "keyword": "minute maid",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.299Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 437,
+  "fields": {
+    "keyword": "ribena",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.301Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 438,
+  "fields": {
+    "keyword": "reload",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.304Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 439,
+  "fields": {
+    "keyword": "drink",
+    "master_category": 9,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.307Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 440,
+  "fields": {
+    "keyword": "soymilk",
+    "master_category": 9,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.310Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 441,
+  "fields": {
+    "keyword": "soy milk",
+    "master_category": 9,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.313Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 442,
+  "fields": {
+    "keyword": "grapes",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.316Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 443,
+  "fields": {
+    "keyword": "apples",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.319Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 444,
+  "fields": {
+    "keyword": "butternut",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.322Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 445,
+  "fields": {
+    "keyword": "mango",
+    "master_category": 10,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.325Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 446,
+  "fields": {
+    "keyword": "eggs",
+    "master_category": 11,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.328Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 447,
+  "fields": {
+    "keyword": "ham",
+    "master_category": 11,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.331Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 448,
+  "fields": {
+    "keyword": "farmer's choice",
+    "master_category": 11,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.333Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 449,
+  "fields": {
+    "keyword": "doughnut",
+    "master_category": 13,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.337Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 450,
+  "fields": {
+    "keyword": "donut",
+    "master_category": 13,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.340Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 451,
+  "fields": {
+    "keyword": "nutrameal",
+    "master_category": 16,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.342Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 452,
+  "fields": {
+    "keyword": "cherubet",
+    "master_category": 16,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.346Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 453,
+  "fields": {
+    "keyword": "green grams",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.349Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 454,
+  "fields": {
+    "keyword": "njahi",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.351Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 455,
+  "fields": {
+    "keyword": "mbaazi",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.353Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 456,
+  "fields": {
+    "keyword": "granola",
+    "master_category": 14,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.357Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 457,
+  "fields": {
+    "keyword": "digestive",
+    "master_category": 17,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.360Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 458,
+  "fields": {
+    "keyword": "kripsii",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.364Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 459,
+  "fields": {
+    "keyword": "krisps",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.367Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 460,
+  "fields": {
+    "keyword": "poshy",
+    "master_category": 32,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.371Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 461,
+  "fields": {
+    "keyword": "fay",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.374Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 462,
+  "fields": {
+    "keyword": "phoenix",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.378Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 463,
+  "fields": {
+    "keyword": "neptune",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.381Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 464,
+  "fields": {
+    "keyword": "sifa",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.383Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 465,
+  "fields": {
+    "keyword": "softleaf",
+    "master_category": 32,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.385Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 466,
+  "fields": {
+    "keyword": "kitchen towel",
+    "master_category": 32,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.389Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 467,
+  "fields": {
+    "keyword": "morning fresh",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.392Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 468,
+  "fields": {
+    "keyword": "harpic",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.394Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 469,
+  "fields": {
+    "keyword": "atilla",
+    "master_category": 30,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.398Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 470,
+  "fields": {
+    "keyword": "jik",
+    "master_category": 30,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.400Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 471,
+  "fields": {
+    "keyword": "rosapharm",
+    "master_category": 30,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.403Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 472,
+  "fields": {
+    "keyword": "ata",
+    "master_category": 30,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.407Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 473,
+  "fields": {
+    "keyword": "movit",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.411Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 474,
+  "fields": {
+    "keyword": "cantu",
+    "master_category": 22,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.414Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 475,
+  "fields": {
+    "keyword": "loreal",
+    "master_category": 22,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.417Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 476,
+  "fields": {
+    "keyword": "rexona",
+    "master_category": 21,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.422Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 477,
+  "fields": {
+    "keyword": "fa ",
+    "master_category": 21,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.425Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 478,
+  "fields": {
+    "keyword": "gld",
+    "master_category": 5,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.428Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 479,
+  "fields": {
+    "keyword": "vision",
+    "master_category": 5,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.431Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 480,
+  "fields": {
+    "keyword": "von",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.435Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 481,
+  "fields": {
+    "keyword": "hisense",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.438Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 482,
+  "fields": {
+    "keyword": "midea",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.441Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 483,
+  "fields": {
+    "keyword": "solstar",
+    "master_category": 2,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.444Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 484,
+  "fields": {
+    "keyword": "sayona",
+    "master_category": 5,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.447Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 485,
+  "fields": {
+    "keyword": "wahl",
+    "master_category": 2,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.450Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 486,
+  "fields": {
+    "keyword": "lg",
+    "master_category": 2,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.453Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 487,
+  "fields": {
+    "keyword": "tefal",
+    "master_category": 2,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.456Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 488,
+  "fields": {
+    "keyword": "heater",
+    "master_category": 2,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.460Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 489,
+  "fields": {
+    "keyword": "vacuum",
+    "master_category": 2,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.463Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 490,
+  "fields": {
+    "keyword": "startimes",
+    "master_category": 2,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.467Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 491,
+  "fields": {
+    "keyword": "cutlery",
+    "master_category": 36,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.470Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 492,
+  "fields": {
+    "keyword": "spoon",
+    "master_category": 36,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.473Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 493,
+  "fields": {
+    "keyword": "pressure cooker",
+    "master_category": 36,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.476Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 494,
+  "fields": {
+    "keyword": "antiseptic liquid",
+    "master_category": 30,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.479Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 495,
+  "fields": {
+    "keyword": "hair dryer",
+    "master_category": 2,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.482Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 496,
+  "fields": {
+    "keyword": "ziplock",
+    "master_category": 35,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.485Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 497,
+  "fields": {
+    "keyword": "stationery",
+    "master_category": 35,
+    "priority": 70,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.488Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 498,
+  "fields": {
+    "keyword": "diary",
+    "master_category": 35,
+    "priority": 65,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:50:16.492Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 499,
+  "fields": {
+    "keyword": "snickers",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.393Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 500,
+  "fields": {
+    "keyword": "doritos",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.413Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 501,
+  "fields": {
+    "keyword": "gum",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.415Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 502,
+  "fields": {
+    "keyword": "gums",
+    "master_category": 17,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.417Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 503,
+  "fields": {
+    "keyword": "mangoes",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.421Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 504,
+  "fields": {
+    "keyword": "blueberries",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.423Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 505,
+  "fields": {
+    "keyword": "blueberry",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.426Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 506,
+  "fields": {
+    "keyword": "pawpaw",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.428Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 507,
+  "fields": {
+    "keyword": "oranges",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.430Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 508,
+  "fields": {
+    "keyword": "tangerine",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.432Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 509,
+  "fields": {
+    "keyword": "sweet corn",
+    "master_category": 10,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.434Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 510,
+  "fields": {
+    "keyword": "butter nut",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.436Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 511,
+  "fields": {
+    "keyword": "faj",
+    "master_category": 10,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.438Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 512,
+  "fields": {
+    "keyword": "cs fresh",
+    "master_category": 10,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.440Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 513,
+  "fields": {
+    "keyword": "egg",
+    "master_category": 11,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.442Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 514,
+  "fields": {
+    "keyword": "sossi",
+    "master_category": 11,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.443Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 515,
+  "fields": {
+    "keyword": "mountain dew",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.446Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 516,
+  "fields": {
+    "keyword": "gofrut",
+    "master_category": 9,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.448Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 517,
+  "fields": {
+    "keyword": "baraka",
+    "master_category": 9,
+    "priority": 105,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.449Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 518,
+  "fields": {
+    "keyword": "ch valac",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.454Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 519,
+  "fields": {
+    "keyword": "casal mendes",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.457Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 520,
+  "fields": {
+    "keyword": "terra linda",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.459Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 521,
+  "fields": {
+    "keyword": "tons de",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.460Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 522,
+  "fields": {
+    "keyword": "marques",
+    "master_category": 46,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.463Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 523,
+  "fields": {
+    "keyword": "pe branco",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.465Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 524,
+  "fields": {
+    "keyword": "pe tinto",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.467Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 525,
+  "fields": {
+    "keyword": "monte velho",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.469Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 526,
+  "fields": {
+    "keyword": "jp azeitao",
+    "master_category": 46,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.471Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 527,
+  "fields": {
+    "keyword": "capt morgan",
+    "master_category": 47,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.473Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 528,
+  "fields": {
+    "keyword": "heinz",
+    "master_category": 18,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.475Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 529,
+  "fields": {
+    "keyword": "santa maria",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.478Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 530,
+  "fields": {
+    "keyword": "mara",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.479Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 531,
+  "fields": {
+    "keyword": "natures own",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.482Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 532,
+  "fields": {
+    "keyword": "virginia green garden",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.484Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 533,
+  "fields": {
+    "keyword": "aryuva",
+    "master_category": 18,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.485Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 534,
+  "fields": {
+    "keyword": "butterfly",
+    "master_category": 16,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.488Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 535,
+  "fields": {
+    "keyword": "chick peas",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.490Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 536,
+  "fields": {
+    "keyword": "chickpeas",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.493Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 537,
+  "fields": {
+    "keyword": "lentil",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.495Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 538,
+  "fields": {
+    "keyword": "masoor",
+    "master_category": 16,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.497Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 539,
+  "fields": {
+    "keyword": "dal",
+    "master_category": 16,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.499Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 540,
+  "fields": {
+    "keyword": "usb",
+    "master_category": 7,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.501Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 541,
+  "fields": {
+    "keyword": "extension cord",
+    "master_category": 7,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.503Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 542,
+  "fields": {
+    "keyword": "extension socket",
+    "master_category": 7,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.506Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 543,
+  "fields": {
+    "keyword": "premier",
+    "master_category": 2,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.506Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 544,
+  "fields": {
+    "keyword": "kenpoly",
+    "master_category": 37,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.509Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 545,
+  "fields": {
+    "keyword": "chair",
+    "master_category": 37,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.512Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 546,
+  "fields": {
+    "keyword": "odo",
+    "master_category": 33,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.512Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 547,
+  "fields": {
+    "keyword": "toilet balls",
+    "master_category": 33,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.516Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 548,
+  "fields": {
+    "keyword": "chia",
+    "master_category": 27,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.518Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 549,
+  "fields": {
+    "keyword": "glucose",
+    "master_category": 27,
+    "priority": 75,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.519Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 550,
+  "fields": {
+    "keyword": "ashwaganda",
+    "master_category": 27,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.521Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 551,
+  "fields": {
+    "keyword": "hibiscus",
+    "master_category": 27,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.524Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 552,
+  "fields": {
+    "keyword": "vitamin",
+    "master_category": 27,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.526Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 553,
+  "fields": {
+    "keyword": "3m",
+    "master_category": 31,
+    "priority": 105,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.528Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 554,
+  "fields": {
+    "keyword": "fay white",
+    "master_category": 32,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:03.531Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 555,
+  "fields": {
+    "keyword": "orbit",
+    "master_category": 17,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:48.404Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 556,
+  "fields": {
+    "keyword": "pierre",
+    "master_category": 46,
+    "priority": 110,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:48.407Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 557,
+  "fields": {
+    "keyword": "suree",
+    "master_category": 18,
+    "priority": 115,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-06T07:52:48.408Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 558,
+  "fields": {
+    "keyword": "veg oil",
+    "master_category": 15,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.177Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 559,
+  "fields": {
+    "keyword": "sunflower oil",
+    "master_category": 15,
+    "priority": 100,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.180Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 560,
+  "fields": {
+    "keyword": "lemonade",
+    "master_category": 9,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.181Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 561,
+  "fields": {
+    "keyword": "energy drink",
+    "master_category": 9,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.184Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 562,
+  "fields": {
+    "keyword": "avocado",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.185Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 563,
+  "fields": {
+    "keyword": "cabbage",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.187Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 564,
+  "fields": {
+    "keyword": "onion",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.188Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 565,
+  "fields": {
+    "keyword": "melon",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.189Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 566,
+  "fields": {
+    "keyword": "spinach",
+    "master_category": 10,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.191Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 567,
+  "fields": {
+    "keyword": "tomato",
+    "master_category": 10,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.192Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 568,
+  "fields": {
+    "keyword": "muffin",
+    "master_category": 13,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.194Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 569,
+  "fields": {
+    "keyword": "croissant",
+    "master_category": 13,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.195Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 570,
+  "fields": {
+    "keyword": "yght",
+    "master_category": 12,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.197Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 571,
+  "fields": {
+    "keyword": "maziwa",
+    "master_category": 12,
+    "priority": 85,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.198Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 572,
+  "fields": {
+    "keyword": "giin",
+    "master_category": 47,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.200Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 573,
+  "fields": {
+    "keyword": "fragolino",
+    "master_category": 47,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.200Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 574,
+  "fields": {
+    "keyword": "hair removal",
+    "master_category": 22,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.202Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 575,
+  "fields": {
+    "keyword": "body scrub",
+    "master_category": 21,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.203Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 576,
+  "fields": {
+    "keyword": "body bath",
+    "master_category": 21,
+    "priority": 90,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.204Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 577,
+  "fields": {
+    "keyword": "glycerine",
+    "master_category": 21,
+    "priority": 80,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.205Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 578,
+  "fields": {
+    "keyword": "pasta sauce",
+    "master_category": 18,
+    "priority": 95,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.207Z"
+  }
+},
+{
+  "model": "core.categorykeywordrule",
+  "pk": 579,
+  "fields": {
+    "keyword": "pasta sauc",
+    "master_category": 18,
+    "priority": 95,
+    "match_field": "product_name",
+    "is_active": true,
+    "created_at": "2026-06-07T08:29:05.208Z"
+  }
+}
+]
