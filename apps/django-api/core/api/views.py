@@ -140,10 +140,25 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ["name"]
 
     def get_queryset(self):
-        qs = Category.objects.all().order_by("name")
+        # The deals filter dropdown only needs top-level categories.
+        # Descendants are included automatically when deals are filtered (see DealViewSet).
+        # Showing leaf categories in a flat <select> is confusing and under-counts results.
+        qs = Category.objects.filter(parent__isnull=True).order_by("name")
         if retailer_id := self.request.query_params.get("retailer"):
-            # Only return categories that have at least one product from this retailer
-            qs = qs.filter(product__retailer_id=retailer_id).distinct()
+            from core.services.alert_resolver import get_category_descendants
+            # Include a root if it OR any of its descendants has a product from this retailer
+            all_cat_ids = set(
+                Category.objects.values_list("id", flat=True)
+            )
+            roots_with_products = set()
+            for root in qs:
+                desc_ids = get_category_descendants(root)
+                if Product.objects.filter(
+                    retailer_id=retailer_id,
+                    master_category_id__in=desc_ids,
+                ).exists():
+                    roots_with_products.add(root.id)
+            qs = qs.filter(id__in=roots_with_products)
         return qs
 
     @action(detail=False, methods=["get"])
@@ -201,7 +216,14 @@ class DealViewSet(viewsets.ReadOnlyModelViewSet):
         if retailer_id := params.get("retailer"):
             qs = qs.filter(retailer_id=retailer_id)
         if category_id := params.get("category"):
-            qs = qs.filter(product__master_category_id=category_id)
+            from core.models import Category as Cat
+            from core.services.alert_resolver import get_category_descendants
+            try:
+                cat = Cat.objects.get(pk=category_id)
+                cat_ids = get_category_descendants(cat)
+            except Cat.DoesNotExist:
+                cat_ids = {int(category_id)}
+            qs = qs.filter(product__master_category_id__in=cat_ids)
         if search := params.get("search"):
             from django.db.models import Q
             qs = qs.filter(

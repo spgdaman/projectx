@@ -149,29 +149,7 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Africa/Nairobi"
 
-from celery.schedules import crontab
-CELERY_BEAT_SCHEDULE = {
-    'scrape-naivas': {
-        'task': 'scrapers.tasks.scrape_naivas',
-        'schedule': crontab(hour='*/4'),
-    },
-    'scrape-chandarana': {
-        'task': 'scrapers.tasks.scrape_chandarana',
-        'schedule': crontab(hour='*/4'),
-    },
-    'normalize-staging': {
-        'task': 'scrapers.tasks.normalize_staging',
-        'schedule': crontab(minute='*/30'),
-    },
-    'reap-orphaned-runs': {
-        'task': 'scrapers.tasks.reap_orphaned_runs',
-        'schedule': crontab(minute='*/30'),
-    },
-    'process-alerts': {
-        'task': 'core.tasks.process_alerts',
-        'schedule': crontab(hour='*/4'),
-    },
-}
+CELERY_BEAT_SCHEDULE = {}
 
 CELERY_TASK_ROUTES = {
     'scrapers.tasks.scrape_naivas':     {'queue': 'naivas-queue'},
