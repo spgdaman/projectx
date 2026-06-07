@@ -12,9 +12,16 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
 
 const CATEGORY_ICONS: Record<string, string> = {
-  electronics: '📱', appliances: '🏠', food: '🛒', beverages: '🥤',
-  fresh: '🥬', 'personal care': '🧴', beauty: '💄', 'home care': '🧹',
-  household: '🏠', kitchen: '🍳', liquor: '🍷', fashion: '👗', textile: '👕', pet: '🐾',
+  electronics: '📱', appliances: '🏠', phones: '📱', tv: '📺',
+  food: '🛒', beverages: '🥤', fresh: '🥬', dairy: '🥛', meat: '🥩',
+  bakery: '🍞', snacks: '🍿', confectionery: '🍫', breakfast: '🥣',
+  cooking: '🫙', frozen: '🧊', condiments: '🫙', pasta: '🍝',
+  'personal care': '🧴', beauty: '💄', body: '🧴', hair: '💇',
+  oral: '🪥', sanitary: '🧴', health: '💊',
+  'home care': '🧹', household: '🏠', kitchen: '🍳', laundry: '🫧',
+  cleaning: '🧹', tissue: '🧻',
+  liquor: '🍷', spirits: '🥃', beer: '🍺', wines: '🍷', wine: '🍷',
+  fashion: '👗', textile: '👕', luggage: '🧳', pet: '🐾',
 };
 
 function categoryIcon(name?: string | null) {

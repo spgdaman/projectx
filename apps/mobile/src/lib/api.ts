@@ -3,13 +3,12 @@ import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { configureShoppingList } from '@bargain-hunters/api-client';
 
-const BASE = Platform.OS === 'android'
-  ? 'http://10.0.2.2:8000/api/v1'
-  : 'http://127.0.0.1:8000/api/v1';
+// Production URL is the default. Override with EXPO_PUBLIC_API_URL for local dev
+// (e.g. EXPO_PUBLIC_API_URL=http://10.0.2.2:8000/api/v1 for Android emulator)
+const BASE = process.env.EXPO_PUBLIC_API_URL
+  ?? 'https://www.bargainhunters.co.ke/api/v1';
 
-const API_ORIGIN = Platform.OS === 'android'
-  ? 'http://10.0.2.2:8000'
-  : 'http://127.0.0.1:8000';
+const API_ORIGIN = BASE.replace(/\/api\/v1\/?$/, '');
 
 configureShoppingList({
   baseUrl: API_ORIGIN,
