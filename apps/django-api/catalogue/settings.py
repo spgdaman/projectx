@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config, Csv
 import dj_database_url
+from celery.schedules import crontab
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -149,7 +150,22 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Africa/Nairobi"
 
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+    # ── 08:00 EAT ──────────────────────────────────────────────────────────
+    "scrape-naivas-0800":     {"task": "scrapers.tasks.scrape_naivas",          "schedule": crontab(hour=8,  minute=0), "options": {"queue": "naivas-queue"}},
+    "scrape-chandarana-0800": {"task": "scrapers.tasks.scrape_chandarana",      "schedule": crontab(hour=8,  minute=0), "options": {"queue": "chandarana-queue"}},
+    "scrape-quickmart-0800":  {"task": "scrapers.tasks.scrape_quickmart_all",   "schedule": crontab(hour=8,  minute=0), "options": {"queue": "default"}},
+
+    # ── 12:00 EAT ──────────────────────────────────────────────────────────
+    "scrape-naivas-1200":     {"task": "scrapers.tasks.scrape_naivas",          "schedule": crontab(hour=12, minute=0), "options": {"queue": "naivas-queue"}},
+    "scrape-chandarana-1200": {"task": "scrapers.tasks.scrape_chandarana",      "schedule": crontab(hour=12, minute=0), "options": {"queue": "chandarana-queue"}},
+    "scrape-quickmart-1200":  {"task": "scrapers.tasks.scrape_quickmart_all",   "schedule": crontab(hour=12, minute=0), "options": {"queue": "default"}},
+
+    # ── 20:00 EAT ──────────────────────────────────────────────────────────
+    "scrape-naivas-2000":     {"task": "scrapers.tasks.scrape_naivas",          "schedule": crontab(hour=20, minute=0), "options": {"queue": "naivas-queue"}},
+    "scrape-chandarana-2000": {"task": "scrapers.tasks.scrape_chandarana",      "schedule": crontab(hour=20, minute=0), "options": {"queue": "chandarana-queue"}},
+    "scrape-quickmart-2000":  {"task": "scrapers.tasks.scrape_quickmart_all",   "schedule": crontab(hour=20, minute=0), "options": {"queue": "default"}},
+}
 
 CELERY_TASK_ROUTES = {
     'scrapers.tasks.scrape_naivas':     {'queue': 'naivas-queue'},
