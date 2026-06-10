@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi, categoriesApi, retailersApi } from "@/lib/api";
 
@@ -18,21 +18,55 @@ interface Category {
   children: Category[];
 }
 
+// Extract a keyword suggestion from product names.
+// Strips weights/volumes, noise words, punctuation then takes first 2-3 words.
+const NOISE = /\b(the|a|an|with|and|or|for|of|to|in|on|at|w\/|c\/w|easy|open|pack|pcs|pieces|assorted|super|extra|new|free|value|offer)\b/gi;
+const WEIGHTS = /\b\d+\s*(?:g|kg|ml|l|cl|oz|lb|pcs|pc|x)\b/gi;
+
+function suggestKeyword(names: string[]): string {
+  const cleaned = names.map((n) =>
+    n.toLowerCase()
+      .replace(WEIGHTS, " ")
+      .replace(NOISE, " ")
+      .replace(/[^a-z\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .filter((w) => w.length > 2)
+  );
+  if (cleaned.length === 0) return "";
+  if (cleaned.length === 1) return cleaned[0].slice(0, 3).join(" ");
+  // For multiple products find words common to all
+  const common = cleaned[0].filter((w) => cleaned.every((ws) => ws.includes(w)));
+  return (common.length > 0 ? common : cleaned[0]).slice(0, 2).join(" ");
+}
+
 export default function AdminCategoriesPage() {
   const qc = useQueryClient();
   const [tab, setTab] = useState<"products" | "mapped">("products");
 
-  // Product mapping state
+  // Product list state
   const [search, setSearch] = useState("");
   const [retailerFilter, setRetailerFilter] = useState<number | "">("");
   const [page, setPage] = useState(1);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Multi-select state
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+
+  // Category picker state
   const [expandedRoot, setExpandedRoot] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<{ id: number; name: string } | null>(null);
 
-  // Retailer category mapping state
+  // Keyword rule state
+  const [createRule, setCreateRule] = useState(false);
+  const [keyword, setKeyword] = useState("");
+
+  // Retailer mapping state
   const [selectedUnmapped, setSelectedUnmapped] = useState<number | null>(null);
   const [selectedMaster, setSelectedMaster] = useState<number | null>(null);
+
+  // Feedback
+  const [successMsg, setSuccessMsg] = useState("");
 
   const { data: retailers } = useQuery({
     queryKey: ["retailers"],
@@ -58,17 +92,48 @@ export default function AdminCategoriesPage() {
     queryFn: () => adminApi.mappings().then((r) => r.data),
   });
 
-  const setCategory = useMutation({
+  const products: Product[] = productsData?.results ?? [];
+  const totalPages: number = productsData?.num_pages ?? 1;
+  const totalProducts: number = productsData?.count ?? 0;
+  const tree: Category[] = categoryTree ?? [];
+  const unmapped: any[] = mappingsData?.unmapped ?? [];
+  const mapped: any[] = mappingsData?.mapped ?? [];
+  const topLevel = tree.filter((c) => c.parent === null);
+
+  // Auto-suggest keyword when selection or category changes
+  useEffect(() => {
+    if (!createRule) return;
+    const names = products.filter((p) => selectedIds.has(p.id)).map((p) => p.name);
+    if (names.length > 0) setKeyword(suggestKeyword(names));
+  }, [selectedIds, createRule]);
+
+  // Reset selection when page/filters change
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [search, retailerFilter, page]);
+
+  const bulkSave = useMutation({
     mutationFn: () => {
-      if (!selectedProduct || !selectedCategory) throw new Error("Select both");
-      return adminApi.setProductCategory(selectedProduct.id, selectedCategory.id);
+      if (selectedIds.size === 0 || !selectedCategory) throw new Error("Select products and category");
+      return adminApi.bulkSetProductCategory(
+        Array.from(selectedIds),
+        selectedCategory.id,
+        createRule ? keyword : undefined,
+      );
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
+      const { updated, keyword_rule_created, keyword: kw } = res.data;
+      let msg = `${updated} product${updated !== 1 ? "s" : ""} mapped to ${selectedCategory?.name}.`;
+      if (keyword_rule_created) msg += ` Keyword rule "${kw}" created.`;
+      setSuccessMsg(msg);
+      setTimeout(() => setSuccessMsg(""), 5000);
       qc.invalidateQueries({ queryKey: ["admin-uncategorized"] });
       qc.invalidateQueries({ queryKey: ["admin-stats"] });
-      setSelectedProduct(null);
+      setSelectedIds(new Set());
       setSelectedCategory(null);
       setExpandedRoot(null);
+      setCreateRule(false);
+      setKeyword("");
     },
   });
 
@@ -94,39 +159,32 @@ export default function AdminCategoriesPage() {
     },
   });
 
-  const products: Product[] = productsData?.results ?? [];
-  const totalPages: number = productsData?.num_pages ?? 1;
-  const totalProducts: number = productsData?.count ?? 0;
-  const tree: Category[] = categoryTree ?? [];
-  const unmapped: any[] = mappingsData?.unmapped ?? [];
-  const mapped: any[] = mappingsData?.mapped ?? [];
-  const topLevel = tree.filter((c) => c.parent === null);
+  const pageIds = products.map((p) => p.id);
+  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
 
-  function handleSearchChange(val: string) {
-    setSearch(val);
-    setPage(1);
+  function toggleAll() {
+    if (allPageSelected) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        pageIds.forEach((id) => next.delete(id));
+        return next;
+      });
+    } else {
+      setSelectedIds((prev) => new Set([...prev, ...pageIds]));
+    }
   }
 
-  function handleRetailerChange(val: number | "") {
-    setRetailerFilter(val);
-    setPage(1);
-  }
-
-  function handleSelectProduct(p: Product) {
-    setSelectedProduct(p);
-    setSelectedCategory(null);
-    setExpandedRoot(null);
+  function toggleOne(id: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
   }
 
   function handleRootClick(root: Category) {
     setExpandedRoot(expandedRoot === root.id ? null : root.id);
-    if (!root.children?.length) {
-      setSelectedCategory({ id: root.id, name: root.name });
-    }
-  }
-
-  function handleChildClick(child: Category) {
-    setSelectedCategory({ id: child.id, name: child.name });
+    if (!root.children?.length) setSelectedCategory({ id: root.id, name: root.name });
   }
 
   return (
@@ -134,18 +192,22 @@ export default function AdminCategoriesPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Category Mappings</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Map uncategorized products to the correct category so they appear in searches.
+          Select products, pick a sub-category, optionally create a keyword rule for future auto-mapping.
         </p>
       </div>
+
+      {successMsg && (
+        <div className="mb-4 bg-green-50 border border-green-200 text-green-700 text-sm font-medium rounded-lg px-4 py-3">
+          ✓ {successMsg}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setTab("products")}
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-            tab === "products"
-              ? "bg-brand-600 text-white"
-              : "border border-gray-200 text-gray-600 hover:bg-gray-50"
+            tab === "products" ? "bg-brand-600 text-white" : "border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
           Uncategorized Products ({totalProducts})
@@ -153,9 +215,7 @@ export default function AdminCategoriesPage() {
         <button
           onClick={() => setTab("mapped")}
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-            tab === "mapped"
-              ? "bg-brand-600 text-white"
-              : "border border-gray-200 text-gray-600 hover:bg-gray-50"
+            tab === "mapped" ? "bg-brand-600 text-white" : "border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
           Retailer Mappings ({mapped.length})
@@ -171,12 +231,12 @@ export default function AdminCategoriesPage() {
               type="text"
               placeholder="Search products..."
               value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               className="flex-1 border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
             />
             <select
               value={retailerFilter}
-              onChange={(e) => handleRetailerChange(e.target.value ? Number(e.target.value) : "")}
+              onChange={(e) => { setRetailerFilter(e.target.value ? Number(e.target.value) : ""); setPage(1); }}
               className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
             >
               <option value="">All retailers</option>
@@ -186,20 +246,44 @@ export default function AdminCategoriesPage() {
             </select>
           </div>
 
+          {/* Selection summary pill */}
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold text-brand-700 bg-brand-50 border border-brand-200 px-3 py-1 rounded-full">
+                {selectedIds.size} product{selectedIds.size !== 1 ? "s" : ""} selected
+              </span>
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="text-xs text-gray-400 hover:text-gray-700 transition"
+              >
+                Clear selection
+              </button>
+            </div>
+          )}
+
           {/* Two-column layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left: product list */}
+            {/* Left: product list with checkboxes */}
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+              {/* Header with select-all */}
+              <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={allPageSelected}
+                  onChange={toggleAll}
+                  className="w-4 h-4 accent-brand-600 cursor-pointer"
+                />
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  Select a product
+                  {allPageSelected ? "Deselect page" : "Select all on page"}
                 </p>
               </div>
+
               <div className="divide-y divide-gray-50 max-h-[480px] overflow-y-auto">
                 {productsLoading ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <div key={i} className="h-14 px-5 py-3 flex items-center gap-3">
-                      <div className="h-4 w-48 bg-gray-100 rounded animate-pulse" />
+                      <div className="w-4 h-4 bg-gray-100 rounded animate-pulse" />
+                      <div className="h-4 flex-1 bg-gray-100 rounded animate-pulse" />
                     </div>
                   ))
                 ) : products.length === 0 ? (
@@ -207,22 +291,32 @@ export default function AdminCategoriesPage() {
                     {search || retailerFilter ? "No products match your search" : "All products are categorized! 🎉"}
                   </p>
                 ) : (
-                  products.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => handleSelectProduct(p)}
-                      className={`w-full text-left px-5 py-3 hover:bg-gray-50 transition ${
-                        selectedProduct?.id === p.id ? "bg-brand-50" : ""
-                      }`}
-                    >
-                      <p className={`text-sm font-medium leading-snug ${
-                        selectedProduct?.id === p.id ? "text-brand-700" : "text-gray-900"
-                      }`}>
-                        {p.name}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">{p.retailer.name}</p>
-                    </button>
-                  ))
+                  products.map((p) => {
+                    const checked = selectedIds.has(p.id);
+                    return (
+                      <label
+                        key={p.id}
+                        className={`flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-gray-50 transition ${
+                          checked ? "bg-brand-50" : ""
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleOne(p.id)}
+                          className="w-4 h-4 accent-brand-600 shrink-0 cursor-pointer"
+                        />
+                        <div className="min-w-0">
+                          <p className={`text-sm font-medium leading-snug truncate ${
+                            checked ? "text-brand-700" : "text-gray-900"
+                          }`}>
+                            {p.name}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">{p.retailer.name}</p>
+                        </div>
+                      </label>
+                    );
+                  })
                 )}
               </div>
 
@@ -236,9 +330,7 @@ export default function AdminCategoriesPage() {
                   >
                     ← Prev
                   </button>
-                  <span className="text-xs text-gray-500">
-                    Page {page} of {totalPages}
-                  </span>
+                  <span className="text-xs text-gray-500">Page {page} of {totalPages}</span>
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
@@ -254,13 +346,15 @@ export default function AdminCategoriesPage() {
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
               <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  {selectedProduct ? `Assign category for: ${selectedProduct.name}` : "Select a product first"}
+                  {selectedIds.size > 0
+                    ? `Assign category to ${selectedIds.size} product${selectedIds.size !== 1 ? "s" : ""}`
+                    : "Select products first"}
                 </p>
               </div>
               <div className="max-h-[480px] overflow-y-auto">
-                {!selectedProduct ? (
+                {selectedIds.size === 0 ? (
                   <p className="py-10 text-center text-gray-300 text-sm">
-                    ← Pick a product to see categories
+                    ← Check products to see categories
                   </p>
                 ) : (
                   <ul className="divide-y divide-gray-50">
@@ -283,9 +377,7 @@ export default function AdminCategoriesPage() {
                               {root.name}
                             </span>
                             {hasChildren && (
-                              <span className="text-gray-400 text-xs ml-2">
-                                {isExpanded ? "▲" : "▼"}
-                              </span>
+                              <span className="text-gray-400 text-xs ml-2">{isExpanded ? "▲" : "▼"}</span>
                             )}
                           </button>
 
@@ -296,14 +388,12 @@ export default function AdminCategoriesPage() {
                                 return (
                                   <li key={child.id}>
                                     <button
-                                      onClick={() => handleChildClick(child)}
+                                      onClick={() => setSelectedCategory({ id: child.id, name: child.name })}
                                       className={`w-full text-left pl-10 pr-5 py-2.5 hover:bg-brand-50 transition ${
                                         isSelected ? "bg-brand-50" : ""
                                       }`}
                                     >
-                                      <span className={`text-sm ${
-                                        isSelected ? "text-brand-700 font-semibold" : "text-gray-700"
-                                      }`}>
+                                      <span className={`text-sm ${isSelected ? "text-brand-700 font-semibold" : "text-gray-700"}`}>
                                         {child.name}
                                       </span>
                                     </button>
@@ -322,21 +412,53 @@ export default function AdminCategoriesPage() {
           </div>
 
           {/* Confirmation bar */}
-          {selectedProduct && selectedCategory && (
-            <div className="bg-brand-50 border border-brand-200 rounded-xl px-5 py-4 flex items-center justify-between">
-              <div>
+          {selectedIds.size > 0 && selectedCategory && (
+            <div className="bg-brand-50 border border-brand-200 rounded-xl px-5 py-4 space-y-3">
+              <div className="flex items-center justify-between gap-4">
                 <p className="text-sm font-semibold text-brand-800">
-                  {selectedProduct.name} → {selectedCategory.name}
+                  {selectedIds.size} product{selectedIds.size !== 1 ? "s" : ""} → {selectedCategory.name}
                 </p>
-                <p className="text-xs text-brand-600 mt-0.5">Save this category assignment</p>
+                <button
+                  onClick={() => bulkSave.mutate()}
+                  disabled={bulkSave.isPending}
+                  className="shrink-0 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition disabled:opacity-60"
+                >
+                  {bulkSave.isPending ? "Saving…" : "Save Mapping"}
+                </button>
               </div>
-              <button
-                onClick={() => setCategory.mutate()}
-                disabled={setCategory.isPending}
-                className="shrink-0 ml-4 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition disabled:opacity-60"
-              >
-                {setCategory.isPending ? "Saving…" : "Save Mapping"}
-              </button>
+
+              {/* Keyword rule row */}
+              <div className="flex items-center gap-3 pt-1 border-t border-brand-200">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={createRule}
+                    onChange={(e) => {
+                      setCreateRule(e.target.checked);
+                      if (e.target.checked) {
+                        const names = products.filter((p) => selectedIds.has(p.id)).map((p) => p.name);
+                        setKeyword(suggestKeyword(names));
+                      }
+                    }}
+                    className="w-4 h-4 accent-brand-600"
+                  />
+                  <span className="text-xs font-semibold text-brand-700">Create keyword rule</span>
+                </label>
+                {createRule && (
+                  <input
+                    type="text"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="e.g. ritter sport"
+                    className="flex-1 border border-brand-300 bg-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+                  />
+                )}
+                {createRule && (
+                  <span className="text-xs text-brand-600 shrink-0">
+                    Future products matching this keyword → {selectedCategory.name}
+                  </span>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -345,7 +467,6 @@ export default function AdminCategoriesPage() {
       {/* ── Retailer mappings tab ── */}
       {tab === "mapped" && (
         <div className="space-y-6">
-          {/* Unmapped retailer categories */}
           {unmapped.length > 0 && (
             <div>
               <h2 className="text-sm font-semibold text-gray-700 mb-3">
@@ -354,22 +475,16 @@ export default function AdminCategoriesPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                   <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Retailer category
-                    </p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Retailer category</p>
                   </div>
                   <div className="divide-y divide-gray-50 max-h-72 overflow-y-auto">
                     {unmapped.map((rc: any) => (
                       <button
                         key={rc.id}
                         onClick={() => setSelectedUnmapped(rc.id)}
-                        className={`w-full text-left px-5 py-3 hover:bg-gray-50 transition ${
-                          selectedUnmapped === rc.id ? "bg-brand-50" : ""
-                        }`}
+                        className={`w-full text-left px-5 py-3 hover:bg-gray-50 transition ${selectedUnmapped === rc.id ? "bg-brand-50" : ""}`}
                       >
-                        <p className={`text-sm font-medium ${selectedUnmapped === rc.id ? "text-brand-700" : "text-gray-900"}`}>
-                          {rc.name}
-                        </p>
+                        <p className={`text-sm font-medium ${selectedUnmapped === rc.id ? "text-brand-700" : "text-gray-900"}`}>{rc.name}</p>
                         <p className="text-xs text-gray-400 mt-0.5">{rc.retailer}</p>
                       </button>
                     ))}
@@ -378,22 +493,16 @@ export default function AdminCategoriesPage() {
 
                 <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                   <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Map to master category
-                    </p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Map to master category</p>
                   </div>
                   <div className="divide-y divide-gray-50 max-h-72 overflow-y-auto">
                     {topLevel.map((mc: any) => (
                       <button
                         key={mc.id}
                         onClick={() => setSelectedMaster(mc.id)}
-                        className={`w-full text-left px-5 py-3 hover:bg-gray-50 transition ${
-                          selectedMaster === mc.id ? "bg-brand-50" : ""
-                        }`}
+                        className={`w-full text-left px-5 py-3 hover:bg-gray-50 transition ${selectedMaster === mc.id ? "bg-brand-50" : ""}`}
                       >
-                        <p className={`text-sm font-medium ${selectedMaster === mc.id ? "text-brand-700" : "text-gray-900"}`}>
-                          {mc.name}
-                        </p>
+                        <p className={`text-sm font-medium ${selectedMaster === mc.id ? "text-brand-700" : "text-gray-900"}`}>{mc.name}</p>
                       </button>
                     ))}
                   </div>
@@ -420,11 +529,8 @@ export default function AdminCategoriesPage() {
             </div>
           )}
 
-          {/* Existing mappings table */}
           <div>
-            <h2 className="text-sm font-semibold text-gray-700 mb-3">
-              Existing retailer mappings ({mapped.length})
-            </h2>
+            <h2 className="text-sm font-semibold text-gray-700 mb-3">Existing retailer mappings ({mapped.length})</h2>
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
               {mappingsLoading ? (
                 <div className="p-6 space-y-2">
@@ -454,11 +560,7 @@ export default function AdminCategoriesPage() {
                         </td>
                         <td className="px-5 py-3 text-right">
                           <button
-                            onClick={() => {
-                              if (confirm(`Remove mapping for "${m.retailer_category}"?`)) {
-                                deleteMap.mutate(m.id);
-                              }
-                            }}
+                            onClick={() => { if (confirm(`Remove mapping for "${m.retailer_category}"?`)) deleteMap.mutate(m.id); }}
                             className="text-xs text-red-400 hover:text-red-600 transition"
                           >
                             Remove
