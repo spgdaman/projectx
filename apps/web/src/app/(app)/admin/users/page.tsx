@@ -46,7 +46,7 @@ export default function AdminUsersPage() {
     },
   });
 
-  const setPlan = useMutation({
+  const changePlan = useMutation({
     mutationFn: ({ id, plan }: { id: number; plan: "premium" | "free" }) =>
       adminApi.setUserPlan(id, plan),
     onSuccess: () => {
@@ -167,12 +167,12 @@ export default function AdminUsersPage() {
                           </span>
                           <button
                             onClick={() =>
-                              setPlan.mutate({
+                              changePlan.mutate({
                                 id: profile.id,
                                 plan: profile.payment_status ? "free" : "premium",
                               })
                             }
-                            disabled={setPlan.isPending}
+                            disabled={changePlan.isPending}
                             className={`text-xs font-semibold hover:underline disabled:opacity-50 whitespace-nowrap ${
                               profile.payment_status ? "text-gray-400" : "text-brand-600"
                             }`}
