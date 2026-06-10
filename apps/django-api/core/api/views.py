@@ -432,6 +432,28 @@ class AdminUsersViewSet(viewsets.ReadOnlyModelViewSet):
         profile.user.save(update_fields=["is_staff"])
         return Response({"is_staff": profile.user.is_staff})
 
+    @action(detail=True, methods=["post"], url_path="set-plan")
+    def set_plan(self, request, pk=None):
+        """Manually set a user's plan to premium or free — staff only."""
+        profile = self.get_object()
+        plan = request.data.get("plan")
+        if plan not in ("premium", "free"):
+            return Response(
+                {"detail": "plan must be 'premium' or 'free'"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if plan == "premium":
+            profile.payment_status = True
+            profile.is_free_tier = False
+            profile.grace_until = None
+            profile.save(update_fields=["payment_status", "is_free_tier", "grace_until"])
+            profile.user.subscription_set.update(is_active=True)
+        else:
+            profile.payment_status = False
+            profile.is_free_tier = True
+            profile.save(update_fields=["payment_status", "is_free_tier"])
+        return Response({"payment_status": profile.payment_status, "is_free_tier": profile.is_free_tier})
+
 
 class AdminTriggerScraperView(APIView):
     """Manually queue a scraper task — staff only."""

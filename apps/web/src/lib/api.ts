@@ -103,6 +103,8 @@ export const adminApi = {
     apiClient.post("/admin/mappings/", { retailer_category_id, master_category_id }),
   deleteMapping: (id: number) => apiClient.delete(`/admin/mappings/${id}/`),
   toggleAdmin: (id: number) => apiClient.post(`/admin/users/${id}/toggle_admin/`),
+  setUserPlan: (id: number, plan: "premium" | "free") =>
+    apiClient.post(`/admin/users/${id}/set-plan/`, { plan }),
   scraperRuns: (params?: { retailer?: string; status?: string; page?: number }) =>
     apiClient.get("/admin/scraper-runs/", { params }),
   triggerScrape: (retailer: string) =>

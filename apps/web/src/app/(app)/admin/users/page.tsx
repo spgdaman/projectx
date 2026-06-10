@@ -34,13 +34,29 @@ export default function AdminUsersPage() {
 
   const toggleAdmin = useMutation({
     mutationFn: (id: number) => adminApi.toggleAdmin(id),
-    onSuccess: (_data, _id) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-users"] });
       setAdminSuccess("Admin status updated.");
       setTimeout(() => setAdminSuccess(null), 3000);
     },
     onError: (err: any) => {
       const msg = err?.response?.data?.detail ?? err?.message ?? "Failed to update admin status.";
+      setAdminError(msg);
+      setTimeout(() => setAdminError(null), 5000);
+    },
+  });
+
+  const setPlan = useMutation({
+    mutationFn: ({ id, plan }: { id: number; plan: "premium" | "free" }) =>
+      adminApi.setUserPlan(id, plan),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      qc.invalidateQueries({ queryKey: ["admin-stats"] });
+      setAdminSuccess("Plan updated.");
+      setTimeout(() => setAdminSuccess(null), 3000);
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.detail ?? err?.message ?? "Failed to update plan.";
       setAdminError(msg);
       setTimeout(() => setAdminError(null), 5000);
     },
@@ -143,11 +159,27 @@ export default function AdminUsersPage() {
                       <td className="px-5 py-3 text-gray-600 whitespace-nowrap">{profile.phone_number}</td>
                       <td className="px-5 py-3 text-gray-500 whitespace-nowrap">{dob}</td>
                       <td className="px-5 py-3">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          profile.payment_status ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-600"
-                        }`}>
-                          {profile.payment_status ? "⭐ Premium" : "Free"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                            profile.payment_status ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-600"
+                          }`}>
+                            {profile.payment_status ? "⭐ Premium" : "Free"}
+                          </span>
+                          <button
+                            onClick={() =>
+                              setPlan.mutate({
+                                id: profile.id,
+                                plan: profile.payment_status ? "free" : "premium",
+                              })
+                            }
+                            disabled={setPlan.isPending}
+                            className={`text-xs font-semibold hover:underline disabled:opacity-50 whitespace-nowrap ${
+                              profile.payment_status ? "text-gray-400" : "text-brand-600"
+                            }`}
+                          >
+                            {profile.payment_status ? "Downgrade" : "Upgrade"}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
