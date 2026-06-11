@@ -911,16 +911,16 @@ class AdminEmailTestView(APIView):
 class AdminSendTestAlertView(APIView):
     """
     POST /admin/users/<pk>/send-test-alert/
-    Finds the user's active subscriptions, resolves current deals for each,
-    and fires a real email alert for the best deal found.
+    Collects the best deal from each active subscription and sends ONE
+    batched alert email listing all of them.
     """
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request, pk=None):
-        from core.models import UserProfile, Subscription
+        from core.models import UserProfile, Subscription, Deal
         from core.services.alert_resolver import resolve_alert_products
-        from core.services.alerts import notify
-        from core.models import Deal
+        from core.services.email import _send
+        from django.conf import settings
         from django.db.models import F
 
         try:
@@ -944,12 +944,15 @@ class AdminSendTestAlertView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        sent = []
-        errors = []
+        # Collect one best deal per subscription, dedup by product id
+        deals_data = []
+        seen_products = set()
 
         for sub in subs:
             products = resolve_alert_products(sub)
-            for product in products[:1]:  # one alert per subscription for the test
+            for product in products[:1]:
+                if product.id in seen_products:
+                    continue
                 deal = (
                     Deal.objects
                     .filter(product=product)
@@ -959,22 +962,46 @@ class AdminSendTestAlertView(APIView):
                 )
                 if not deal:
                     continue
-                try:
-                    notify(sub, deal)
-                    sent.append(f"{product.name} ({sub.target_type})")
-                except Exception as exc:
-                    errors.append(str(exc))
+                seen_products.add(product.id)
+                old = deal.old_price
+                cur = deal.current_price
+                deals_data.append({
+                    'name': deal.product.name,
+                    'retailer': deal.retailer.name,
+                    'price': cur,
+                    'old_price': old,
+                    'discount_pct': int((old - cur) / old * 100) if old and old > cur else None,
+                    'image_url': getattr(deal.product, 'image_url', None),
+                    'branch': deal.branch.name if getattr(deal, 'branch', None) else None,
+                })
 
-        if not sent and not errors:
+        if not deals_data:
             return Response(
                 {'detail': 'No active deals found for this user\'s subscriptions right now'},
                 status=status.HTTP_200_OK,
             )
 
+        name = user.first_name or user.username
+        subject = (
+            f"Price drop: {deals_data[0]['name']}"
+            if len(deals_data) == 1
+            else f"{len(deals_data)} deals matched your alerts"
+        )
+
+        _send(
+            subject=subject,
+            template='emails/deal_alert.html',
+            context={
+                'name': name,
+                'deals': deals_data,
+                'site_url': getattr(settings, 'SITE_URL', 'https://www.bargainhunters.co.ke'),
+            },
+            to=user.email,
+        )
+
         return Response({
             'email': user.email,
-            'alerts_sent': sent,
-            'errors': errors,
+            'deals_included': [d['name'] for d in deals_data],
         })
 
 
