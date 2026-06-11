@@ -16,6 +16,13 @@ class UserProfile(models.Model):
     is_active = models.BooleanField(default=True)
     grace_until = models.DateTimeField(null=True, blank=True)
 
+    email_digest_opt_in = models.BooleanField(default=False)
+    email_digest_frequency = models.CharField(
+        max_length=10,
+        default='daily',
+        choices=[('daily', 'Daily'), ('weekly', 'Weekly')],
+    )
+
     def has_access(self):
         if self.payment_status:
             return True
@@ -573,3 +580,39 @@ class MappingReviewQueue(models.Model):
     def __str__(self):
         status = "resolved" if self.resolved else "pending"
         return f'{self.staging_product.product_name} — tier {self.tier_reached} — {status}'
+
+
+class EmailConfig(models.Model):
+    """
+    Singleton — there is always exactly one row (pk=1).
+    The custom email backend reads from this model at send time,
+    falling back to settings.py env-var config if the row is missing.
+    """
+    smtp_host = models.CharField(max_length=255, default='smtp.gmail.com')
+    smtp_port = models.IntegerField(default=587)
+    smtp_username = models.CharField(max_length=255, blank=True)
+    smtp_password = models.CharField(max_length=255, blank=True)
+    use_tls = models.BooleanField(default=True)
+    use_ssl = models.BooleanField(default=False)
+    from_email = models.EmailField(default='noreply@bargainhunters.co.ke')
+    from_name = models.CharField(max_length=100, default='Bargain Hunters')
+    is_active = models.BooleanField(
+        default=False,
+        help_text="When False, Django falls back to settings.py EMAIL_* env vars",
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Email configuration'
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return f'Email config — {self.smtp_host}:{self.smtp_port} ({"active" if self.is_active else "inactive"})'

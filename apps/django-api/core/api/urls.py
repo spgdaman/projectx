@@ -26,6 +26,10 @@ from .views import (
     AdminImportKeywordRulesView,
     AdminUncategorizedProductsView,
     AdminSetProductCategoryView,
+    AdminBulkSetProductCategoryView,
+    AdminEmailConfigView,
+    AdminEmailTestView,
+    AdminEmailDigestStatsView,
 )
 
 router = DefaultRouter()
@@ -64,6 +68,10 @@ urlpatterns = [
     path("admin/import-keyword-rules/", AdminImportKeywordRulesView.as_view(), name="admin-import-keyword-rules"),
     path("admin/uncategorized-products/", AdminUncategorizedProductsView.as_view(), name="admin-uncategorized-products"),
     path("admin/products/<int:pk>/set-category/", AdminSetProductCategoryView.as_view(), name="admin-set-product-category"),
+    path("admin/products/bulk-set-category/", AdminBulkSetProductCategoryView.as_view(), name="admin-bulk-set-product-category"),
+    path("admin/email-config/", AdminEmailConfigView.as_view(), name="admin-email-config"),
+    path("admin/email-config/test/", AdminEmailTestView.as_view(), name="admin-email-test"),
+    path("admin/email-config/digest-stats/", AdminEmailDigestStatsView.as_view(), name="admin-email-digest-stats"),
     path("admin/", include(admin_router.urls)),
 
     # Resource router

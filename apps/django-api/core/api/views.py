@@ -563,6 +563,53 @@ class AdminSetProductCategoryView(APIView):
         return Response({'id': product.id, 'master_category': {'id': category.id, 'name': category.name}})
 
 
+class AdminBulkSetProductCategoryView(APIView):
+    """
+    Map multiple products to a category in one request — staff only.
+    Optionally creates a CategoryKeywordRule so future products with
+    similar names are auto-categorized.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        from core.models import Category, CategoryKeywordRule, Product
+
+        product_ids = request.data.get('product_ids', [])
+        category_id = request.data.get('master_category_id')
+        keyword = (request.data.get('keyword') or '').strip().lower()
+
+        if not product_ids or not category_id:
+            return Response(
+                {'detail': 'product_ids and master_category_id are required'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            category = Category.objects.get(pk=category_id)
+        except Category.DoesNotExist:
+            return Response({'detail': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        updated = Product.objects.filter(pk__in=product_ids).update(master_category=category)
+
+        rule_created = False
+        if keyword:
+            _, rule_created = CategoryKeywordRule.objects.get_or_create(
+                keyword=keyword,
+                master_category=category,
+                defaults={
+                    'priority': 150,
+                    'match_field': 'product_name',
+                    'is_active': True,
+                },
+            )
+
+        return Response({
+            'updated': updated,
+            'category': {'id': category.id, 'name': category.name},
+            'keyword_rule_created': rule_created,
+            'keyword': keyword or None,
+        })
+
+
 class AdminImportKeywordRulesView(APIView):
     """
     Bulk-import CategoryKeywordRule records — staff only.
@@ -773,3 +820,91 @@ def alert_unread_count(request):
         is_read=False,
     ).count()
     return Response({'unread': count})
+
+
+# ── Email config admin views ──────────────────────────────────────────────────
+
+class AdminEmailConfigView(APIView):
+    """
+    GET  /admin/email-config/   — return current SMTP config (password masked)
+    PUT  /admin/email-config/   — update SMTP config
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def _serialize(self, cfg):
+        return {
+            'smtp_host': cfg.smtp_host,
+            'smtp_port': cfg.smtp_port,
+            'smtp_username': cfg.smtp_username,
+            'smtp_password': '••••••••' if cfg.smtp_password else '',
+            'use_tls': cfg.use_tls,
+            'use_ssl': cfg.use_ssl,
+            'from_email': cfg.from_email,
+            'from_name': cfg.from_name,
+            'is_active': cfg.is_active,
+            'updated_at': cfg.updated_at,
+        }
+
+    def get(self, request):
+        from core.models import EmailConfig
+        cfg = EmailConfig.get()
+        return Response(self._serialize(cfg))
+
+    def put(self, request):
+        from core.models import EmailConfig
+        cfg = EmailConfig.get()
+        fields = [
+            'smtp_host', 'smtp_port', 'smtp_username',
+            'use_tls', 'use_ssl', 'from_email', 'from_name', 'is_active',
+        ]
+        for field in fields:
+            if field in request.data:
+                setattr(cfg, field, request.data[field])
+        # Only update password if a real value (not the masked placeholder) is sent
+        password = request.data.get('smtp_password', '')
+        if password and password != '••••••••':
+            cfg.smtp_password = password
+        cfg.save()
+        return Response(self._serialize(cfg))
+
+
+class AdminEmailTestView(APIView):
+    """POST /admin/email-config/test/ — send a test email to the given address."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        from core.services.email import send_test_email
+        to = request.data.get('to') or request.user.email
+        if not to:
+            return Response(
+                {'detail': 'Provide a "to" email address'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        success = send_test_email(to)
+        if success:
+            return Response({'detail': f'Test email sent to {to}'})
+        return Response(
+            {'detail': 'Failed to send — check SMTP settings and server logs'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+class AdminEmailDigestStatsView(APIView):
+    """GET /admin/email-config/digest-stats/ — opt-in counts and breakdown."""
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        from core.models import UserProfile
+        total = UserProfile.objects.count()
+        opted_in = UserProfile.objects.filter(email_digest_opt_in=True).count()
+        daily = UserProfile.objects.filter(email_digest_opt_in=True, email_digest_frequency='daily').count()
+        weekly = UserProfile.objects.filter(email_digest_opt_in=True, email_digest_frequency='weekly').count()
+        with_email = UserProfile.objects.filter(email_digest_opt_in=True, user__email__gt='').count()
+        return Response({
+            'total_users': total,
+            'opted_in': opted_in,
+            'opted_out': total - opted_in,
+            'daily_subscribers': daily,
+            'weekly_subscribers': weekly,
+            'with_email_address': with_email,
+        })

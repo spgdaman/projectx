@@ -165,6 +165,10 @@ CELERY_BEAT_SCHEDULE = {
     "scrape-naivas-2000":     {"task": "scrapers.tasks.scrape_naivas",          "schedule": crontab(hour=20, minute=0), "options": {"queue": "naivas-queue"}},
     "scrape-chandarana-2000": {"task": "scrapers.tasks.scrape_chandarana",      "schedule": crontab(hour=20, minute=0), "options": {"queue": "chandarana-queue"}},
     "scrape-quickmart-2000":  {"task": "scrapers.tasks.scrape_quickmart_all",   "schedule": crontab(hour=20, minute=0), "options": {"queue": "default"}},
+
+    # ── Email digests ───────────────────────────────────────────────────────
+    "email-digest-daily":  {"task": "core.tasks.send_deal_digest_daily",  "schedule": crontab(hour=9, minute=0)},
+    "email-digest-weekly": {"task": "core.tasks.send_deal_digest_weekly", "schedule": crontab(hour=9, minute=0, day_of_week=1)},
 }
 
 CELERY_TASK_ROUTES = {
@@ -235,3 +239,18 @@ MESSAGE_TAGS = {
     messages.SUCCESS: "success",
     messages.ERROR: "error",
 }
+
+# ---------------------------------------------------------------------------
+# Email — SMTP env-var defaults; overridden at runtime by EmailConfig DB row
+# ---------------------------------------------------------------------------
+EMAIL_BACKEND = "core.email_backend.DbConfigEmailBackend"
+EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL", default="Bargain Hunters <noreply@bargainhunters.co.ke>"
+)
+SITE_URL = config("SITE_URL", default="https://www.bargainhunters.co.ke")

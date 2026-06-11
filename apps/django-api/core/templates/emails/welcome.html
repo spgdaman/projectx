@@ -1,0 +1,20 @@
+{% extends "emails/base.html" %}
+{% block subject %}Welcome to Bargain Hunters!{% endblock %}
+{% block content %}
+<h2>Welcome, {{ name }}! 🎉</h2>
+<p>You're now part of Kenya's smartest deal-hunting community. We track prices across Naivas, Chandarana, Quickmart and more — so you never miss a bargain.</p>
+
+<p><strong>Here's what you can do:</strong></p>
+<ul style="padding-left:20px;color:#374151;font-size:15px;line-height:1.8;">
+  <li>Browse deals across all major supermarkets</li>
+  <li>Subscribe to categories or products you love</li>
+  <li>Get notified the moment prices drop</li>
+  <li>Upgrade to Premium for unlimited alerts</li>
+</ul>
+
+<div style="text-align:center;margin:28px 0;">
+  <a href="{{ site_url }}/deals" class="btn">Browse Today's Deals →</a>
+</div>
+
+<p style="color:#6B7280;font-size:13px;">If you have any questions, reply to this email and we'll be happy to help.</p>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "emails/base.html" %}
+{% block subject %}Test email from Bargain Hunters{% endblock %}
+{% block content %}
+<h2>It's working! ✓</h2>
+<p>This is a test email sent from the Bargain Hunters admin panel to confirm your SMTP configuration is set up correctly.</p>
+
+<div class="card">
+  <p><span class="label">Status</span><br/><span class="value" style="color:#16a34a;">Delivery successful</span></p>
+</div>
+
+<p style="color:#6B7280;font-size:13px;">If you received this email, your mail server is configured correctly and ready to send transactional emails.</p>
+{% endblock %}

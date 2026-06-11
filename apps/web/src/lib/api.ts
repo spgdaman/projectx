@@ -113,4 +113,14 @@ export const adminApi = {
     apiClient.get("/admin/uncategorized-products/", { params }),
   setProductCategory: (productId: number, masterCategoryId: number) =>
     apiClient.patch(`/admin/products/${productId}/set-category/`, { master_category_id: masterCategoryId }),
+  bulkSetProductCategory: (productIds: number[], masterCategoryId: number, keyword?: string) =>
+    apiClient.post("/admin/products/bulk-set-category/", {
+      product_ids: productIds,
+      master_category_id: masterCategoryId,
+      keyword: keyword || undefined,
+    }),
+  getEmailConfig: () => apiClient.get("/admin/email-config/"),
+  updateEmailConfig: (data: object) => apiClient.put("/admin/email-config/", data),
+  testEmail: (to: string) => apiClient.post("/admin/email-config/test/", { to }),
+  emailDigestStats: () => apiClient.get("/admin/email-config/digest-stats/"),
 };

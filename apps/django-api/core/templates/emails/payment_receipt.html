@@ -1,0 +1,25 @@
+{% extends "emails/base.html" %}
+{% block subject %}Payment Receipt — Bargain Hunters Premium{% endblock %}
+{% block content %}
+<h2>Payment confirmed ✓</h2>
+<p>Hi {{ name }}, thank you for upgrading to <strong>Bargain Hunters Premium</strong>. Your payment has been received successfully.</p>
+
+<div class="card">
+  <p><span class="label">Amount paid</span><br/><span class="value">KES {{ amount }}</span></p>
+  <hr class="divider" style="margin:12px 0;"/>
+  <p><span class="label">Reference</span><br/><span class="value" style="font-size:14px;">{{ reference }}</span></p>
+</div>
+
+<p>Your Premium benefits are now active:</p>
+<ul style="padding-left:20px;color:#374151;font-size:15px;line-height:1.8;">
+  <li>Unlimited deal alerts</li>
+  <li>Priority notifications when prices drop</li>
+  <li>Early access to new features</li>
+</ul>
+
+<div style="text-align:center;margin:28px 0;">
+  <a href="{{ site_url }}/deals" class="btn">Start Browsing →</a>
+</div>
+
+<p style="color:#6B7280;font-size:13px;">Keep this email as your payment receipt. If you have any billing questions, reply to this email.</p>
+{% endblock %}
