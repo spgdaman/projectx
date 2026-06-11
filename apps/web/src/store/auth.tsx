@@ -24,6 +24,7 @@ interface AuthState {
   login: (phone: string, password: string) => Promise<void>;
   register: (phone: string, password: string, email: string, dateOfBirth: string, firstName?: string, lastName?: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -93,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, isAuthenticated: !!user, login, register, logout }}  // eslint-disable-line
+      value={{ user, isLoading, isAuthenticated: !!user, login, register, logout, refreshUser: fetchMe }}  // eslint-disable-line
     >
       {children}
     </AuthContext.Provider>

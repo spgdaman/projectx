@@ -121,7 +121,7 @@ class RegisterView(APIView):
 
 
 class MeView(APIView):
-    """Return the authenticated user's full profile."""
+    """GET/PATCH the authenticated user's profile."""
 
     def get(self, request):
         try:
@@ -131,6 +131,25 @@ class MeView(APIView):
                 {"detail": "Profile not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        return Response(UserProfileSerializer(profile).data)
+
+    def patch(self, request):
+        try:
+            profile = request.user.userprofile
+        except UserProfile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        email = request.data.get("email")
+        dob = request.data.get("date_of_birth")
+
+        if email is not None:
+            request.user.email = email
+            request.user.save(update_fields=["email"])
+
+        if dob is not None:
+            profile.date_of_birth = dob or None
+            profile.save(update_fields=["date_of_birth"])
+
         return Response(UserProfileSerializer(profile).data)
 
 

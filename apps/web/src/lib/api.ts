@@ -56,6 +56,8 @@ export const authApi = {
       last_name: lastName ?? "",
     }),
   me: () => apiClient.get("/auth/me/"),
+  updateMe: (data: { email?: string; date_of_birth?: string }) =>
+    apiClient.patch("/auth/me/", data),
 };
 
 export const dealsApi = {
