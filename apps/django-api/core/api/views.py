@@ -908,6 +908,76 @@ class AdminEmailTestView(APIView):
         )
 
 
+class AdminSendTestAlertView(APIView):
+    """
+    POST /admin/users/<pk>/send-test-alert/
+    Finds the user's active subscriptions, resolves current deals for each,
+    and fires a real email alert for the best deal found.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request, pk=None):
+        from core.models import UserProfile, Subscription
+        from core.services.alert_resolver import resolve_alert_products
+        from core.services.alerts import notify
+        from core.models import Deal
+        from django.db.models import F
+
+        try:
+            profile = UserProfile.objects.select_related('user').get(pk=pk)
+        except UserProfile.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user = profile.user
+        if not user.email:
+            return Response(
+                {'detail': f'User {user.username} has no email address on their account'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        subs = Subscription.objects.filter(user=user, is_active=True).select_related(
+            'product', 'category', 'retailer'
+        )
+        if not subs.exists():
+            return Response(
+                {'detail': 'User has no active subscriptions to send alerts for'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        sent = []
+        errors = []
+
+        for sub in subs:
+            products = resolve_alert_products(sub)
+            for product in products[:1]:  # one alert per subscription for the test
+                deal = (
+                    Deal.objects
+                    .filter(product=product)
+                    .select_related('product', 'retailer', 'branch')
+                    .order_by(F('old_price') - F('current_price'))
+                    .last()
+                )
+                if not deal:
+                    continue
+                try:
+                    notify(sub, deal)
+                    sent.append(f"{product.name} ({sub.target_type})")
+                except Exception as exc:
+                    errors.append(str(exc))
+
+        if not sent and not errors:
+            return Response(
+                {'detail': 'No active deals found for this user\'s subscriptions right now'},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response({
+            'email': user.email,
+            'alerts_sent': sent,
+            'errors': errors,
+        })
+
+
 class AdminEmailDigestStatsView(APIView):
     """GET /admin/email-config/digest-stats/ — opt-in counts and breakdown."""
     permission_classes = [permissions.IsAdminUser]

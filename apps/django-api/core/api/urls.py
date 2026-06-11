@@ -30,6 +30,7 @@ from .views import (
     AdminEmailConfigView,
     AdminEmailTestView,
     AdminEmailDigestStatsView,
+    AdminSendTestAlertView,
 )
 
 router = DefaultRouter()
@@ -69,6 +70,7 @@ urlpatterns = [
     path("admin/uncategorized-products/", AdminUncategorizedProductsView.as_view(), name="admin-uncategorized-products"),
     path("admin/products/<int:pk>/set-category/", AdminSetProductCategoryView.as_view(), name="admin-set-product-category"),
     path("admin/products/bulk-set-category/", AdminBulkSetProductCategoryView.as_view(), name="admin-bulk-set-product-category"),
+    path("admin/users/<int:pk>/send-test-alert/", AdminSendTestAlertView.as_view(), name="admin-send-test-alert"),
     path("admin/email-config/", AdminEmailConfigView.as_view(), name="admin-email-config"),
     path("admin/email-config/test/", AdminEmailTestView.as_view(), name="admin-email-test"),
     path("admin/email-config/digest-stats/", AdminEmailDigestStatsView.as_view(), name="admin-email-digest-stats"),

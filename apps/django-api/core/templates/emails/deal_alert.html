@@ -1,0 +1,38 @@
+{% extends "emails/base.html" %}
+{% block subject %}Price drop: {{ deal.name }}{% endblock %}
+{% block content %}
+<h2>Price drop alert 🔥</h2>
+<p>Hi {{ name }}, a deal just dropped on one of your tracked items.</p>
+
+<div style="border:1px solid #E5E7EB;border-radius:12px;padding:20px 24px;margin:20px 0;">
+  {% if deal.image_url %}
+  <img src="{{ deal.image_url }}" alt="{{ deal.name }}" width="80" height="80"
+       style="width:80px;height:80px;object-fit:contain;border-radius:8px;margin-bottom:12px;background:#F9FAFB;display:block;" />
+  {% endif %}
+  <p style="margin:0 0 4px;font-weight:700;font-size:17px;color:#111827;">{{ deal.name }}</p>
+  <p style="margin:0 0 12px;font-size:13px;color:#6B7280;">{{ deal.retailer }}</p>
+  <p style="margin:0;">
+    <span style="font-size:24px;font-weight:800;color:#E54416;">KES {{ deal.price }}</span>
+    {% if deal.old_price %}
+    <span style="font-size:14px;color:#9CA3AF;text-decoration:line-through;margin-left:10px;">KES {{ deal.old_price }}</span>
+    {% endif %}
+    {% if deal.discount_pct %}
+    <span style="background:#FDEBD0;color:#C73D0F;font-size:13px;font-weight:700;padding:3px 10px;border-radius:100px;margin-left:8px;">-{{ deal.discount_pct }}% off</span>
+    {% endif %}
+  </p>
+  {% if deal.branch %}
+  <p style="margin:8px 0 0;font-size:12px;color:#9CA3AF;">Available at {{ deal.branch }}</p>
+  {% endif %}
+</div>
+
+<div style="text-align:center;margin:24px 0;">
+  <a href="{{ site_url }}/deals" class="btn">View All Deals →</a>
+</div>
+
+<hr class="divider" />
+<p style="color:#9CA3AF;font-size:12px;text-align:center;">
+  You're getting this because you subscribed to
+  {% if subscription_type == "product" %}this product{% elif subscription_type == "category" %}{{ subscription_label }} deals{% else %}{{ subscription_label }} deals{% endif %}.
+  <a href="{{ site_url }}/subscriptions" style="color:#E54416;">Manage alerts</a>.
+</p>
+{% endblock %}
