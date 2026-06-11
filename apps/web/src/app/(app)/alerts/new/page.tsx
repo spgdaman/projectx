@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productsApi, categoriesApi, retailersApi, subscriptionsApi } from "@/lib/api";
+import posthog from "posthog-js";
 
 type TargetType = "product" | "category" | "retailer";
 
@@ -70,10 +71,16 @@ export default function CreateAlertPage() {
       });
     },
     onSuccess: () => {
+      posthog.capture("deal_alert_created", {
+        target_type: type,
+        target_id: selectedId,
+        target_name: selectedName,
+      });
       qc.invalidateQueries({ queryKey: ["subscriptions"] });
       router.push("/subscriptions");
     },
     onError: (e: any) => {
+      posthog.captureException(e);
       const data = e?.response?.data;
       const msg =
         data?.detail ??

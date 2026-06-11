@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { paymentsApi } from "@/lib/api";
+import posthog from "posthog-js";
 
 export default function UpgradePage() {
   const router = useRouter();
@@ -12,8 +13,15 @@ export default function UpgradePage() {
 
   const initiate = useMutation({
     mutationFn: () => paymentsApi.initiate(phone.trim()),
-    onSuccess: () => router.push("/upgrade/pending"),
+    onSuccess: () => {
+      posthog.capture("upgrade_payment_initiated", {
+        amount_kes: 299,
+        payment_method: "mpesa",
+      });
+      router.push("/upgrade/pending");
+    },
     onError: (e: any) => {
+      posthog.captureException(e);
       setError(e?.response?.data?.detail ?? "Payment failed. Try again.");
     },
   });

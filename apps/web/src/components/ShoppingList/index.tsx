@@ -9,6 +9,7 @@ import {
   Branch,
   OptimisationResult,
 } from '@bargain-hunters/api-client'
+import posthog from 'posthog-js'
 
 // ── Helpers ───────────────────────────────────────────────────────────────── //
 
@@ -85,6 +86,7 @@ export function ShoppingListPage() {
     setCreating(true)
     try {
       const list = await shoppingListApi.createList({ name, mode: 'split' })
+      posthog.capture('shopping_list_created', { list_id: list.id, list_name: list.name })
       setLists(prev => [list, ...prev])
       setActive(list.id)
       setShowNewForm(false)
@@ -98,6 +100,7 @@ export function ShoppingListPage() {
   const deleteList = async (id: number) => {
     if (!confirm('Delete this list?')) return
     await shoppingListApi.deleteList(id)
+    posthog.capture('shopping_list_deleted', { list_id: id })
     setLists(prev => prev.filter(l => l.id !== id))
     if (activeListId === id) setActive(null)
   }
@@ -368,6 +371,12 @@ function ShoppingListBuilder({
     setOptimising(true)
     try {
       const result = await shoppingListApi.optimiseList(listId, listMode)
+      posthog.capture('shopping_list_optimised', {
+        list_id: listId,
+        mode: listMode,
+        item_count: list?.item_count ?? 0,
+        budget: listMode === 'budget' ? parseFloat(budget) : undefined,
+      })
       onOptimised(result)
     } catch (e: unknown) {
       const err = e as { body?: string }
@@ -703,7 +712,14 @@ function ShoppingListResult({
     lines.push(`Grand total:    ${formatKES(plan.grand_total)}`)
     lines.push(`Total savings:  ${formatKES(plan.total_saving)} (${savingPct}% off)`)
     navigator.clipboard.writeText(lines.join('\n'))
-      .then(() => alert('Copied to clipboard!'))
+      .then(() => {
+        posthog.capture('shopping_list_shared', {
+          list_id: listId,
+          total_saving: plan.total_saving,
+          grand_total: plan.grand_total,
+        })
+        alert('Copied to clipboard!')
+      })
   }
 
   return (

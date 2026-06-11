@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/auth";
+import posthog from "posthog-js";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -39,9 +40,20 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(phone.trim(), password, email.trim(), dob, firstName.trim(), lastName.trim());
+      posthog.identify(phone.trim(), {
+        email: email.trim() || undefined,
+        first_name: firstName.trim() || undefined,
+        last_name: lastName.trim() || undefined,
+      });
+      posthog.capture("user_signed_up", {
+        phone: phone.trim(),
+        has_email: !!email.trim(),
+        has_name: !!(firstName.trim() || lastName.trim()),
+      });
       router.push("/deals");
     } catch (err: any) {
       const data = err?.response?.data;
+      posthog.captureException(err);
       if (!err?.response) {
         setError("Cannot reach the server. Make sure the Django API is running on port 8000.");
       } else if (typeof data?.phone === "object") {

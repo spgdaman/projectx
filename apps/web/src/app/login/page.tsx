@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/auth";
+import posthog from "posthog-js";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,8 +32,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(phone.trim(), password);
+      posthog.capture("user_logged_in", { phone: phone.trim() });
       router.push("/deals");
     } catch (err: any) {
+      posthog.captureException(err);
       setError(
         err?.response?.data?.detail ?? "Login failed. Check your credentials and try again."
       );

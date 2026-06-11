@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { authApi } from "@/lib/api";
+import posthog from "posthog-js";
 
 export interface User {
   id: number;
@@ -65,6 +66,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
       await fetchMe();
+      // Identify in PostHog after fetching user profile
+      const stored = localStorage.getItem("access_token");
+      if (stored) {
+        try {
+          const me = (await authApi.me()).data;
+          posthog.identify(String(me.user.id), {
+            phone: me.phone_number,
+            email: me.user.email,
+            first_name: me.user.first_name,
+            last_name: me.user.last_name,
+            plan: me.is_free_tier ? "free" : "premium",
+          });
+        } catch { /* non-critical */ }
+      }
     },
     [fetchMe]
   );
@@ -87,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const logout = useCallback(() => {
+    posthog.reset();
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     setUser(null);

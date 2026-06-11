@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { subscriptionsApi } from "@/lib/api";
+import posthog from "posthog-js";
 
 const typeIcon: Record<string, string> = { product: "📦", category: "🏷️", retailer: "🏪" };
 const typeLabel: Record<string, string> = { product: "Product", category: "Category", retailer: "Retailer" };
@@ -18,12 +19,18 @@ export default function SubscriptionsPage() {
   const toggle = useMutation({
     mutationFn: ({ id, active }: { id: number; active: boolean }) =>
       active ? subscriptionsApi.deactivate(id) : subscriptionsApi.activate(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["subscriptions"] }),
+    onSuccess: (_data, { id, active }) => {
+      posthog.capture(active ? "alert_paused" : "alert_resumed", { subscription_id: id });
+      qc.invalidateQueries({ queryKey: ["subscriptions"] });
+    },
   });
 
   const remove = useMutation({
     mutationFn: (id: number) => subscriptionsApi.destroy(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["subscriptions"] }),
+    onSuccess: (_data, id) => {
+      posthog.capture("alert_deleted", { subscription_id: id });
+      qc.invalidateQueries({ queryKey: ["subscriptions"] });
+    },
   });
 
   return (

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/store/auth";
 import { authApi, subscriptionsApi } from "@/lib/api";
+import posthog from "posthog-js";
 
 export default function ProfilePage() {
   const { user, logout, refreshUser } = useAuth();
@@ -26,13 +27,17 @@ export default function ProfilePage() {
   const updateMe = useMutation({
     mutationFn: (data: { email?: string; date_of_birth?: string }) =>
       authApi.updateMe(data),
-    onSuccess: async () => {
+    onSuccess: async (_data, variables) => {
       await refreshUser();
+      posthog.capture("profile_updated", {
+        updated_fields: Object.keys(variables),
+      });
       setSaveMsg({ ok: true, text: "Profile updated." });
       setEditing(false);
       setTimeout(() => setSaveMsg(null), 4000);
     },
     onError: (err: any) => {
+      posthog.captureException(err);
       const msg = err?.response?.data?.detail ?? err?.response?.data?.email?.[0] ?? "Failed to save.";
       setSaveMsg({ ok: false, text: msg });
     },
@@ -75,6 +80,7 @@ export default function ProfilePage() {
   }
 
   function handleLogout() {
+    posthog.capture("user_logged_out");
     logout();
     router.push("/");
   }

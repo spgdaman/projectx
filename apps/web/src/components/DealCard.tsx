@@ -1,5 +1,7 @@
 "use client";
 
+import posthog from "posthog-js";
+
 const CATEGORY_ICONS: Record<string, { icon: string; bg: string }> = {
   "electronics": { icon: "📱", bg: "bg-blue-50" },
   "appliances": { icon: "🏠", bg: "bg-blue-50" },
@@ -153,6 +155,16 @@ export function DealCard({ deal, onSubscribe }: Props) {
               href={deal.link}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                posthog.capture("deal_link_clicked", {
+                  deal_id: deal.id,
+                  product_id: deal.product.id,
+                  product_name: deal.product.name,
+                  retailer: deal.retailer.name,
+                  current_price: deal.current_price,
+                  discount_pct: deal.discount_pct,
+                })
+              }
               className="flex-1 text-xs font-semibold border border-gray-200 text-gray-600 hover:border-brand-400 hover:text-brand-600 rounded-lg py-1.5 text-center transition"
             >
               View ↗

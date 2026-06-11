@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dealsApi, retailersApi, categoriesApi, subscriptionsApi } from "@/lib/api";
 import { DealCard } from "@/components/DealCard";
 import { Pagination } from "@/components/Pagination";
+import posthog from "posthog-js";
 
 const PAGE_SIZE = 20;
 
@@ -62,9 +63,18 @@ export default function DealsPage() {
     setSubscribing(deal.id);
     try {
       await subscriptionsApi.create({ target_type: "product", product_id: deal.product.id });
+      posthog.capture("deal_alert_created_from_deal_card", {
+        deal_id: deal.id,
+        product_id: deal.product.id,
+        product_name: deal.product.name,
+        retailer: deal.retailer?.name,
+        current_price: deal.current_price,
+        discount_pct: deal.discount_pct,
+      });
       setSuccessId(deal.id);
       setTimeout(() => setSuccessId(null), 3000);
     } catch (e: any) {
+      posthog.captureException(e);
       alert(e?.response?.data?.detail ?? "Could not create alert.");
     } finally {
       setSubscribing(null);
