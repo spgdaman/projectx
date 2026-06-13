@@ -82,11 +82,12 @@ class OraimoScraper(BaseScraper):
             if run:
                 self.record_page_scraped(run, http_error=False)
 
-            # Wait for Vue SPA hydration
+            # Wait for Vue SPA hydration — generous timeout to absorb Cloudflare
+            # challenge redirect (networkidle may fire on the challenge page first)
             try:
-                page.wait_for_selector('div.site-product', timeout=20_000)
+                page.wait_for_selector('div.site-product', timeout=45_000)
             except Exception:
-                logger.warning('[Oraimo] No div.site-product found on %s after 20s', url)
+                logger.warning('[Oraimo] No div.site-product found on %s after 45s', url)
                 continue
 
             # Scroll to trigger lazy-loading

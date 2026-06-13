@@ -120,9 +120,10 @@ class HotpointScraper(BaseScraper):
             if run:
                 self.record_page_scraped(run, http_error=False)
 
-            # Wait for product cards
+            # Wait for product cards — generous timeout to absorb Cloudflare challenge
+            # redirect (networkidle can fire on the challenge page before it redirects)
             try:
-                page.wait_for_selector('div.product-item', timeout=10_000)
+                page.wait_for_selector('div.product-item', timeout=45_000)
             except Exception:
                 logger.info('[Hotpoint] No product cards on page %d — stopping', page_num)
                 break
