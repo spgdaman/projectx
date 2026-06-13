@@ -224,10 +224,11 @@ def _process_batch(batch, retailers, branches, cat_map, stats) -> None:
                 update_fields_set[(rid, name)] = changed
 
     if new_products:
-        created_objs = Product.objects.bulk_create(new_products, ignore_conflicts=False)
-        stats['products_created'] += len(created_objs)
-        for p in created_objs:
-            existing_products[(p.retailer_id, p.name)] = p
+        # ignore_conflicts=True: races between two concurrent normalize tasks
+        # hitting the (retailer, name) unique constraint are silently skipped;
+        # the re-fetch below loads the winner's row for the deal step.
+        Product.objects.bulk_create(new_products, ignore_conflicts=True)
+        stats['products_created'] += len(new_products)
 
     if update_products:
         all_update_fields = set()

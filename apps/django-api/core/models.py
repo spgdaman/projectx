@@ -150,6 +150,9 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        unique_together = (('retailer', 'name'),)
+
     def assign_master_category(self):
         if self.retailer_category and hasattr(self.retailer_category, "mapping"):
             self.master_category = self.retailer_category.mapping.master_category

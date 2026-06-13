@@ -98,6 +98,7 @@ class HotpointScraper(BaseScraper):
 
     def scrape_web(self, page, run=None) -> list:
         all_items: list = []
+        seen_ids: set = set()
         page_num = 1
 
         while True:
@@ -139,7 +140,10 @@ class HotpointScraper(BaseScraper):
                 try:
                     item = self._parse_card(card)
                     if item:
-                        all_items.append(item)
+                        eid = item['external_id']
+                        if eid not in seen_ids:
+                            seen_ids.add(eid)
+                            all_items.append(item)
                 except Exception as e:
                     logger.debug('[Hotpoint] Skipping card: %s', e)
 
