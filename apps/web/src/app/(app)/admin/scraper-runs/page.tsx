@@ -34,6 +34,8 @@ const SCRAPERS = [
   { key: "chandarana", label: "Chandarana" },
   { key: "quickmart",  label: "Quickmart" },
   { key: "carrefour",  label: "Carrefour" },
+  { key: "oraimo",    label: "Oraimo" },
+  { key: "hotpoint",  label: "Hotpoint" },
 ];
 
 const RETAILERS = SCRAPERS;

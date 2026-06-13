@@ -483,6 +483,8 @@ class AdminTriggerScraperView(APIView):
         'quickmart':  'scrapers.tasks.scrape_quickmart_all',
         'chandarana': 'scrapers.tasks.scrape_chandarana',
         'carrefour':  'scrapers.tasks.scrape_carrefour',
+        'oraimo':     'scrapers.tasks.scrape_oraimo',
+        'hotpoint':   'scrapers.tasks.scrape_hotpoint',
         'normalize':  'scrapers.tasks.normalize_staging',
     }
 
