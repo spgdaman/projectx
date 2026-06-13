@@ -100,13 +100,16 @@ jobs:
       # ── 9. Rolling restart to pull :latest images ─────────────────────────────
       - name: Rollout restart all deployments
         run: |
-          kubectl rollout restart deployment/django          -n bargainhunters
+          kubectl rollout restart deployment/django            -n bargainhunters
           kubectl rollout restart deployment/celery-default    -n bargainhunters
           kubectl rollout restart deployment/celery-naivas     -n bargainhunters
           kubectl rollout restart deployment/celery-chandarana -n bargainhunters
           kubectl rollout restart deployment/celery-quickmart  -n bargainhunters
-          kubectl rollout restart deployment/celery-beat      -n bargainhunters
-          kubectl rollout restart deployment/web              -n bargainhunters
+          kubectl rollout restart deployment/celery-carrefour  -n bargainhunters
+          kubectl rollout restart deployment/celery-oraimo     -n bargainhunters
+          kubectl rollout restart deployment/celery-hotpoint   -n bargainhunters
+          kubectl rollout restart deployment/celery-beat       -n bargainhunters
+          kubectl rollout restart deployment/web               -n bargainhunters
 
       # ── 10. Wait for Django to finish rolling out ─────────────────────────────
       - name: Wait for Django rollout
