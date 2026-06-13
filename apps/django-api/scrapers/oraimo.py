@@ -67,7 +67,7 @@ class OraimoScraper(BaseScraper):
         for url, fallback_category in pages_to_scrape:
             logger.info('[Oraimo] Scraping %s (%s)', url, fallback_category)
             try:
-                resp = page.goto(url, wait_until='domcontentloaded', timeout=30_000)
+                resp = page.goto(url, wait_until='networkidle', timeout=60_000)
                 if resp and resp.status >= 400:
                     logger.warning('[Oraimo] %s returned HTTP %d', url, resp.status)
                     if run:
@@ -84,9 +84,9 @@ class OraimoScraper(BaseScraper):
 
             # Wait for Vue SPA hydration
             try:
-                page.wait_for_selector('div.site-product', timeout=10_000)
+                page.wait_for_selector('div.site-product', timeout=20_000)
             except Exception:
-                logger.warning('[Oraimo] No div.site-product found on %s after 10s', url)
+                logger.warning('[Oraimo] No div.site-product found on %s after 20s', url)
                 continue
 
             # Scroll to trigger lazy-loading

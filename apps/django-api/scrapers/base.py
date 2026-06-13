@@ -214,7 +214,14 @@ class BaseScraper:
         logger.info('[%s] Fallback → Playwright: %s', self.retailer_name, url)
 
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(
+                headless=True,
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                ],
+            )
             context = browser.new_context(
                 user_agent=(
                     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
@@ -231,10 +238,10 @@ class BaseScraper:
             )
 
             try:
-                # domcontentloaded avoids hanging on sites with persistent
-                # WebSocket / analytics connections (networkidle never fires)
-                page.goto(url, wait_until='domcontentloaded', timeout=30_000)
-                page.wait_for_timeout(2_000)
+                # 'commit' fires on the first byte of the response — scrape_web
+                # handles its own navigation and wait strategy per site.
+                page.goto(url, wait_until='commit', timeout=30_000)
+                page.wait_for_timeout(1_000)
                 items = self.scrape_web(page, run=getattr(self, '_current_run', None))
             finally:
                 browser.close()
