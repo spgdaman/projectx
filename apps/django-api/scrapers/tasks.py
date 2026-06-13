@@ -165,6 +165,84 @@ def scrape_quickmart_branch(self, branch_name: str, branch_url: str):
     return {'status': 'paused', 'branch': branch_name}
 
 
+# ── Oraimo ───────────────────────────────────────────────────────────────── #
+
+@shared_task(
+    bind=True,
+    max_retries=3,
+    default_retry_delay=300,
+    queue='oraimo-queue',
+    name='scrapers.tasks.scrape_oraimo',
+)
+def scrape_oraimo(self):
+    from scrapers.oraimo import OraimoScraper
+    with scraper_lock('oraimo') as acquired:
+        if not acquired:
+            logger.info('[Oraimo] Already running — skipping duplicate task')
+            return {'skipped': 'locked'}
+        try:
+            run = OraimoScraper().run()
+            if run is None:
+                return {'skipped': 'recent_run_exists'}
+            run.celery_task_id = self.request.id or ''
+            run.save(update_fields=['celery_task_id'])
+            normalize_staging.delay()
+            return {
+                'retailer':         'Oraimo',
+                'status':           run.status,
+                'strategy':         run.strategy,
+                'found':            run.deals_found,
+                'changed':          run.deals_changed,
+                'new':              run.products_new,
+                'skipped':          run.products_skipped,
+                'pages':            run.pages_scraped,
+                'http_errors':      run.http_errors,
+                'duration_seconds': run.duration_seconds,
+            }
+        except Exception as exc:
+            logger.error('[Oraimo] Task failed: %s', exc)
+            raise self.retry(exc=exc)
+
+
+# ── Hotpoint ──────────────────────────────────────────────────────────────── #
+
+@shared_task(
+    bind=True,
+    max_retries=3,
+    default_retry_delay=300,
+    queue='hotpoint-queue',
+    name='scrapers.tasks.scrape_hotpoint',
+)
+def scrape_hotpoint(self):
+    from scrapers.hotpoint import HotpointScraper
+    with scraper_lock('hotpoint') as acquired:
+        if not acquired:
+            logger.info('[Hotpoint] Already running — skipping duplicate task')
+            return {'skipped': 'locked'}
+        try:
+            run = HotpointScraper().run()
+            if run is None:
+                return {'skipped': 'recent_run_exists'}
+            run.celery_task_id = self.request.id or ''
+            run.save(update_fields=['celery_task_id'])
+            normalize_staging.delay()
+            return {
+                'retailer':         'Hotpoint',
+                'status':           run.status,
+                'strategy':         run.strategy,
+                'found':            run.deals_found,
+                'changed':          run.deals_changed,
+                'new':              run.products_new,
+                'skipped':          run.products_skipped,
+                'pages':            run.pages_scraped,
+                'http_errors':      run.http_errors,
+                'duration_seconds': run.duration_seconds,
+            }
+        except Exception as exc:
+            logger.error('[Hotpoint] Task failed: %s', exc)
+            raise self.retry(exc=exc)
+
+
 # ── Chandarana ────────────────────────────────────────────────────────────── #
 
 @shared_task(

@@ -169,11 +169,21 @@ CELERY_BEAT_SCHEDULE = {
     # ── Email digests ───────────────────────────────────────────────────────
     "email-digest-daily":  {"task": "core.tasks.send_deal_digest_daily",  "schedule": crontab(hour=9, minute=0)},
     "email-digest-weekly": {"task": "core.tasks.send_deal_digest_weekly", "schedule": crontab(hour=9, minute=0, day_of_week=1)},
+
+    # ── Oraimo — twice daily (deals refresh once/day) ───────────────────
+    "scrape-oraimo-0800":  {"task": "scrapers.tasks.scrape_oraimo", "schedule": crontab(hour=8,  minute=0), "options": {"queue": "oraimo-queue"}},
+    "scrape-oraimo-1600":  {"task": "scrapers.tasks.scrape_oraimo", "schedule": crontab(hour=16, minute=0), "options": {"queue": "oraimo-queue"}},
+
+    # ── Hotpoint — twice daily (appliance prices change slowly) ─────────
+    "scrape-hotpoint-0800": {"task": "scrapers.tasks.scrape_hotpoint", "schedule": crontab(hour=8,  minute=0), "options": {"queue": "hotpoint-queue"}},
+    "scrape-hotpoint-2000": {"task": "scrapers.tasks.scrape_hotpoint", "schedule": crontab(hour=20, minute=0), "options": {"queue": "hotpoint-queue"}},
 }
 
 CELERY_TASK_ROUTES = {
     'scrapers.tasks.scrape_naivas':     {'queue': 'naivas-queue'},
     'scrapers.tasks.scrape_chandarana': {'queue': 'chandarana-queue'},
+    'scrapers.tasks.scrape_oraimo':     {'queue': 'oraimo-queue'},
+    'scrapers.tasks.scrape_hotpoint':   {'queue': 'hotpoint-queue'},
 }
 
 # ---------------------------------------------------------------------------

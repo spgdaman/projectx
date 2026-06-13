@@ -157,6 +157,76 @@ spec:
           type: Utilization
           averageUtilization: 70
 ---
+# ── Celery Oraimo queue ───────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-oraimo
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-oraimo
+  template:
+    metadata:
+      labels:
+        app: celery-oraimo
+    spec:
+      containers:
+        - name: celery-oraimo
+          image: localhost:5000/bargainhunters-celery:latest
+          # concurrency 1: Oraimo falls back to Playwright; single worker avoids
+          # two Playwright instances competing for RAM.
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "oraimo-queue", "-c", "1", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+---
+# ── Celery Hotpoint queue ──────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-hotpoint
+  namespace: bargainhunters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-hotpoint
+  template:
+    metadata:
+      labels:
+        app: celery-hotpoint
+    spec:
+      containers:
+        - name: celery-hotpoint
+          image: localhost:5000/bargainhunters-celery:latest
+          # concurrency 1: Hotpoint Playwright scrapes multiple pages sequentially;
+          # single worker avoids memory pressure from parallel browser instances.
+          command: ["celery", "-A", "catalogue", "worker", "-Q", "hotpoint-queue", "-c", "1", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: bargainhunters-config
+            - secretRef:
+                name: bargainhunters-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+---
 # ── Celery Beat (scheduler) ───────────────────────────────────────────────────
 # IMPORTANT: replicas is hard-locked to 1 and must NEVER be increased.
 # Multiple beat instances would fire duplicate scheduled scraper tasks,

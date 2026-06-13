@@ -258,8 +258,26 @@ class ScraperRunAdmin(admin.ModelAdmin):
         return False
 
 
+class RetailerAdmin(admin.ModelAdmin):
+    list_display  = ['id', 'name', 'product_count', 'deal_count', 'last_scraped']
+    search_fields = ['name']
+
+    def product_count(self, obj):
+        return obj.product_set.count()
+    product_count.short_description = 'Products'
+
+    def deal_count(self, obj):
+        return obj.deal_set.count()
+    deal_count.short_description = 'Deals'
+
+    def last_scraped(self, obj):
+        run = ScraperRun.objects.filter(retailer=obj).order_by('-started_at').first()
+        return run.started_at if run else '—'
+    last_scraped.short_description = 'Last scraped'
+
+
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Retailer, admin.ModelAdmin)
+admin.site.register(Retailer, RetailerAdmin)
 admin.site.register(RetailerCategory, RetailerCategoryMappingAdmin)
 admin.site.register(CategoryMapping, CategoryMappingAdmin)
 admin.site.register(Product, ProductAdmin)
