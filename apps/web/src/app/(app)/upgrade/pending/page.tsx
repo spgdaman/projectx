@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { paymentsApi } from "@/lib/api";
+import posthog from "posthog-js";
 
 export default function PaymentPendingPage() {
   const router = useRouter();
@@ -19,9 +20,11 @@ export default function PaymentPendingPage() {
     if (!data || didNavigate.current) return;
     if (data.status === "success") {
       didNavigate.current = true;
+      posthog.capture("upgrade_payment_completed", { payment_method: "mpesa", amount_kes: 299 });
       router.push("/upgrade?success=1");
     } else if (data.status === "failed" || data.status === "expired") {
       didNavigate.current = true;
+      posthog.capture("upgrade_payment_failed", { payment_method: "mpesa", failure_reason: data.status });
       router.push("/upgrade?failed=1");
     }
   }, [data, router]);

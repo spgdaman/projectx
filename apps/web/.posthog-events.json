@@ -1,0 +1,104 @@
+[
+  {
+    "event": "user_logged_in",
+    "description": "User successfully authenticated with phone and password",
+    "file": "src/app/login/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "user_signed_up",
+    "description": "New user completed registration with phone, email, and date of birth",
+    "file": "src/app/register/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "user_logged_out",
+    "description": "User signed out of their account",
+    "file": "src/app/(app)/profile/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "deal_alert_created",
+    "description": "User created a deal alert for a product, category, or retailer via the Create Alert page",
+    "file": "src/app/(app)/alerts/new/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "deal_alert_created_from_deal_card",
+    "description": "User subscribed to alerts directly from a deal card on the deals listing page",
+    "file": "src/app/(app)/deals/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "deal_link_clicked",
+    "description": "User clicked the external retailer link on a deal card",
+    "file": "src/components/DealCard.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "alert_paused",
+    "description": "User paused an active deal alert subscription",
+    "file": "src/app/(app)/subscriptions/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "alert_resumed",
+    "description": "User reactivated a paused deal alert subscription",
+    "file": "src/app/(app)/subscriptions/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "alert_deleted",
+    "description": "User permanently removed a deal alert subscription",
+    "file": "src/app/(app)/subscriptions/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "profile_updated",
+    "description": "User saved changes to their email address or date of birth",
+    "file": "src/app/(app)/profile/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "upgrade_payment_initiated",
+    "description": "User initiated M-Pesa premium upgrade payment of KES 299",
+    "file": "src/app/(app)/upgrade/page.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "upgrade_payment_completed",
+    "description": "M-Pesa payment succeeded and user account was upgraded to premium",
+    "file": "src/app/(app)/upgrade/pending/page.tsx",
+    "status": "new"
+  },
+  {
+    "event": "upgrade_payment_failed",
+    "description": "M-Pesa payment failed or expired before completion",
+    "file": "src/app/(app)/upgrade/pending/page.tsx",
+    "status": "new"
+  },
+  {
+    "event": "shopping_list_created",
+    "description": "User created a new shopping list",
+    "file": "src/components/ShoppingList/index.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "shopping_list_deleted",
+    "description": "User deleted a shopping list",
+    "file": "src/components/ShoppingList/index.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "shopping_list_optimised",
+    "description": "User ran optimisation on a shopping list to find best deals across retailers",
+    "file": "src/components/ShoppingList/index.tsx",
+    "status": "existing"
+  },
+  {
+    "event": "shopping_list_shared",
+    "description": "User copied the optimised shopping list plan to clipboard",
+    "file": "src/components/ShoppingList/index.tsx",
+    "status": "existing"
+  }
+]
