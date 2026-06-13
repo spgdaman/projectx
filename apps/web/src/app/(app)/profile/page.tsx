@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/store/auth";
 import { authApi, subscriptionsApi } from "@/lib/api";
@@ -42,6 +42,14 @@ export default function ProfilePage() {
       setSaveMsg({ ok: false, text: msg });
     },
   });
+
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setAnalyticsEnabled(!posthog.has_opted_out_capturing());
+    }
+  }, []);
 
   if (!user) return null;
 
@@ -244,6 +252,40 @@ export default function ProfilePage() {
             <Row label="Plan" value={user.payment_status ? "Premium" : "Free"} />
           </>
         )}
+      </div>
+
+      {/* Privacy */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Privacy</h2>
+        <div className="border border-gray-100 rounded-xl p-4">
+          <h3 className="font-medium text-gray-900 mb-1">Analytics</h3>
+          <p className="text-sm text-gray-500 mb-3">
+            Help us improve Bargain Hunters by allowing anonymous usage analytics.
+          </p>
+          <button
+            onClick={() => {
+              if (analyticsEnabled) {
+                posthog.opt_out_capturing();
+                setAnalyticsEnabled(false);
+              } else {
+                posthog.opt_in_capturing();
+                setAnalyticsEnabled(true);
+              }
+            }}
+            className={`text-sm px-4 py-2 rounded-lg border transition ${
+              analyticsEnabled
+                ? "border-red-300 text-red-600 hover:bg-red-50"
+                : "border-brand-400 text-brand-700 hover:bg-brand-50"
+            }`}
+          >
+            {analyticsEnabled ? "Opt out of analytics" : "Opt back in to analytics"}
+          </button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-400">
+          <Link href="/privacy" className="hover:text-brand-600 transition">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-brand-600 transition">Terms of Service</Link>
+          <Link href="/cookies" className="hover:text-brand-600 transition">Cookie Notice</Link>
+        </div>
       </div>
 
       {/* Logout */}

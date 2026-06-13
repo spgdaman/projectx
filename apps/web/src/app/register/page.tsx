@@ -17,6 +17,8 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentError, setConsentError] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -35,6 +37,10 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (!consentGiven) {
+      setConsentError(true);
+      return;
+    }
     if (password !== confirm) { setError("Passwords do not match."); return; }
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
     setLoading(true);
@@ -137,6 +143,43 @@ export default function RegisterPage() {
 
               {field("Password", "password", password, setPassword, { placeholder: "At least 6 characters" })}
               {field("Confirm password", "password", confirm, setConfirm, { placeholder: "Re-enter password" })}
+
+              <label className="flex items-start gap-3 text-sm text-gray-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={consentGiven}
+                  onChange={(e) => {
+                    setConsentGiven(e.target.checked);
+                    if (e.target.checked) setConsentError(false);
+                  }}
+                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                />
+                <span>
+                  I have read and agree to the{" "}
+                  <a
+                    href="/privacy"
+                    className="text-brand-600 underline hover:text-brand-700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Privacy Policy
+                  </a>
+                  {" "}and{" "}
+                  <a
+                    href="/terms"
+                    className="text-brand-600 underline hover:text-brand-700"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms of Service
+                  </a>
+                </span>
+              </label>
+              {consentError && (
+                <p className="text-sm text-red-600 -mt-2">
+                  Please accept the Privacy Policy and Terms of Service to continue.
+                </p>
+              )}
 
               {error && (
                 <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>

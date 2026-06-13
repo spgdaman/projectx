@@ -133,6 +133,35 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Legal */}
+        <View style={s.card}>
+          <Text style={s.sectionLabel}>LEGAL</Text>
+          <TouchableOpacity
+            style={s.legalItem}
+            onPress={() => navigation.navigate('Privacy')}
+            activeOpacity={0.7}
+          >
+            <Text style={s.legalItemText}>Privacy Policy</Text>
+            <Text style={s.chevron}>›</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={s.legalItem}
+            onPress={() => navigation.navigate('Terms')}
+            activeOpacity={0.7}
+          >
+            <Text style={s.legalItemText}>Terms of Service</Text>
+            <Text style={s.chevron}>›</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.legalItem, { borderBottomWidth: 0 }]}
+            onPress={() => navigation.navigate('Cookies')}
+            activeOpacity={0.7}
+          >
+            <Text style={s.legalItemText}>Cookie &amp; Analytics Notice</Text>
+            <Text style={s.chevron}>›</Text>
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -175,4 +204,7 @@ const s = StyleSheet.create({
   rowValue: { fontSize: 13, fontWeight: '600', color: colors.textPrimary, maxWidth: '60%', textAlign: 'right' },
   signOutBtn: { borderWidth: 1.5, borderColor: '#FCA5A5', borderRadius: 12, paddingVertical: 14, alignItems: 'center' },
   signOutText: { color: '#DC2626', fontSize: 14, fontWeight: '700' },
+  legalItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderColor: colors.background },
+  legalItemText: { fontSize: 14, color: colors.textPrimary },
+  chevron: { fontSize: 20, color: colors.textMuted },
 });

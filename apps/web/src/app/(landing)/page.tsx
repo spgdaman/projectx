@@ -327,24 +327,42 @@ export default function LandingPage() {
                 Your smart companion for finding the best deals and discounts.
               </p>
             </div>
-            {[
-              { heading: "Product", links: ["Features", "How it Works", "Pricing"] },
-              { heading: "Company", links: ["About", "Blog", "Careers"] },
-              { heading: "Support", links: ["Help Center", "Contact", "Privacy Policy"] },
-            ].map((col) => (
-              <div key={col.heading}>
-                <p className="text-white font-semibold mb-3">{col.heading}</p>
-                <ul className="space-y-2 text-sm">
-                  {col.links.map((l) => (
-                    <li key={l}>
-                      <a href="#" className="hover:text-white transition">
-                        {l}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <div>
+              <p className="text-white font-semibold mb-3">Product</p>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#features" className="hover:text-white transition">Features</a></li>
+                <li><a href="#how-it-works" className="hover:text-white transition">How it Works</a></li>
+                <li><a href="#" className="hover:text-white transition">Pricing</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-white font-semibold mb-3">Company</p>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white transition">About</a></li>
+                <li><a href="#" className="hover:text-white transition">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition">Careers</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-white font-semibold mb-3">Legal</p>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/privacy" className="hover:text-white transition">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="hover:text-white transition">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/cookies" className="hover:text-white transition">
+                    Cookie Notice
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
           <hr className="border-gray-700 mb-6" />
           <p className="text-center text-sm">

@@ -7,6 +7,9 @@ import {
   ShoppingListBuilderScreen,
   ShoppingListResultScreen,
 } from '../screens/ShoppingList';
+import PrivacyScreen from '../screens/PrivacyScreen';
+import TermsScreen from '../screens/TermsScreen';
+import CookiesScreen from '../screens/CookiesScreen';
 import { OptimisationResult } from '@bargain-hunters/api-client';
 import { colors } from '../theme';
 
@@ -17,6 +20,9 @@ export type AppStackParams = {
   ShoppingListHome: undefined;
   ShoppingListBuilder: { listId: number };
   ShoppingListResult: { listId: number; result: OptimisationResult };
+  Privacy: undefined;
+  Terms: undefined;
+  Cookies: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParams>();
@@ -36,6 +42,9 @@ export default function AppStack() {
       <Stack.Screen name="ShoppingListHome" component={ShoppingListHomeScreen} options={{ title: 'Shopping Lists' }} />
       <Stack.Screen name="ShoppingListBuilder" component={ShoppingListBuilderScreen} options={{ title: 'Build List' }} />
       <Stack.Screen name="ShoppingListResult" component={ShoppingListResultScreen} options={{ title: 'Best Deals Found' }} />
+      <Stack.Screen name="Privacy" component={PrivacyScreen} options={{ title: 'Privacy Policy' }} />
+      <Stack.Screen name="Terms" component={TermsScreen} options={{ title: 'Terms of Service' }} />
+      <Stack.Screen name="Cookies" component={CookiesScreen} options={{ title: 'Cookie & Analytics Notice' }} />
     </Stack.Navigator>
   );
 }

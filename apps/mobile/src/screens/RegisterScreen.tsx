@@ -13,6 +13,8 @@ export default function RegisterScreen({ navigation }: Props) {
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', dob: '', password: '', confirmPassword: '' });
   const [errors, setErrors] = useState<Partial<typeof form>>({});
   const [apiError, setApiError] = useState('');
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentError, setConsentError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   function set(key: keyof typeof form, val: string) {
@@ -33,6 +35,10 @@ export default function RegisterScreen({ navigation }: Props) {
 
   async function handleRegister() {
     if (!validate()) return;
+    if (!consentGiven) {
+      setConsentError(true);
+      return;
+    }
     setApiError('');
     setLoading(true);
     try {
@@ -94,6 +100,31 @@ export default function RegisterScreen({ navigation }: Props) {
             {apiError ? <View style={s.errorBox}><Text style={s.errorText}>{apiError}</Text></View> : null}
 
             <TouchableOpacity
+              style={s.checkboxRow}
+              onPress={() => { setConsentGiven(!consentGiven); setConsentError(false); }}
+              activeOpacity={0.7}
+            >
+              <View style={[s.checkbox, consentGiven && s.checkboxChecked]}>
+                {consentGiven && <Text style={s.checkmark}>✓</Text>}
+              </View>
+              <Text style={s.consentText}>
+                I agree to the{' '}
+                <Text style={s.consentLink} onPress={() => navigation.navigate('Privacy')}>
+                  Privacy Policy
+                </Text>
+                {' '}and{' '}
+                <Text style={s.consentLink} onPress={() => navigation.navigate('Terms')}>
+                  Terms of Service
+                </Text>
+              </Text>
+            </TouchableOpacity>
+            {consentError && (
+              <Text style={s.consentError}>
+                Please accept the Privacy Policy and Terms to continue.
+              </Text>
+            )}
+
+            <TouchableOpacity
               style={[s.btnPrimary, loading && s.btnDisabled]}
               onPress={handleRegister}
               disabled={loading}
@@ -135,4 +166,11 @@ const s = StyleSheet.create({
   switchRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
   switchText: { color: colors.textSecondary, fontSize: 14 },
   switchLink: { color: colors.primary, fontSize: 14, fontWeight: '700' },
+  checkboxRow: { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },
+  checkbox: { width: 20, height: 20, borderRadius: 4, borderWidth: 1.5, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center', marginTop: 1 },
+  checkboxChecked: { backgroundColor: colors.primary, borderColor: colors.primary },
+  checkmark: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  consentText: { flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 20 },
+  consentLink: { color: colors.primary, textDecorationLine: 'underline' },
+  consentError: { color: '#dc2626', fontSize: 12, marginTop: -4 },
 });
