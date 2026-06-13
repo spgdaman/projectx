@@ -67,7 +67,7 @@ class OraimoScraper(BaseScraper):
         for url, fallback_category in pages_to_scrape:
             logger.info('[Oraimo] Scraping %s (%s)', url, fallback_category)
             try:
-                resp = page.goto(url, wait_until='networkidle', timeout=60_000)
+                resp = page.goto(url, wait_until='domcontentloaded', timeout=30_000)
                 if resp and resp.status >= 400:
                     logger.warning('[Oraimo] %s returned HTTP %d', url, resp.status)
                     if run:
