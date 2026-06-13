@@ -39,6 +39,11 @@ def _remove_duplicate_products(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    # atomic=False: RunPython deletes rows (firing deferred triggers) and
+    # AlterUniqueTogether then does ALTER TABLE — PostgreSQL rejects ALTER TABLE
+    # while pending trigger events exist in the same transaction.
+    # With atomic=False each operation commits before the next one starts.
+    atomic = False
 
     dependencies = [
         ('core', '0022_seed_oraimo_hotpoint'),
