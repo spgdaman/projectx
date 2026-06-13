@@ -173,6 +173,11 @@ spec:
       labels:
         app: celery-oraimo
     spec:
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: "256Mi"
       containers:
         - name: celery-oraimo
           image: localhost:5000/bargainhunters-celery:latest
@@ -184,13 +189,16 @@ spec:
                 name: bargainhunters-config
             - secretRef:
                 name: bargainhunters-secret
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
               memory: "512Mi"
               cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
 ---
 # ── Celery Hotpoint queue ──────────────────────────────────────────────────────
 apiVersion: apps/v1
@@ -208,6 +216,11 @@ spec:
       labels:
         app: celery-hotpoint
     spec:
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: "256Mi"
       containers:
         - name: celery-hotpoint
           image: localhost:5000/bargainhunters-celery:latest
@@ -219,13 +232,16 @@ spec:
                 name: bargainhunters-config
             - secretRef:
                 name: bargainhunters-secret
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
               memory: "512Mi"
               cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
 ---
 # ── Celery Beat (scheduler) ───────────────────────────────────────────────────
 # IMPORTANT: replicas is hard-locked to 1 and must NEVER be increased.

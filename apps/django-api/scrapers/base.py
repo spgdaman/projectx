@@ -219,7 +219,6 @@ class BaseScraper:
                 args=[
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
                 ],
             )
             context = browser.new_context(
