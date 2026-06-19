@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/auth";
 import posthog from "posthog-js";
+import { PhoneInput, buildFullPhone } from "@/components/ui/PhoneInput";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, isAuthenticated, isLoading } = useAuth();
-  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+254");
+  const [localPhone, setLocalPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,9 +33,10 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
+    const fullPhone = buildFullPhone(countryCode, localPhone);
     try {
-      await login(phone.trim(), password);
-      posthog.capture("user_logged_in", { phone: phone.trim() });
+      await login(fullPhone, password);
+      posthog.capture("user_logged_in", { phone: fullPhone });
       router.push("/deals");
     } catch (err: any) {
       posthog.captureException(err);
@@ -76,25 +80,17 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Phone number
                 </label>
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+254700000000"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                <PhoneInput
+                  countryCode={countryCode}
+                  localNumber={localPhone}
+                  onCountryChange={setCountryCode}
+                  onLocalChange={setLocalPhone}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
+                <PasswordInput value={password} onChange={setPassword} />
               </div>
 
               {error && (

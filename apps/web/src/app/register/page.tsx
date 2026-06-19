@@ -5,12 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/auth";
 import posthog from "posthog-js";
+import { PhoneInput, buildFullPhone } from "@/components/ui/PhoneInput";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register, isAuthenticated, isLoading } = useAuth();
 
-  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+254");
+  const [phone, setPhone] = useState(""); // local number only
   const [email, setEmail] = useState("");
   const [dob, setDob] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -44,15 +47,16 @@ export default function RegisterPage() {
     if (password !== confirm) { setError("Passwords do not match."); return; }
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
     setLoading(true);
+    const fullPhone = buildFullPhone(countryCode, phone);
     try {
-      await register(phone.trim(), password, email.trim(), dob, firstName.trim(), lastName.trim());
-      posthog.identify(phone.trim(), {
+      await register(fullPhone, password, email.trim(), dob, firstName.trim(), lastName.trim());
+      posthog.identify(fullPhone, {
         email: email.trim() || undefined,
         first_name: firstName.trim() || undefined,
         last_name: lastName.trim() || undefined,
       });
       posthog.capture("user_signed_up", {
-        phone: phone.trim(),
+        phone: fullPhone,
         has_email: !!email.trim(),
         has_name: !!(firstName.trim() || lastName.trim()),
       });
@@ -134,15 +138,35 @@ export default function RegisterPage() {
                 {field("Last name", "text", lastName, setLastName, { placeholder: "Doe", required: false })}
               </div>
 
-              {field("Phone number", "tel", phone, setPhone, { placeholder: "+254700000000" })}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone number <span className="text-red-500">*</span>
+                </label>
+                <PhoneInput
+                  countryCode={countryCode}
+                  localNumber={phone}
+                  onCountryChange={setCountryCode}
+                  onLocalChange={setPhone}
+                />
+              </div>
               {field("Email address", "email", email, setEmail, { placeholder: "jane@example.com" })}
               {field("Date of birth", "date", dob, setDob, {
                 max: new Date(new Date().setFullYear(new Date().getFullYear() - 13))
                   .toISOString().split("T")[0],
               })}
 
-              {field("Password", "password", password, setPassword, { placeholder: "At least 6 characters" })}
-              {field("Confirm password", "password", confirm, setConfirm, { placeholder: "Re-enter password" })}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password <span className="text-red-500">*</span>
+                </label>
+                <PasswordInput value={password} onChange={setPassword} placeholder="At least 6 characters" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm password <span className="text-red-500">*</span>
+                </label>
+                <PasswordInput value={confirm} onChange={setConfirm} placeholder="Re-enter password" />
+              </div>
 
               <label className="flex items-start gap-3 text-sm text-gray-600 cursor-pointer">
                 <input

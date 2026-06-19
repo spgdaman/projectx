@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParams } from '../navigation/AuthStack';
 import { useAuth } from '../store/auth';
 import { colors } from '../theme';
+import { CountryCodePicker, buildFullPhone } from '../components/CountryCodePicker';
 
 type Props = NativeStackScreenProps<AuthStackParams, 'Register'>;
 
@@ -13,6 +14,9 @@ export default function RegisterScreen({ navigation }: Props) {
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', dob: '', password: '', confirmPassword: '' });
   const [errors, setErrors] = useState<Partial<typeof form>>({});
   const [apiError, setApiError] = useState('');
+  const [countryCode, setCountryCode] = useState('+254');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [consentError, setConsentError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,8 +45,9 @@ export default function RegisterScreen({ navigation }: Props) {
     }
     setApiError('');
     setLoading(true);
+    const fullPhone = buildFullPhone(countryCode, form.phone);
     try {
-      await register(form.phone.trim(), form.password, form.email.trim(), form.dob.trim(), form.firstName.trim(), form.lastName.trim());
+      await register(fullPhone, form.password, form.email.trim(), form.dob.trim(), form.firstName.trim(), form.lastName.trim());
     } catch (e: any) {
       const data = e?.response?.data;
       setApiError(data?.detail ?? data?.phone?.[0] ?? data?.email?.[0] ?? 'Registration failed.');
@@ -51,9 +56,9 @@ export default function RegisterScreen({ navigation }: Props) {
     }
   }
 
-  const Field = ({ field, label, placeholder, keyboardType = 'default', secure = false }: {
+  const Field = ({ field, label, placeholder, keyboardType = 'default' }: {
     field: keyof typeof form; label: string; placeholder: string;
-    keyboardType?: 'default' | 'email-address' | 'phone-pad'; secure?: boolean;
+    keyboardType?: 'default' | 'email-address' | 'phone-pad';
   }) => (
     <View style={s.field}>
       <Text style={s.label}>{label}</Text>
@@ -64,7 +69,6 @@ export default function RegisterScreen({ navigation }: Props) {
         value={form[field]}
         onChangeText={(v) => set(field, v)}
         keyboardType={keyboardType}
-        secureTextEntry={secure}
         autoCapitalize={field === 'email' ? 'none' : 'words'}
       />
       {errors[field] ? <Text style={s.fieldError}>{errors[field]}</Text> : null}
@@ -91,11 +95,75 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Field field="lastName" label="Last name" placeholder="Doe" />
               </View>
             </View>
-            <Field field="phone" label="Phone number *" placeholder="+254700000000" keyboardType="phone-pad" />
+
+            {/* Phone with country code picker */}
+            <View style={s.field}>
+              <Text style={s.label}>Phone number *</Text>
+              <View style={s.phoneRow}>
+                <CountryCodePicker value={countryCode} onChange={setCountryCode} />
+                <TextInput
+                  style={[s.phoneInput, errors.phone ? s.phoneInputError : null]}
+                  placeholder="700000000"
+                  placeholderTextColor={colors.textMuted}
+                  value={form.phone}
+                  onChangeText={(v) => set('phone', v)}
+                  keyboardType="phone-pad"
+                  autoCapitalize="none"
+                />
+              </View>
+              {errors.phone ? <Text style={s.fieldError}>{errors.phone}</Text> : null}
+            </View>
+
             <Field field="email" label="Email *" placeholder="you@example.com" keyboardType="email-address" />
             <Field field="dob" label="Date of birth *" placeholder="YYYY-MM-DD" />
-            <Field field="password" label="Password *" placeholder="Min 6 characters" secure />
-            <Field field="confirmPassword" label="Confirm password *" placeholder="Repeat password" secure />
+
+            {/* Password with eye toggle */}
+            <View style={s.field}>
+              <Text style={s.label}>Password *</Text>
+              <View style={[s.inputWrapper, errors.password ? s.inputWrapperError : null]}>
+                <TextInput
+                  style={s.inputWithToggle}
+                  placeholder="Min 6 characters"
+                  placeholderTextColor={colors.textMuted}
+                  value={form.password}
+                  onChangeText={(v) => set('password', v)}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  style={s.eyeBtn}
+                  onPress={() => setShowPassword((v) => !v)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Text style={s.eyeText}>{showPassword ? 'HIDE' : 'SHOW'}</Text>
+                </TouchableOpacity>
+              </View>
+              {errors.password ? <Text style={s.fieldError}>{errors.password}</Text> : null}
+            </View>
+
+            {/* Confirm password with eye toggle */}
+            <View style={s.field}>
+              <Text style={s.label}>Confirm password *</Text>
+              <View style={[s.inputWrapper, errors.confirmPassword ? s.inputWrapperError : null]}>
+                <TextInput
+                  style={s.inputWithToggle}
+                  placeholder="Repeat password"
+                  placeholderTextColor={colors.textMuted}
+                  value={form.confirmPassword}
+                  onChangeText={(v) => set('confirmPassword', v)}
+                  secureTextEntry={!showConfirm}
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  style={s.eyeBtn}
+                  onPress={() => setShowConfirm((v) => !v)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Text style={s.eyeText}>{showConfirm ? 'HIDE' : 'SHOW'}</Text>
+                </TouchableOpacity>
+              </View>
+              {errors.confirmPassword ? <Text style={s.fieldError}>{errors.confirmPassword}</Text> : null}
+            </View>
 
             {apiError ? <View style={s.errorBox}><Text style={s.errorText}>{apiError}</Text></View> : null}
 
@@ -157,6 +225,21 @@ const s = StyleSheet.create({
   label: { fontSize: 13, fontWeight: '600', color: colors.textPrimary },
   input: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, color: colors.textPrimary },
   inputError: { borderColor: '#DC2626' },
+  phoneRow: { flexDirection: 'row' },
+  phoneInput: {
+    flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border,
+    borderTopRightRadius: 12, borderBottomRightRadius: 12,
+    paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, color: colors.textPrimary,
+  },
+  phoneInputError: { borderColor: '#DC2626' },
+  inputWrapper: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 12,
+  },
+  inputWrapperError: { borderColor: '#DC2626' },
+  inputWithToggle: { flex: 1, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, color: colors.textPrimary },
+  eyeBtn: { paddingHorizontal: 14 },
+  eyeText: { fontSize: 11, fontWeight: '700', color: colors.textMuted, letterSpacing: 0.5 },
   fieldError: { color: '#DC2626', fontSize: 12, marginTop: 2 },
   errorBox: { backgroundColor: '#FEF2F2', borderRadius: 10, padding: 12 },
   errorText: { color: '#DC2626', fontSize: 13 },
