@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { dealsApi, retailersApi, categoriesApi, subscriptionsApi } from "@/lib/api";
+import { dealsApi, retailersApi, subscriptionsApi } from "@/lib/api";
 import { DealCard } from "@/components/DealCard";
 import { Pagination } from "@/components/Pagination";
 import posthog from "posthog-js";
 
 const PAGE_SIZE = 20;
 
-export default function DealsPage() {
+function CategoryContent({ categoryId }: { categoryId: number }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const categoryName = searchParams.get("name") ?? "Category";
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("search") ?? "");
+  const [retailerId, setRetailerId] = useState<number | undefined>(
+    searchParams.get("retailer") ? Number(searchParams.get("retailer")) : undefined
+  );
+  const [ordering, setOrdering] = useState(searchParams.get("ordering") ?? "");
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [retailerId, setRetailerId] = useState<number | undefined>();
-  const [categoryId, setCategoryId] = useState<number | undefined>();
-  const [ordering, setOrdering] = useState("");
   const [subscribing, setSubscribing] = useState<number | null>(null);
   const [successId, setSuccessId] = useState<number | null>(null);
 
@@ -32,12 +37,12 @@ export default function DealsPage() {
   }
 
   const { data: dealsData, isLoading } = useQuery({
-    queryKey: ["deals", debouncedSearch, retailerId, categoryId, ordering, page],
+    queryKey: ["deals-v2-cat", categoryId, debouncedSearch, retailerId, ordering, page],
     queryFn: () =>
       dealsApi.list({
+        category: categoryId,
         search: debouncedSearch || undefined,
         retailer: retailerId,
-        category: categoryId,
         ordering: ordering || undefined,
         page,
       }),
@@ -47,12 +52,6 @@ export default function DealsPage() {
   const { data: retailersData } = useQuery({
     queryKey: ["retailers"],
     queryFn: () => retailersApi.list(),
-    select: (r) => r.data.results ?? r.data,
-  });
-
-  const { data: categoriesData } = useQuery({
-    queryKey: ["categories", retailerId],
-    queryFn: () => categoriesApi.list(retailerId ? { retailer: retailerId } : undefined),
     select: (r) => r.data.results ?? r.data,
   });
 
@@ -84,24 +83,28 @@ export default function DealsPage() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
+        <Link href="/deals-v2" className="hover:text-brand-600 transition">
+          ← All categories
+        </Link>
+        <span>/</span>
+        <span className="text-gray-800 font-medium">{categoryName}</span>
+      </div>
+
+      {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">Today&apos;s Deals</h1>
-            <Link
-              href="/deals-v2"
-              className="inline-flex items-center bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-full transition"
-            >
-              ✦ Try new layout
-            </Link>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">{categoryName}</h1>
           {dealsData?.count != null && (
-            <p className="text-gray-500 text-sm mt-1">{dealsData.count.toLocaleString()} deals found</p>
+            <p className="text-gray-500 text-sm mt-1">
+              {dealsData.count.toLocaleString()} deals
+            </p>
           )}
         </div>
         <button
           onClick={() => router.push("/alerts/new")}
-          className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition"
+          className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition shrink-0"
         >
           🔔 Create Alert
         </button>
@@ -111,7 +114,7 @@ export default function DealsPage() {
       <div className="flex flex-wrap gap-3 mb-6">
         <input
           type="text"
-          placeholder="Search deals…"
+          placeholder="Search within category…"
           className="border border-gray-200 rounded-lg px-4 py-2 text-sm flex-1 min-w-48 focus:outline-none focus:ring-2 focus:ring-brand-500"
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
@@ -119,21 +122,11 @@ export default function DealsPage() {
         <select
           className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
           value={retailerId ?? ""}
-          onChange={(e) => { setRetailerId(e.target.value ? Number(e.target.value) : undefined); setCategoryId(undefined); setPage(1); }}
+          onChange={(e) => { setRetailerId(e.target.value ? Number(e.target.value) : undefined); setPage(1); }}
         >
           <option value="">All retailers</option>
           {(retailersData ?? []).map((r: any) => (
             <option key={r.id} value={r.id}>{r.name}</option>
-          ))}
-        </select>
-        <select
-          className="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-          value={categoryId ?? ""}
-          onChange={(e) => { setCategoryId(e.target.value ? Number(e.target.value) : undefined); setPage(1); }}
-        >
-          <option value="">All categories</option>
-          {(categoriesData ?? []).map((c: any) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
         <select
@@ -178,7 +171,7 @@ export default function DealsPage() {
             <div key={deal.id} className="relative">
               {subscribing === deal.id && (
                 <div className="absolute inset-0 bg-white/70 rounded-xl flex items-center justify-center z-10">
-                  <div className="w-6 h-6 border-3 border-brand-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
                 </div>
               )}
               <DealCard deal={deal} onSubscribe={handleSubscribe} />
@@ -187,12 +180,22 @@ export default function DealsPage() {
         </div>
       )}
 
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-        className="mt-8"
-      />
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} className="mt-8" />
     </div>
+  );
+}
+
+// Exported wrapper: handles the Suspense boundary required by useSearchParams
+export function CategoryPageClient({ categoryId }: { categoryId: number }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <CategoryContent categoryId={categoryId} />
+    </Suspense>
   );
 }
