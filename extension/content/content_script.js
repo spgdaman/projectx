@@ -220,6 +220,18 @@
   // Run on load
   checkPage();
 
+  // Retry at 2 s and 5 s to catch age-gate dismissals and lazy-loaded product titles
+  setTimeout(checkPage, 2000);
+  setTimeout(checkPage, 5000);
+
+  // Watch direct children of <body> for modal removal (age gates, cookie banners)
+  // subtree:false avoids firing on every text/attribute change in the whole page
+  let debounceTimer = null;
+  new MutationObserver(function () {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(checkPage, 600);
+  }).observe(document.body, { childList: true, subtree: false });
+
   // SPA navigation — watch title element for URL changes
   const titleEl = document.querySelector('title');
   if (titleEl) {
