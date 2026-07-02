@@ -36,7 +36,7 @@ spec:
                 name: django-service
                 port:
                   number: 8000
-          - path: /admin
+          - path: /django-admin
             pathType: Prefix
             backend:
               service:

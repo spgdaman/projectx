@@ -9,7 +9,7 @@ def health(request):
 
 urlpatterns = [
     path("health/", health),
-    path("admin/", admin.site.urls),
+    path("django-admin/", admin.site.urls),
     # Versioned REST API — consumed by mobile, web, and n8n
     path("api/v1/", include("core.api.urls")),
     # Shopping list feature
