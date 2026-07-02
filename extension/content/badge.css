@@ -1,0 +1,6 @@
+/* Resets the shadow host element so it doesn't affect page layout.
+   Actual badge styles are injected into the Shadow DOM by content_script.js. */
+#bhk-price-badge {
+  all: unset;
+  display: block;
+}

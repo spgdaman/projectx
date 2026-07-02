@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from core.views import extension as extension_views
 from .views import (
     AlertLogView,
     AlertMarkReadView,
@@ -57,6 +58,9 @@ urlpatterns = [
     path("auth/register/", RegisterView.as_view(), name="api-register"),
     path("auth/refresh/", TokenRefreshView.as_view(), name="api-token-refresh"),
     path("auth/me/", MeView.as_view(), name="api-me"),
+
+    # Chrome Extension — anonymous, rate-limited
+    path("extension/compare/", extension_views.extension_compare, name="extension-compare"),
 
     # Webhooks (no JWT, CSRF-exempt)
     path("webhooks/mpesa/", MpesaWebhookView.as_view(), name="api-mpesa-webhook"),
