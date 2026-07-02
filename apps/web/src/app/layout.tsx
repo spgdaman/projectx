@@ -12,6 +12,11 @@ const quicksand = Quicksand({
 export const metadata: Metadata = {
   title: "Bargain Hunters",
   description: "Track the best deals from your favourite Kenyan retailers",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
