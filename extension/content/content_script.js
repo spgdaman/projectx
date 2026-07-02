@@ -37,7 +37,7 @@
   const BADGE_CSS = `
     .bhk-badge {
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       right: 20px;
       z-index: 2147483647;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -173,14 +173,19 @@
   let currentProductName = null;
 
   async function checkPage() {
+    console.log('[BHK] path:', location.pathname, '| product page?', onProductPage());
     if (!onProductPage()) return;
     const productName = extractText(config.productNameSelector);
-    if (!productName || productName === currentProductName) return;
+    console.log('[BHK] product name found:', productName);
+    // Reject modal/overlay text — real product names are short and don't ask questions
+    if (!productName || productName.length > 80 || productName.includes('confirm') || productName.includes('please')) return;
+    if (productName === currentProductName) return;
 
     currentProductName = productName;
     createBadge();
 
     const data = await window.BHK_fetchComparison(productName);
+    console.log('[BHK] API response:', data);
     updateBadge(data);
 
     if (data && data.results && data.results.length > 0) {

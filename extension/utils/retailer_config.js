@@ -4,9 +4,24 @@
 window.BHK_RETAILER_CONFIG = {
   'naivas.online': {
     name: 'Naivas',
-    productPagePattern: /\/p\/|\/catalog\/product\/view\/|\/[a-z0-9-]+-\d+\.html$/i,
-    productNameSelector: '.page-title .base, h1[itemprop="name"]',
-    priceSelector: '[data-price-type="finalPrice"] .price, .price-box .price',
+    // Naivas uses plain slug URLs like /dola-all-purpose-flour-2kg — match any
+    // single-level path with at least one hyphen; selector gating filters non-product pages.
+    productPagePattern: /^\/[a-z0-9][a-z0-9-]+-[a-z0-9][a-z0-9-]*$/i,
+    productNameSelector: [
+      '.page-title .base',
+      '.page-title-wrapper h1',
+      '[data-ui-id="page-title-wrapper"] h1',
+      '.product-info-main h1',
+      'h1[itemprop="name"]',
+      'h1.page-title',
+      '.product-name h1',
+    ].join(', '),
+    priceSelector: [
+      '[data-price-type="finalPrice"] .price',
+      '.price-box .price',
+      '.special-price .price',
+      '.price',
+    ].join(', '),
   },
   'carrefour.ke': {
     name: 'Carrefour',

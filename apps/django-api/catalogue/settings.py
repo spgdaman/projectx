@@ -118,6 +118,10 @@ else:
         cast=Csv(),
     )
 CORS_ALLOW_CREDENTIALS = True
+# Exclude the public extension endpoint from django-cors-headers so the view
+# can return Access-Control-Allow-Origin: * itself (needed for browser-extension
+# and retailer-site origins that aren't in CORS_ALLOWED_ORIGINS).
+CORS_URLS_REGEX = r'^(?!/api/v1/extension/).*'
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
     default="https://*.ngrok-free.app,https://*.ngrok-free.dev",
