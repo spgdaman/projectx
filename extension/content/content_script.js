@@ -175,11 +175,20 @@
   async function checkPage() {
     console.log('[BHK] path:', location.pathname, '| product page?', onProductPage());
     if (!onProductPage()) return;
-    const productName = extractText(config.productNameSelector);
-    console.log('[BHK] product name found:', productName);
+
+    // Try DOM selector first, fall back to document.title parser
+    let productName = extractText(config.productNameSelector);
     // Reject modal/overlay text — real product names are short and don't ask questions
-    if (!productName || productName.length > 80 || productName.includes('confirm') || productName.includes('please')) return;
-    if (productName === currentProductName) return;
+    if (productName && (productName.length > 80 || productName.includes('confirm') || productName.includes('please'))) {
+      productName = null;
+    }
+    if (!productName && config.titleParser) {
+      const parsed = config.titleParser(document.title);
+      // Only use if it looks like a real product name (not a generic site title)
+      if (parsed && parsed.length > 3 && parsed.length < 80) productName = parsed;
+    }
+    console.log('[BHK] product name found:', productName, '| title:', document.title);
+    if (!productName || productName === currentProductName) return;
 
     currentProductName = productName;
     createBadge();
