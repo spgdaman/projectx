@@ -20,18 +20,21 @@ window.BHK_RETAILER_CONFIG = {
     titleParser: function (title) { return title.split(/[|\-–]/)[0].trim(); },
     priceSelector: '[data-testid="special-price"], [data-testid="price"], [class*="price"]',
   },
+  // Chandarana = Chandarana FoodPlus — their website is foodplus.co.ke (Magento 2)
+  // chandarana.co.ke may redirect there; keep both host keys pointing to same config.
   'chandarana.co.ke': {
     name: 'Chandarana',
-    productPagePattern: /\/product\/|\/shop\/[^/]+\/[^/]+/,
-    productNameSelector: 'h1.product_title, .woocommerce-page h1, h1',
+    productPagePattern: /^\/[a-z0-9][a-z0-9-_]+\.html$/i,
+    productNameSelector: '.page-title .base, [data-ui-id="page-title-wrapper"] h1, .product-info-main h1',
     titleParser: function (title) { return title.split(/[|\-–]/)[0].trim(); },
-    priceSelector: '.woocommerce-Price-amount.amount bdi, .price ins .woocommerce-Price-amount bdi, .price .woocommerce-Price-amount bdi',
+    priceSelector: '[data-price-type="finalPrice"] .price, .special-price .price, .price-box .price',
   },
   'foodplus.co.ke': {
-    name: 'FoodPlus',
-    productPagePattern: /\/product\/|\/shop\/[^/]+\/[^/]+/,
-    productNameSelector: 'h1.product_title, .product-title h1, h1',
+    name: 'Chandarana',   // same retailer — DB stores as "Chandarana"
+    // Magento 2 product URLs: /alpro-oat-drink-1l.html
+    productPagePattern: /^\/[a-z0-9][a-z0-9-_]+\.html$/i,
+    productNameSelector: '.page-title .base, [data-ui-id="page-title-wrapper"] h1, .product-info-main h1',
     titleParser: function (title) { return title.split(/[|\-–]/)[0].trim(); },
-    priceSelector: '.woocommerce-Price-amount bdi, .price .amount',
+    priceSelector: '[data-price-type="finalPrice"] .price, .special-price .price, .price-box .price',
   },
 };

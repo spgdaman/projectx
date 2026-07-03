@@ -132,30 +132,24 @@
     });
   }
 
-  function updateBadge(data) {
+  function updateBadge(cheaperResults, currentPrice) {
     if (!badgeShadow) return;
     const badge = badgeShadow.querySelector('.bhk-badge');
     if (!badge) return;
 
-    if (!data || !data.results || data.results.length === 0) {
-      badge.innerHTML = `
-        <button class="bhk-badge-close" title="Dismiss">&times;</button>
-        <div class="bhk-badge-header">&#128293; Bargain Hunters</div>
-        <div class="bhk-badge-loading">No prices found</div>
-      `;
-    } else {
-      const cheapest = data.results[0];
-      const savingsHtml = data.savings > 0
-        ? `<div class="bhk-badge-savings">Save KES ${data.savings.toLocaleString()} vs highest</div>`
-        : '';
-      badge.innerHTML = `
-        <button class="bhk-badge-close" title="Dismiss">&times;</button>
-        <div class="bhk-badge-header">&#128293; Cheapest price</div>
-        <div class="bhk-badge-price">KES ${cheapest.price.toLocaleString()}</div>
-        <div class="bhk-badge-retailer">at ${cheapest.retailer}</div>
-        ${savingsHtml}
-      `;
-    }
+    const best = cheaperResults[0];
+    const saving = currentPrice ? Math.round(currentPrice - best.price) : null;
+    const savingHtml = saving && saving > 0
+      ? `<div class="bhk-badge-savings">&#127381; Save KES ${saving.toLocaleString()} vs here</div>`
+      : '';
+
+    badge.innerHTML = `
+      <button class="bhk-badge-close" title="Dismiss">&times;</button>
+      <div class="bhk-badge-header">&#128293; Cheaper elsewhere</div>
+      <div class="bhk-badge-price">KES ${best.price.toLocaleString()}</div>
+      <div class="bhk-badge-retailer">at ${best.retailer}</div>
+      ${savingHtml}
+    `;
     _attachBadgeListeners(badge);
   }
 
@@ -193,25 +187,41 @@
     currentProductName = productName;
     createBadge();
 
+    const currentPrice = extractPrice(config.priceSelector);
     const data = await window.BHK_fetchComparison(productName);
-    console.log('[BHK] API response:', data);
-    updateBadge(data);
+    console.log('[BHK] API response:', data, '| current price:', currentPrice);
 
-    if (data && data.results && data.results.length > 0) {
-      try {
-        chrome.runtime.sendMessage({
-          type: 'TRACK_EVENT',
-          event: 'extension_comparison_shown',
-          properties: {
-            product_query: productName,
-            matched_name: data.matched_name,
-            result_count: data.results.length,
-            cheapest_retailer: data.cheapest_retailer,
-            savings: data.savings,
-          },
-        });
-      } catch { /* ignore */ }
+    if (!data || !data.results || data.results.length === 0) return;
+
+    // Only show badge when a DIFFERENT retailer has a cheaper price.
+    // If only same-retailer results exist, the user is already at the source.
+    const otherRetailers = data.results.filter(function (r) { return r.retailer !== config.name; });
+    const cheaperElsewhere = otherRetailers.filter(function (r) {
+      return !currentPrice || r.price < currentPrice;
+    });
+
+    if (cheaperElsewhere.length === 0) {
+      removeBadge();
+      return;
     }
+
+    updateBadge(cheaperElsewhere, currentPrice);
+
+    try {
+      chrome.runtime.sendMessage({
+        type: 'TRACK_EVENT',
+        event: 'extension_comparison_shown',
+        properties: {
+          product_query: productName,
+          matched_name: data.matched_name,
+          current_retailer: config.name,
+          current_price: currentPrice,
+          cheaper_count: cheaperElsewhere.length,
+          cheapest_retailer: cheaperElsewhere[0].retailer,
+          cheapest_price: cheaperElsewhere[0].price,
+        },
+      });
+    } catch { /* ignore */ }
   }
 
   // Respond to popup requests for product info

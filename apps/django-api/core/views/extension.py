@@ -14,7 +14,7 @@ from core.models import Deal
 
 logger = logging.getLogger(__name__)
 
-MATCH_THRESHOLD = 82
+MATCH_THRESHOLD = 86
 CACHE_TTL = 14400      # 4 hours
 RATE_LIMIT = 60
 RATE_WINDOW = 60       # seconds
