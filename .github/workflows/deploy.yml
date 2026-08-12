@@ -35,7 +35,6 @@ jobs:
           docker build \
             -f Dockerfile.django \
             -t localhost:5000/bargainhunters-django:${{ steps.tag.outputs.sha }} \
-            -t localhost:5000/bargainhunters-django:latest \
             .
 
       # ── 4. Build Celery image ─────────────────────────────────────────────────
@@ -44,7 +43,6 @@ jobs:
           docker build \
             -f Dockerfile.celery \
             -t localhost:5000/bargainhunters-celery:${{ steps.tag.outputs.sha }} \
-            -t localhost:5000/bargainhunters-celery:latest \
             .
 
       # ── 5. Build Next.js web image ────────────────────────────────────────────
@@ -53,18 +51,16 @@ jobs:
           docker build \
             -f Dockerfile.web \
             -t localhost:5000/bargainhunters-web:${{ steps.tag.outputs.sha }} \
-            -t localhost:5000/bargainhunters-web:latest \
             .
 
       # ── 6. Push all images to local registry ──────────────────────────────────
+      # NOTE: no mutable :latest tag — every deploy pushes and references a unique,
+      # immutable commit-sha tag so the running image always traces back to a git commit.
       - name: Push images to local registry
         run: |
           docker push localhost:5000/bargainhunters-django:${{ steps.tag.outputs.sha }}
-          docker push localhost:5000/bargainhunters-django:latest
           docker push localhost:5000/bargainhunters-celery:${{ steps.tag.outputs.sha }}
-          docker push localhost:5000/bargainhunters-celery:latest
           docker push localhost:5000/bargainhunters-web:${{ steps.tag.outputs.sha }}
-          docker push localhost:5000/bargainhunters-web:latest
 
       # ── 7. Apply / update K8s secret from GitHub secrets ─────────────────────
       - name: Apply K8s secret
@@ -85,7 +81,16 @@ jobs:
             -o yaml \
           | kubectl apply -f -
 
-      # ── 8. Apply infrastructure manifests (idempotent) ────────────────────────
+      # ── 8. Pin manifests to this build's immutable image tag ──────────────────
+      # The checked-out k8s/*.yaml reference ":latest" for readability; substitute
+      # in the unique commit-sha tag for this deploy only (workspace copy, not committed).
+      - name: Pin manifests to commit-sha image tag
+        run: |
+          sed -i "s|bargainhunters-django:latest|bargainhunters-django:${{ steps.tag.outputs.sha }}|g" k8s/05-django.yaml
+          sed -i "s|bargainhunters-celery:latest|bargainhunters-celery:${{ steps.tag.outputs.sha }}|g" k8s/06-celery.yaml
+          sed -i "s|bargainhunters-web:latest|bargainhunters-web:${{ steps.tag.outputs.sha }}|g" k8s/07-web.yaml
+
+      # ── 9. Apply infrastructure manifests (idempotent) ────────────────────────
       - name: Apply K8s manifests
         run: |
           kubectl apply -f k8s/00-namespace.yaml
@@ -97,7 +102,7 @@ jobs:
           kubectl apply -f k8s/07-web.yaml
           kubectl apply -f k8s/08-ingress.yaml
 
-      # ── 9. Rolling restart to pull :latest images ─────────────────────────────
+      # ── 10. Rolling restart so every pod picks up this deploy's pinned tag ────
       - name: Rollout restart all deployments
         run: |
           kubectl rollout restart deployment/django            -n bargainhunters
