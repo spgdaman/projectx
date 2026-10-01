@@ -49,14 +49,21 @@ class ChandaranaScraper(BaseScraper):
     retailer_name = 'Chandarana'
     rate_limit_seconds = 0.3
     # 2026-10-01: foodplus.co.ke turned on Cloudflare Bot Management — even a
-    # plain GET to the homepage now gets HTTP 403 with a __cf_bm challenge
-    # cookie, so scrape_api() (plain `requests`) can never pass it; only a real
-    # browser has a chance. Re-enabled the Playwright fallback with a longer
-    # wait_for_selector (see scrape_web) to survive the challenge redirect —
-    # same fix already used for Oraimo/Hotpoint. If this still can't get past
-    # the challenge, set this back to False so failures stay visible instead of
-    # being masked as "success, 0 found".
-    use_playwright_fallback = True
+    # plain GET to the homepage gets HTTP 403 with a __cf_bm challenge cookie,
+    # so scrape_api() (plain `requests`) can never pass it.
+    #
+    # Tried re-enabling the Playwright fallback with the Oraimo/Hotpoint-style
+    # longer wait_for_selector (see scrape_web) — confirmed NOT applicable
+    # here: page.goto() itself returns HTTP 403 immediately, there's no slow
+    # JS-challenge page to wait through, so the longer timeout never even gets
+    # a chance to matter. Confirmed via manual run: ScraperRun 11558,
+    # 2026-10-01, status=success/deals_found=0/http_errors=1 — Playwright is
+    # being blocked outright, not slow-challenged, and a result that comes
+    # back empty without raising masks the failure as "success" again. Back
+    # to API-only so failures stay visible. Next real options: fingerprint/
+    # stealth evasion (its own cat-and-mouse game) or an official data feed
+    # from Chandarana — not a wait-longer fix.
+    use_playwright_fallback = False
 
     def __init__(self):
         super().__init__()
