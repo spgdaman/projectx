@@ -62,5 +62,10 @@ Use these values consistently across web (Tailwind), mobile (theme.ts), and any 
 ## Current priorities
 - [add what you're working on first]
 
+## Reliability notes
+- `web` deployment resources/probes and its HPA were tuned 2026-10-01 after a
+  light load test (8 concurrent users) caused crash-looping. See
+  `docs/load-test-2026-10-01.md` for root cause and what changed.
+
 ## Git Commits
 - On every major code change, commit the changes and push to master branch
