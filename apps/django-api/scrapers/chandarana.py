@@ -48,12 +48,15 @@ UA = (
 class ChandaranaScraper(BaseScraper):
     retailer_name = 'Chandarana'
     rate_limit_seconds = 0.3
-    # API-only as of 2026-10-01: the Magento REST API has been failing silently
-    # (APIError) since ~2026-09-05, and the Playwright fallback was ALSO finding
-    # zero products on /specials without raising — the run still got recorded as
-    # "success" with deals_found=0, so nobody noticed for weeks. Disabling the
-    # fallback means an API failure is now a real, visible ScraperRun failure.
-    use_playwright_fallback = False
+    # 2026-10-01: foodplus.co.ke turned on Cloudflare Bot Management — even a
+    # plain GET to the homepage now gets HTTP 403 with a __cf_bm challenge
+    # cookie, so scrape_api() (plain `requests`) can never pass it; only a real
+    # browser has a chance. Re-enabled the Playwright fallback with a longer
+    # wait_for_selector (see scrape_web) to survive the challenge redirect —
+    # same fix already used for Oraimo/Hotpoint. If this still can't get past
+    # the challenge, set this back to False so failures stay visible instead of
+    # being masked as "success, 0 found".
+    use_playwright_fallback = True
 
     def __init__(self):
         super().__init__()
@@ -275,6 +278,15 @@ class ChandaranaScraper(BaseScraper):
 
         if run:
             self.record_page_scraped(run)
+
+        # Wait for real product cards — generous timeout to absorb a Cloudflare
+        # challenge redirect (networkidle can fire on the challenge page itself,
+        # before it redirects to the real listing). Same fix as Oraimo/Hotpoint.
+        try:
+            page.wait_for_selector('.product-item', timeout=45_000)
+        except Exception:
+            logger.warning('[Chandarana] No .product-item found on /specials after 45s — likely still blocked')
+            return all_items
 
         # Scroll to trigger Magento lazy-loading
         for _ in range(8):
