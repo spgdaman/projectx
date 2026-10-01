@@ -201,13 +201,17 @@ spec:
               cpu: "500m"
 ---
 # ── Celery Hotpoint queue ──────────────────────────────────────────────────────
+# PAUSED 2026-10-01 — replicas: 0. Has found 0 products on every run since it
+# was added (2026-06-13); CELERY_BEAT_SCHEDULE entries for it are commented out
+# in settings.py too, so nothing enqueues to hotpoint-queue while this is at 0.
+# Re-enable only after the scraper itself is fixed (see scrapers/hotpoint.py).
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: celery-hotpoint
   namespace: bargainhunters
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: celery-hotpoint

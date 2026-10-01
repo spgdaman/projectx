@@ -48,6 +48,12 @@ UA = (
 class ChandaranaScraper(BaseScraper):
     retailer_name = 'Chandarana'
     rate_limit_seconds = 0.3
+    # API-only as of 2026-10-01: the Magento REST API has been failing silently
+    # (APIError) since ~2026-09-05, and the Playwright fallback was ALSO finding
+    # zero products on /specials without raising — the run still got recorded as
+    # "success" with deals_found=0, so nobody noticed for weeks. Disabling the
+    # fallback means an API failure is now a real, visible ScraperRun failure.
+    use_playwright_fallback = False
 
     def __init__(self):
         super().__init__()

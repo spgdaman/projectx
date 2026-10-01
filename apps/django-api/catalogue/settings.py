@@ -179,9 +179,13 @@ CELERY_BEAT_SCHEDULE = {
     "scrape-oraimo-0800":  {"task": "scrapers.tasks.scrape_oraimo", "schedule": crontab(hour=8,  minute=0), "options": {"queue": "oraimo-queue"}},
     "scrape-oraimo-1600":  {"task": "scrapers.tasks.scrape_oraimo", "schedule": crontab(hour=16, minute=0), "options": {"queue": "oraimo-queue"}},
 
-    # ── Hotpoint — twice daily (appliance prices change slowly) ─────────
-    "scrape-hotpoint-0800": {"task": "scrapers.tasks.scrape_hotpoint", "schedule": crontab(hour=8,  minute=0), "options": {"queue": "hotpoint-queue"}},
-    "scrape-hotpoint-2000": {"task": "scrapers.tasks.scrape_hotpoint", "schedule": crontab(hour=20, minute=0), "options": {"queue": "hotpoint-queue"}},
+    # ── Hotpoint — PAUSED 2026-10-01 ─────────────────────────────────────
+    # Has found 0 products on every run since it was added (2026-06-13) —
+    # flaky Cloudflare challenge on the Playwright fallback, API never worked.
+    # Not worth the resources until someone revisits the scraper itself.
+    # Manual scrape: python manage.py scrape_hotpoint
+    # "scrape-hotpoint-0800": {"task": "scrapers.tasks.scrape_hotpoint", "schedule": crontab(hour=8,  minute=0), "options": {"queue": "hotpoint-queue"}},
+    # "scrape-hotpoint-2000": {"task": "scrapers.tasks.scrape_hotpoint", "schedule": crontab(hour=20, minute=0), "options": {"queue": "hotpoint-queue"}},
 }
 
 CELERY_TASK_ROUTES = {

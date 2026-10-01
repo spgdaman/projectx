@@ -67,6 +67,10 @@ class BaseScraper:
     branch_name: Optional[str] = None
     branch_external_id: Optional[str] = None
     rate_limit_seconds: float = 0.4
+    # When False, an APIError is a hard failure — no Playwright attempt, and the
+    # real API error is recorded instead of being masked by a fallback that may
+    # itself return zero results without raising (silently reported as success).
+    use_playwright_fallback: bool = True
 
     def __init__(self):
         if not self.retailer_name:
@@ -295,6 +299,11 @@ class BaseScraper:
             run.save(update_fields=['strategy'])
 
         except APIError as api_err:
+            if not self.use_playwright_fallback:
+                logger.error('[%s] API failed (%s) — Playwright fallback disabled for this retailer', label, api_err)
+                run.finish(status='failed', error=str(api_err))
+                raise ScraperError(f'{label}: API strategy failed, no fallback configured') from api_err
+
             logger.warning('[%s] API failed (%s) — trying Playwright', label, api_err)
             run.strategy = 'scraper'
             run.save(update_fields=['strategy'])
